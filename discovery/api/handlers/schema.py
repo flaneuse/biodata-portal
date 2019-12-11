@@ -5,7 +5,7 @@ import requests
 from elasticsearch_dsl import Index
 from tornado.escape import json_decode
 
-from api.es.doc import SchemaClass, Schema
+from discovery.api.es.doc import SchemaClass, Schema
 
 from .base import APIBaseHandler, github_authenticated
 

@@ -6,9 +6,9 @@ from tornado.escape import json_encode
 from tornado.web import create_signed_value
 
 from biothings.tests import BiothingsTestCase, TornadoTestServerMixin
-from scripts.index_schema import index_schema
-from tests import run
-from api.es.doc import SchemaClass
+from discovery.scripts.index_schema import index_schema
+from discovery.tests import run
+from discovery.api.es.doc import SchemaClass
 
 BTS_URL = ('https://raw.githubusercontent.com/data2health/schemas'
            '/biothings/biothings/biothings_curie.jsonld')

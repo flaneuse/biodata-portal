@@ -13,7 +13,7 @@ import json
 import logging
 from datetime import datetime
 
-from api.adapters import ClassInfoDict
+from discovery.api.adapters import ClassInfoDict
 
 from elasticsearch_dsl import (Binary, Date, Document, InnerDoc, Keyword,
                                Nested, Object, Text, Boolean, Q)

@@ -4,7 +4,7 @@ import requests
 from biothings_schema import Schema as SchemaParser
 from elasticsearch_dsl import connections
 
-from api.es.doc import DatasetMetadata
+from discovery.api.es.doc import DatasetMetadata
 
 connections.create_connection(hosts=['localhost'], timeout=20)
 

@@ -3,8 +3,8 @@
 '''
 
 from biothings.tests import BiothingsTestCase, TornadoTestServerMixin
-from tests import run
-from scripts.schema_org import index_schema_org
+from discovery.tests import run
+from discovery.scripts.schema_org import index_schema_org
 
 
 class DiscoveryQueryTest(TornadoTestServerMixin, BiothingsTestCase):

@@ -5,12 +5,12 @@
 from biothings.web.settings.default import *
 from tornado.web import RedirectHandler
 
-from api.es.query_builder import DiscoveryQueryBuilder
-from api.handlers import (MetadataHandler, QueryHandler,
+from discovery.api.es.query_builder import DiscoveryQueryBuilder
+from discovery.api.handlers import (MetadataHandler, QueryHandler,
                                     RegistryHandler, SchemaViewHandler)
-from config_key import (COOKIE_SECRET, GITHUB_CLIENT_ID,
+from discovery.config_key import (COOKIE_SECRET, GITHUB_CLIENT_ID,
                                   GITHUB_CLIENT_SECRET)
-from web.handlers import APP_LIST as WEB_ENDPOINTS
+from discovery.web.handlers import APP_LIST as WEB_ENDPOINTS
 
 # *****************************************************************************
 # Credentials
