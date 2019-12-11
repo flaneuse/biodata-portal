@@ -1,5 +1,5 @@
 # Discovery
-A Web Schema Visualization App 
+A Web Schema Visualization App
 
 ## Run a local dev server
 1. Install Elasticsearch at localhost:9200 (follow [this instruction](https://www.elastic.co/guide/en/elasticsearch/reference/current/_installation.html))
@@ -19,6 +19,7 @@ A Web Schema Visualization App
     ```
     pip install -r requirements.txt
     ```
+    # Note: had some conflicts with Conda so ran biothings installations with `--ignore-installed`
 4. Change directory to python source folder
     ```
     cd discovery
@@ -30,9 +31,9 @@ A Web Schema Visualization App
     GITHUB_CLIENT_SECRET = '<your Github application Client Secret>'
     ```
     Follow [this instruction](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/) to create your Github Client ID and Secret.
-8. Run dev server
+8. Run dev server from discovery-app folder
     ```
-    python index.py --debug
+    PYTHONPATH=. python3 discovery/index.py
     ```
 You should now be able to access the homepage at http://localhost:8000/
 
