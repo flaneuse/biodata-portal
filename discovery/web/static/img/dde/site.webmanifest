@@ -1,6 +1,6 @@
 {
-  "name": "Data Discovery Engine",
-  "short_name": "DDE",
+  "name": "NIAID Data Portal",
+  "short_name": "NIAID Data",
   "start_url": "http://discovery.biothings.io/",
   "icons": [{
       "src": "/static/img/android-chrome-192x192.png",
