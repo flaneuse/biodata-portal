@@ -245,6 +245,13 @@ class GuideSpecialHandler(BaseHandler):
         guide_output = guide_template.render()
         self.write(guide_output)
 
+class SearchHandler(BaseHandler):
+    def get(self):
+        doc_file = "search-results.html"
+        guide_template = TEMPLATE_ENV.get_template(doc_file)
+        guide_output = guide_template.render()
+        self.write(guide_output)
+
 
 APP_LIST = [
     (r"/?", MainHandler),
@@ -264,5 +271,6 @@ APP_LIST = [
     (r"/dataset/?", DatasetRegistryHandler),
     (r"/dataset/([^/]+)/?", DatasetHandler),
     (r"/view/([^/]+)/([^/]*)/?", VisualizerHandler),
+    (r"/search", SearchHandler),
     (r".*", PageNotFoundHandler)
 ]

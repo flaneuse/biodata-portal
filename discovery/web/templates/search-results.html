@@ -1,0 +1,141 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<style>
+  #pagination {
+    display: inline-flex;
+  }
+
+  #pagination ul {
+    list-style-type: none;
+  }
+
+  #pagination li {
+    display: inline-block;
+    margin-right: 25px;
+  }
+</style>
+<div id="search-results" class="container d-flex" style="min-height:100vh">
+  <div class="jumbotron bg-light text-center text-muted w-100">
+    <h1 id="num-results" v-if="results">
+      <span v-text=results.length>
+      </span><span> results</span>
+    </h1>
+
+    <input type="text" v-model='inputSearch' class="form-control m-auto col-lg-4 col-md-6" placeholder="search datasets">
+
+    <template v-if="results && results.length > 0">
+
+      <div id="pagination">
+        Show
+        <ul>
+          <li v-for="(pageSize, index) in paginationOptions" v-if="pageSize <= results.length || index === 0">
+            <span v-text="pageSize"></span>
+          </li>
+        </ul>
+      </div>
+
+      <div v-for="item in results" class="row m-1">
+        <div class="col-md-4">
+          <a :href="'/dataset/' + item._id"><h5 v-text="item.name" class="row"></h5></a>
+          <div id="datePublished" class="row" v-if="item.datePublished"><span style="padding-right:4px">published</span><span v-text="item.datePublished"></span></div>
+        </div>
+        <div class="col-md-8 text-left">
+          <div v-html="item.description"></div>
+        </div>
+
+
+        <div class="license" v-if="item.license && item.license.text">
+          <a target="_blank" :href="'/'+item.license.url+'/'" v-text="item.license.text">link</a>
+        </div>
+      </div>
+
+    </template>
+
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://unpkg.com/vuex"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+<!-- <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.28.11/dist/sweetalert2.all.min.js"></script> -->
+<script>
+  const store = new Vuex.Store({
+    state: {
+      'metadata': {},
+    },
+    strict: true,
+    mutations: {
+      saveMetadata(state, payload) {
+        state.metadata = payload['metadata']
+      },
+    },
+    getters: {
+      // exposed as store.getters.nameOfGetter
+      getMetadata: state => {
+        return state.metadata
+      },
+    }
+  });
+
+  var app = new Vue({
+    el: '#search-results',
+    data: function() {
+      return {
+        inputSearch: "ebola",
+        paginationOptions: [15, 25, 50],
+        results: [{
+            "@type": "Dataset",
+            "_id": "https://www.omicsdi.org/dataset/omics_ena_project/PRJNA274405",
+            "_score": 15.792193,
+            "description": "Immortalized Human Hepatocyte (IHH) transcriptome response to wild-type Ebola viruses Zaire Ebola (ZEBOV '76) and Reston Ebola (REBOV '08)",
+            "name": "Homo sapiens",
+            "sameAs": "https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA274405",
+            "variableMeasured": "Genomics"
+          },
+          {
+            "@type": "Dataset",
+            "_id": "https://www.omicsdi.org/dataset/omics_ena_project/PRJNA281532",
+            "_score": 15.376336,
+            "description": "Ebola virus metagenome Ebola virus/H.sapiens-wt/COD/2014/Lomela-Lokolia16",
+            "name": "Ebola virus strain:Lomela-Lokolia16",
+            "sameAs": "https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA281532",
+            "variableMeasured": "Genomics"
+          },
+          {
+            "@context": "https://schema.org/",
+            "@id": "https://doi.org/10.5281/zenodo.13163",
+            "@type": "Dataset",
+            "_id": "doi.org_10.5281_zenodo.13163",
+            "_score": 15.178536,
+            "creator": [{
+              "@type": "Person",
+              "name": "codeanticode"
+            }],
+            "datePublished": "2014-12-08",
+            "description": "<p>This dataset includes 157 individuals from Sierra Leone from whom 106 were diagnosed to be Ebola positive during the 2014 Ebola outbreak. Details at http://www.nejm.org/doi/full/10.1056/NEJMoa1411680</p>",
+            "distribution": [{
+              "@type": "DataDownload",
+              "contentUrl": "https://zenodo.org/api/files/5ae6217b-49fc-4c27-ab8a-73eec90f06e1/ebola-1.0.zip",
+              "fileFormat": "zip"
+            }],
+            "identifier": "https://doi.org/10.5281/zenodo.13163",
+            "license": "",
+            "name": "ebola: Ebola dataset for Mirador",
+            "url": "https://zenodo.org/record/13163"
+          }
+        ],
+        query: '',
+        loading: false,
+        scripttext: ''
+      }
+    },
+    methods: {}
+  });
+</script>
+{% include "footer.html" %}
+{% endblock %}
