@@ -8,7 +8,7 @@ import jsonschema
 from elasticsearch_dsl import Index
 from tornado.escape import json_decode
 
-from discovery.api.es.doc import DatasetMetadata, SchemaClass
+from api.es.doc import DatasetMetadata, SchemaClass
 
 from .base import APIBaseHandler, ParserValidationError, github_authenticated
 

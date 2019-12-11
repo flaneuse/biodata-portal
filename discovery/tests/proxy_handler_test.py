@@ -2,7 +2,7 @@
     Proxy Handler Tester
 '''
 
-from discovery.tests import run
+from tests import run
 
 from biothings.tests import BiothingsTestCase, TornadoTestServerMixin
 

@@ -3,9 +3,9 @@
     Require Elasticsearch setup at localhost:9200
 '''
 
-from discovery.scripts.index_schema import index_schema
-from discovery.tests import run
-from discovery.api.es.doc import SchemaClass, Schema
+from scripts.index_schema import index_schema
+from tests import run
+from api.es.doc import SchemaClass, Schema
 
 
 def setup():

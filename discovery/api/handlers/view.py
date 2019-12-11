@@ -3,7 +3,7 @@ import logging
 
 import tornado
 
-from discovery.api.adapters import ClassInfoDict
+from api.adapters import ClassInfoDict
 
 from .base import APIBaseHandler
 

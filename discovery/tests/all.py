@@ -9,4 +9,4 @@ if __name__ == '__main__':
     print('Discovery Local Test')
     print('-' * 70)
     print()
-    run(argv=['', '--logging-level=INFO', '-v'], defaultTest='discovery.tests')
+    run(argv=['', '--logging-level=INFO', '-v'], defaultTest='tests')

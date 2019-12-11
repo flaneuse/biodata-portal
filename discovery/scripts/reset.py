@@ -7,7 +7,7 @@
 
 from elasticsearch_dsl import Index
 
-from discovery.api.es.doc import DatasetMetadata, Schema, SchemaClass
+from api.es.doc import DatasetMetadata, Schema, SchemaClass
 
 
 def main():

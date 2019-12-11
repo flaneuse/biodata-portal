@@ -10,7 +10,7 @@ from elasticsearch_dsl import connections
 from biothings_schema import Schema as SchemaParser
 from elasticsearch_dsl import Index
 
-from discovery.api.es.doc import DatasetMetadata, Schema, SchemaClass
+from api.es.doc import DatasetMetadata, Schema, SchemaClass
 
 
 def index_core_schema(lazy=False):
@@ -25,7 +25,7 @@ def index_core_schema(lazy=False):
         ('biomedical', 'https://raw.githubusercontent.com/data2health/schemas/master/Dataset/BioMedical/BioMedicalDataset.json')
     )
 
-    logger = logging.getLogger('discovery.scripts.setup')
+    logger = logging.getLogger('scripts.setup')
 
     for namespace, url in schemas:
 

@@ -14,8 +14,8 @@ from tornado.escape import json_decode
 from tornado.httpclient import AsyncHTTPClient
 from torngithub import json_encode
 
-from discovery.api.es.doc import Schema
-from discovery.scripts.setup import es_data_setup
+from api.es.doc import Schema
+from scripts.setup import es_data_setup
 
 L = logging.getLogger(__name__)
 
