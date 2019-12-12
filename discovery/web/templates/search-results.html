@@ -2,51 +2,192 @@
 {% block content %}
 {% include "header.html" %}
 <style>
-  #pagination {
+  #pagination-page-size {
     display: inline-flex;
   }
 
-  #pagination ul {
+  #pagination-page-size ul {
     list-style-type: none;
   }
 
-  #pagination li {
+  #pagination-page-size li {
     display: inline-block;
     margin-right: 25px;
+    cursor: pointer;
+  }
+
+  .result-summary {
+    border-bottom: 1px solid #BBB;
+  }
+
+  .keyword,
+  .measurement {
+    padding: 3px 5px;
+    border-radius: 0.3em;
+    margin-left: 0.5em;
+    font-size: 0.75em;
+  }
+
+  .keyword {
+    background: #63296b31;
+  }
+
+  .measurement {
+    background: #4a7d8f31;
+  }
+
+  .dataset-properties {
+    font-size: 0.85em;
+  }
+
+  .citation {
+    color: #4a7d8f;
+    line-height: 1.2em;
+  }
+
+  #credit {
+    border-bottom: 1px dashed #bbb;
+    margin-bottom: 5px;
+    flex-direction: column;
   }
 </style>
 <div id="search-results" class="container d-flex" style="min-height:100vh">
-  <div class="jumbotron bg-light text-center text-muted w-100">
-    <h1 id="num-results" v-if="results">
-      <span v-text=results.length>
-      </span><span> results</span>
-    </h1>
+  <div class="jumbotron bg-light text-muted w-100">
+    <div class="row">
+      <input type="text" v-model='inputSearch' class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
+    </div>
 
-    <input type="text" v-model='inputSearch' class="form-control m-auto col-lg-4 col-md-6" placeholder="search datasets">
+    <div id="results-count" class="d-flex justify-content-between" v-if="results">
+      <h1 id="num-results">
+        <span v-text=results.length>
+        </span><span> results</span>
+      </h1>
 
-    <template v-if="results && results.length > 0">
-
-      <div id="pagination">
+      <div id="pagination-page-size">
         Show
         <ul>
           <li v-for="(pageSize, index) in paginationOptions" v-if="pageSize <= results.length || index === 0">
-            <span v-text="pageSize"></span>
+            <a v-text="pageSize"></a>
           </li>
         </ul>
       </div>
 
-      <div v-for="item in results" class="row m-1">
-        <div class="col-md-4">
-          <a :href="'/dataset/' + item._id"><h5 v-text="item.name" class="row"></h5></a>
-          <div id="datePublished" class="row" v-if="item.datePublished"><span style="padding-right:4px">published</span><span v-text="item.datePublished"></span></div>
-        </div>
-        <div class="col-md-8 text-left">
-          <div v-html="item.description"></div>
-        </div>
+    </div>
 
 
-        <div class="license" v-if="item.license && item.license.text">
-          <a target="_blank" :href="'/'+item.license.url+'/'" v-text="item.license.text">link</a>
+    <template v-if="results && results.length > 0">
+      <div v-for="item in results" class="row py-3 result-summary">
+        <div class="col-md-4 text-left">
+          <!-- name -->
+          <a :href="'/dataset/' + item._id">
+            <h5 v-text="item.name" class="row"></h5>
+          </a>
+
+          <!-- other short properties -->
+          <div class="dataset-properties">
+            <div id="credit" class="row" v-if="item.creator || item.publisher || item.provider">
+
+              <div id="creator" v-if="item.creator">
+                <div v-if="Array.isArray(item.creator)">
+                  <span v-for="(creator, index) in item.creator" v-text="creator.name" v-if="index===0"></span><i> et al.</i>
+
+                </div>
+                <div v-else>
+                  <span v-text="item.creator.name"></span>
+                </div>
+              </div>
+              <div id="author" v-else-if="item.author">
+                <div v-if="Array.isArray(item.author)">
+                  <span v-for="(author, index) in item.author" v-text="author.name" v-if="index===0"></span><i> et al.</i>
+
+                </div>
+                <div v-else>
+                  <span v-text="item.author.name"></span>
+                </div>
+              </div>
+
+              <div id="creator-affiliation" v-text="item.creator[0].affiliation" v-if="item.creator && item.creator[0].affiliation">
+              </div>
+              <div id="creator-affiliation" v-text="item.author[0].affiliation" v-else-if="item.author && item.author[0].affiliation">
+              </div>
+              <div id="publisher" v-text="item.publisher.name" v-else-if="item.publisher"></div>
+              <div id="provider" v-text="item.provider.name" v-else-if="item.provider"></div>
+
+              <div id="citation" class="citation" v-if="item.citation">
+                <div v-if="Array.isArray(item.citation)">
+                  <span v-for="citation in item.citation" v-text="citation"></span> </div>
+                <div v-else>
+                  <span v-text="item.citation"></span>
+                </div>
+              </div>
+
+            </div>
+
+            <div id="source">
+              <div v-if="item['_id'].includes('zenodo')">
+                view on <a :href="item.url" target="_blank" rel="noreferrer">Zenodo</a>
+              </div>
+
+              <div v-if="item['_id'].includes('omicsdi')">
+                view on <a :href="item['_id']" target="_blank" rel="noreferrer">OmicsDI</a>
+              </div>
+              <div v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('NCBI GEO')">
+                view on <a :href="item.distribution.contentUrl" target="_blank" rel="noreferrer">NCBI GEO</a>
+              </div>
+              <div v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('Harvard Dataverse')">
+                view on <a :href="item['@id']" target="_blank" rel="noreferrer">Harvard Dataverse</a>
+              </div>
+
+            </div>
+
+
+            <div id="dateModified" v-if="item.dateModified"><span style="padding-right:4px">updated</span><span v-text="item.dateModified"></span></div>
+            <!-- <div id="dateModified" class="row" v-if="item.dateModified | moment('dddd, MMMM Do YYYY')"><span style="padding-right:4px">updated</span><span v-text="item.dateModified"></span></div> -->
+            <div id="datePublished" v-if="item.datePublished"><span style="padding-right:4px">published</span><span v-text="item.datePublished"></span></div>
+
+            <div id="license" v-if="item.license && item.license.text">
+              <a target="_blank" :href="'/'+item.license.url+'/'" v-text="item.license.text">link</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- description -->
+        <div class="col-md-8 text-left" id="description">
+          <div v-if="Array.isArray(item.description)">
+            <div v-for="description in item.description" v-html="description"></div>
+          </div>
+          <div v-html="item.description" v-else></div>
+        </div>
+
+        <!-- measurementTechnique -->
+        <div class="col-md-12">
+          <div class="row d-flex justify-content-end" id="variableMeasured" v-if="item.variableMeasured || item.measurementTechnique">
+            <!-- variableMeasured -->
+            <div v-if="Array.isArray(item.variableMeasured)">
+              <small class="measurement" v-text="measurement" v-for="measurement in item.variableMeasured">
+              </small>
+            </div>
+            <small class="measurement" v-else v-text="item.variableMeasured" v-if="item.variableMeasured">
+            </small>
+
+            <!-- measurementTechnique -->
+            <div v-if="Array.isArray(item.measurementTechnique)">
+              <small class="measurement" v-text="measurement" v-for="measurement in item.measurementTechnique">
+              </small>
+            </div>
+            <small class="measurement" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique">
+            </small>
+          </div>
+        </div>
+
+        <!-- keywords -->
+        <div class="col-md-12">
+          <div class="row d-flex justify-content-end" id="keywords">
+            <div v-for="keyword in item.keywords">
+              <small class="keyword" v-text="keyword">
+              </small>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -87,7 +228,7 @@
     data: function() {
       return {
         inputSearch: "ebola",
-        paginationOptions: [15, 25, 50],
+        paginationOptions: [10, 25, 50],
         results: [{
             "@type": "Dataset",
             "_id": "https://www.omicsdi.org/dataset/omics_ena_project/PRJNA274405",
@@ -127,6 +268,263 @@
             "license": "",
             "name": "ebola: Ebola dataset for Mirador",
             "url": "https://zenodo.org/record/13163"
+          },
+          {
+            "@context": "http://schema.org/",
+            "@type": "Dataset",
+            "_id": "GSE69942",
+            "_score": 15.076835,
+            "creator": [{
+                "@type": "Person",
+                "name": "Kawaoka Y"
+              },
+              {
+                "@type": "Person",
+                "name": "Waters KM"
+              },
+              {
+                "@type": "Person",
+                "name": "Halfmann P"
+              },
+              {
+                "@type": "Person",
+                "name": "Eisfeld AJ"
+              }
+            ],
+            "dateModified": "Jan 09, 2018",
+            "datePublished": "Jun 17, 2015",
+            "description": "The purpose of this experiment was to obtain samples for mRNA analysis in IHH cells infected with Zaire Ebola virus and mutants:Zaire Ebola virus: This wild-type Ebola virus - strain Mayinga - was isolated from a fatal human case in Zaire (now known as the Democratic Republic of Congo) in 1976Zaire Ebola virus, VP35 R312A possesses a R312A mutation in the VP35 protein.Zaire Ebola virus, delta sGP. Lacks the ability to produce non-structural protein, the secreted glycoprotein (sGP).Zaire Ebola virus, delta mucin.  Lacks the mucin-like domain (MLD), which contains both N-linked and O-linked glycosylation sites, for the glycoproteins.",
+            "distribution": {
+              "@type": "dataDownload",
+              "contentUrl": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE69942"
+            },
+            "identifier": "GSE69942",
+            "includedInDataCatalog": {
+              "@type": "DataCatalog",
+              "name": "NCBI GEO",
+              "url": "https://www.ncbi.nlm.nih.gov/geo/"
+            },
+            "measurementTechnique": "Expression profiling by array",
+            "name": "IHH mRNA response to genetically-reconstructed Zaire Ebola viruses [mRNA]",
+            "organism": "Homo sapiens"
+          },
+          {
+            "@context": "http://schema.org/",
+            "@type": "Dataset",
+            "_id": "GSE69943",
+            "_score": 15.076835,
+            "creator": [{
+                "@type": "Person",
+                "name": "Kawaoka Y"
+              },
+              {
+                "@type": "Person",
+                "name": "Waters KM"
+              },
+              {
+                "@type": "Person",
+                "name": "Halfmann P"
+              },
+              {
+                "@type": "Person",
+                "name": "Eisfeld AJ"
+              }
+            ],
+            "dateModified": "Aug 31, 2016",
+            "datePublished": "Jun 17, 2015",
+            "description": "The purpose of this experiment was to obtain samples for mRNA analysis in IHH cells infected with Zaire Ebola virus and mutants:Zaire Ebola virus: This wild-type Ebola virus - strain Mayinga - was isolated from a fatal human case in Zaire (now known as the Democratic Republic of Congo) in 1976Zaire Ebola virus, VP35 R312A possesses a R312A mutation in the VP35 protein.Zaire Ebola virus, delta sGP. Lacks the ability to produce non-structural protein, the secreted glycoprotein (sGP).Zaire Ebola virus, delta mucin.  Lacks the mucin-like domain (MLD), which contains both N-linked and O-linked glycosylation sites, for the glycoproteins.",
+            "distribution": {
+              "@type": "dataDownload",
+              "contentUrl": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE69943"
+            },
+            "identifier": "GSE69943",
+            "includedInDataCatalog": {
+              "@type": "DataCatalog",
+              "name": "NCBI GEO",
+              "url": "https://www.ncbi.nlm.nih.gov/geo/"
+            },
+            "measurementTechnique": "Non-coding RNA profiling by array",
+            "name": "IHH microRNA response to genetically-reconstructed Zaire Ebola viruses [miRNA]",
+            "organism": "Homo sapiens"
+          },
+          {
+            "@context": "http://schema.org/",
+            "@type": "Dataset",
+            "_id": "GSE122692",
+            "_score": 14.92224,
+            "citation": [
+              "Reynard S, Journeaux A, Gloaguen E, Schaeffer J et al. Immune parameters and outcomes during Ebola virus disease. JCI Insight 2019 Jan 10;4(1). PMID: 30626757"
+            ],
+            "creator": [{
+                "@type": "Person",
+                "name": "Reynard S"
+              },
+              {
+                "@type": "Person",
+                "name": "Baize S"
+              },
+              {
+                "@type": "Person",
+                "name": "Varet H"
+              },
+              {
+                "@type": "Person",
+                "name": "Pietrosemoli N"
+              }
+            ],
+            "dateModified": "May 09, 2019",
+            "datePublished": "Nov 19, 2018",
+            "description": "Immune patterns in Ebola patients were characterized depending on the outcome of the illness. Non-healthy controls were compared to Ebola patients to define the specificity of the immune response against Ebola virus infection.",
+            "distribution": {
+              "@type": "dataDownload",
+              "contentUrl": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE122692"
+            },
+            "identifier": "GSE122692",
+            "includedInDataCatalog": {
+              "@type": "DataCatalog",
+              "name": "NCBI GEO",
+              "url": "https://www.ncbi.nlm.nih.gov/geo/"
+            },
+            "measurementTechnique": "Expression profiling by array",
+            "name": "Immune parameters and outcome during Ebola virus disease",
+            "organism": "Homo sapiens"
+          },
+          {
+            "@context": "https://schema.org/",
+            "@id": "https://doi.org/10.5281/zenodo.14565",
+            "@type": "Dataset",
+            "_id": "doi.org_10.5281_zenodo.14565",
+            "_score": 14.71403,
+            "creator": [{
+              "@type": "Person",
+              "affiliation": "Harvard University",
+              "name": "Andres Colubri"
+            }],
+            "datePublished": "2015-01-26",
+            "description": "<p>This data comprises a total of 213 cases evaluated for Ebola virus infection at the Kenema Government Hospital in Sierra Leone between May 25 and June 18, 2014. Details in &ldquo;Clinical Illness and Outcomes in Patients with Ebola in Sierra Leone&rdquo;, by John S. Schieffelin, et al.</p>\n\n<p>Available are raw files (Excel, VCF formats), Mirador project, and single CSV file.</p>\n\n<p>Zenodo record (DOI):&nbsp;https://zenodo.org/record/14565</p>",
+            "distribution": [{
+              "@type": "DataDownload",
+              "contentUrl": "https://zenodo.org/api/files/46428e41-9b05-4873-9fca-d314d20dab6c/ebola-1.4.zip",
+              "fileFormat": "zip"
+            }],
+            "identifier": "https://doi.org/10.5281/zenodo.14565",
+            "keywords": [
+              "Ebola Outbreak 2014",
+              "Sierra Leone",
+              "Clinical data",
+              "Kenema Government Hospital",
+              "Metabolic Panel",
+              "Viral SNPs"
+            ],
+            "license": "",
+            "name": "ebola: Dataset v1.4",
+            "url": "https://zenodo.org/record/14565"
+          },
+          {
+            "@context": "https://schema.org/",
+            "@id": "https://doi.org/10.5281/zenodo.14097",
+            "@type": "Dataset",
+            "_id": "doi.org_10.5281_zenodo.14097",
+            "_score": 14.71403,
+            "creator": [{
+              "@type": "Person",
+              "affiliation": "Harvard University",
+              "name": "Andres Colubri"
+            }],
+            "datePublished": "2015-01-20",
+            "description": "<p>This data comprises a total of 213 cases evaluated for Ebola virus infection at the Kenema Government Hospital in Sierra Leone between May 25 and June 18, 2014. Details in &ldquo;Clinical Illness and Outcomes in Patients with Ebola in Sierra Leone&rdquo;, by John S. Schieffelin, et al.</p>\n\n<p>Available are raw files (Excel, VCF formats), Mirador project, and single CSV file.</p>\n\n<p>Zenodo record (DOI): https://zenodo.org/record/13163</p>",
+            "distribution": [{
+              "@type": "DataDownload",
+              "contentUrl": "https://zenodo.org/api/files/e741c84d-da4d-4921-b6f9-90b5a882bf77/ebola-1.2.zip",
+              "fileFormat": "zip"
+            }],
+            "identifier": "https://doi.org/10.5281/zenodo.14097",
+            "keywords": [
+              "Ebola outbreak",
+              "clinical data",
+              "Sierra Leone",
+              "Kenema Government Hospital "
+            ],
+            "license": "",
+            "name": "ebola: Dataset v1.2",
+            "url": "https://zenodo.org/record/14097"
+          },
+          {
+            "@context": "http://schema.org",
+            "@id": "https://doi.org/10.7910/DVN/VL6LLH",
+            "@type": "Dataset",
+            "_id": "doi_10.7910_DVN_VL6LLH",
+            "_score": 14.650325,
+            "author": [{
+              "affiliation": "FIND",
+              "name": "Wonderly, Betsy"
+            }],
+            "creator": [{
+              "affiliation": "FIND",
+              "name": "Wonderly, Betsy"
+            }],
+            "dateModified": "2019-02-11",
+            "datePublished": "2019-02-11",
+            "description": [
+              "This is the dataset for the Comparative performance of four rapid Ebola antigen-detection lateral flow immunoassays during the 2014-2016 Ebola epidemic in West Africa"
+            ],
+            "distribution": [{
+              "@type": "DataDownload",
+              "contentSize": 4753636,
+              "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/3355907",
+              "description": "",
+              "fileFormat": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              "name": "Copy of 20150624_LFI_Study_Database_anonymized.xlsx"
+            }],
+            "identifier": "https://doi.org/10.7910/DVN/VL6LLH",
+            "includedInDataCatalog": {
+              "@type": "DataCatalog",
+              "name": "Harvard Dataverse",
+              "url": "https://dataverse.harvard.edu"
+            },
+            "keywords": [
+              "Medicine, Health and Life Sciences",
+              "Ebola, LFI, RDT"
+            ],
+            "license": {
+              "@type": "Dataset",
+              "text": "CC0",
+              "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+            },
+            "name": "Data set for Comparative performance of four rapid Ebola antigen-detection lateral flow immunoassays during the 2014-2016 Ebola epidemic in West Africa",
+            "provider": {
+              "@type": "Organization",
+              "name": "Harvard Dataverse"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Harvard Dataverse"
+            },
+            "version": "1"
+          },
+          {
+            "@context": "https://schema.org/",
+            "@id": "https://doi.org/10.5281/zenodo.33126",
+            "@type": "Dataset",
+            "_id": "doi.org_10.5281_zenodo.33126",
+            "_score": 14.517658,
+            "creator": [{
+              "@type": "Person",
+              "affiliation": "Interuniversity Institute for Biostatistics and Statistical Bioinformatics, Hasselt University, Diepenbeek, Belgium",
+              "name": "evasantermans"
+            }],
+            "datePublished": "2015-11-03",
+            "description": "<p>Data and code for &quot;Spatiotemporal evolution of Ebola virus disease at sub-national level during the 2014 West Africa epidemic: model scrutiny and data meagreness&quot;</p>",
+            "distribution": [{
+              "@type": "DataDownload",
+              "contentUrl": "https://zenodo.org/api/files/bf72f0ad-79b0-4850-ac6f-e35fc3df9105/Spatiotemporal-evolution-of-Ebola-v1.0.zip",
+              "fileFormat": "zip"
+            }],
+            "identifier": "https://doi.org/10.5281/zenodo.33126",
+            "license": "",
+            "name": "Spatiotemporal-evolution-of-Ebola: First release",
+            "url": "https://zenodo.org/record/33126",
+            "version": "v1.0"
           }
         ],
         query: '',
