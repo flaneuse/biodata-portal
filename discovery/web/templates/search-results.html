@@ -94,22 +94,22 @@
             <div id="credit" class="row" v-if="item.creator || item.publisher || item.provider">
 
               <div id="creator" v-if="item.creator">
-                <div v-if="Array.isArray(item.creator)  && item.creator.length > 0">
+                <template v-if="Array.isArray(item.creator)  && item.creator.length > 0">
                   <span v-text="item.creator[0].name"></span><i> et al.</i>
 
-                </div>
-                <div v-else>
+                </template>
+                <template v-else>
                   <span v-text="item.creator.name"></span>
-                </div>
+                </template>
               </div>
               <div id="author" v-else-if="item.author">
-                <div v-if="Array.isArray(item.author) && item.author.length > 0">
+                <template v-if="Array.isArray(item.author) && item.author.length > 0">
                   <span v-text="item.author[0].name"></span><i> et al.</i>
 
-                </div>
-                <div v-else>
+                </template>
+                <template v-else>
                   <span v-text="item.author.name"></span>
-                </div>
+                </template>
               </div>
 
               <!-- <div id="creator-affiliation" v-text="item.creator[0].affiliation" v-if="item.creator && item.creator[0].affiliation">
@@ -120,30 +120,30 @@
               <div id="provider" v-text="item.provider.name" v-else-if="item.provider"></div>
 
               <div id="citation" class="citation" v-if="item.citation">
-                <div v-if="Array.isArray(item.citation)">
-                  <span v-for="citation in item.citation" v-text="citation"></span> </div>
-                <div v-else>
+                <template v-if="Array.isArray(item.citation)">
+                  <span v-for="citation in item.citation" v-text="citation"></span>
+                </template>
+                <template v-else>
                   <span v-text="item.citation"></span>
-                </div>
+                </template>
               </div>
 
             </div>
 
             <div id="source">
-              <div v-if="item['_id'].includes('zenodo')">
+              <template v-if="item['_id'].includes('zenodo')">
                 view on <a :href="item.url" target="_blank" rel="noreferrer">Zenodo</a>
-              </div>
+              </template>
 
-              <div v-if="item['_id'].includes('omicsdi')">
+              <template v-if="item['_id'].includes('omicsdi')">
                 view on <a :href="item['_id']" target="_blank" rel="noreferrer">OmicsDI</a>
-              </div>
-              <div v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('NCBI GEO')">
+              </template>
+              <template v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('NCBI GEO')">
                 view on <a :href="item.distribution.contentUrl" target="_blank" rel="noreferrer">NCBI GEO</a>
-              </div>
-              <div v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('Harvard Dataverse')">
+              </template>
+              <template v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('Harvard Dataverse')">
                 view on <a :href="item['@id']" target="_blank" rel="noreferrer">Harvard Dataverse</a>
-              </div>
-
+              </template>
             </div>
 
 
@@ -159,9 +159,9 @@
 
         <!-- description -->
         <div class="col-md-8 text-left" id="description">
-          <div v-if="Array.isArray(item.description)">
+          <template v-if="Array.isArray(item.description)">
             <div v-for="description in item.description" v-html="description"></div>
-          </div>
+          </template>
           <div v-html="item.description" v-else></div>
         </div>
 
@@ -169,18 +169,18 @@
         <div class="col-md-12">
           <div class="row d-flex justify-content-end" id="variableMeasured" v-if="item.variableMeasured || item.measurementTechnique">
             <!-- variableMeasured -->
-            <div v-if="Array.isArray(item.variableMeasured)">
+            <template v-if="Array.isArray(item.variableMeasured)">
               <small class="measurement" v-text="measurement" v-for="measurement in item.variableMeasured">
               </small>
-            </div>
+            </template>
             <small class="measurement" v-else v-text="item.variableMeasured" v-if="item.variableMeasured">
             </small>
 
             <!-- measurementTechnique -->
-            <div v-if="Array.isArray(item.measurementTechnique)">
+            <template v-if="Array.isArray(item.measurementTechnique)">
               <small class="measurement" v-text="measurement" v-for="measurement in item.measurementTechnique">
               </small>
-            </div>
+            </template>
             <small class="measurement" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique">
             </small>
           </div>
@@ -189,10 +189,10 @@
         <!-- keywords -->
         <div class="col-md-12">
           <div class="row d-flex justify-content-end" id="keywords" v-if="item.keywords">
-            <div v-if="Array.isArray(item.keywords)">
+            <template v-if="Array.isArray(item.keywords)">
               <small class="keyword" v-text="keyword" v-for="keyword in item.keywords">
               </small>
-            </div>
+            </template>
             <small class="keyword" v-text="item.keywords" v-else>
             </small>
           </div>
@@ -238,6 +238,7 @@
         query: "ebola",
         loading: false,
         paginationOptions: [10, 25, 50],
+        numPerPage: 10,
         numResults: 0,
         results: [],
         query: '',
@@ -255,23 +256,26 @@
           var params = {
             "params": {
               "q": query,
+              "size": self.numPerPage,
             }
           };
         }
         console.log(params)
 
+
         self.loading = true;
 
         self.registry = [];
-        axios.get('http://su07:8080/api/query?size=10', params).then(function(response) {
-          console.log(`%c searching ${query}...`, 'color:hotpink')
-          console.log(response)
-          console.log(response.data.hits)
-          self.results = response.data.hits;
-          self.numResults = response.data.total.value;
+        <!--TODO: set in config-- >
+          axios.get('http://su07:8080/api/query?', params).then(function(response) {
+            console.log(`%c searching ${query}...`, 'color:hotpink')
+            console.log(response)
+            console.log(response.data.hits)
+            self.results = response.data.hits;
+            self.numResults = response.data.total.value;
 
-          self.loading = false;
-        });
+            self.loading = false;
+          });
       }
     }
   });
