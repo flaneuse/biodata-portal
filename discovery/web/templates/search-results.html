@@ -2,22 +2,39 @@
 {% block content %}
 {% include "header.html" %}
 <style>
-  #pagination-page-size {
+  #results-count h1 {
+    margin-bottom: 0;
+  }
+
+  .pagination {
     display: inline-flex;
   }
 
-  #pagination-page-size ul {
+  .pagination ul {
     list-style-type: none;
+    margin-bottom: 0;
   }
 
-  #pagination-page-size li {
+  .pagination li {
     display: inline-block;
-    margin-right: 25px;
+    margin-right: 5px;
     cursor: pointer;
   }
 
   .result-summary {
     border-bottom: 1px solid #BBB;
+  }
+
+  .selected {
+    font-weight: bold;
+  }
+
+  .unselected {
+    font-weight: 300;
+  }
+
+  .disabled {
+    opacity: 0.5;
   }
 
   .keyword,
@@ -59,21 +76,21 @@
   </div>
 
   <div class="jumbotron bg-light text-muted w-100">
-    <form class="row" @submit.prevent="search(query)">
+    <form class="row" @submit.prevent="search(query, true)">
       <input id="search-query" type="text" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
     </form>
 
-    <div id="results-count" class="d-flex justify-content-between" v-if="results">
+    <div id="results-count" class="d-flex align-items-center justify-content-between" v-if="results">
       <h1 id="num-results">
         <span v-text=numResults>
         </span><span> results</span>
       </h1>
 
-      <div id="pagination-page-size">
+      <div id="pagination-page-size" class="pagination">
         Show
         <ul>
-          <li v-for="(pageSize, index) in paginationOptions" v-if="pageSize <= numResults || index === 0">
-            <a v-text="pageSize"></a>
+          <li v-for="(pageSize, index) in paginationOptions" v-if="pageSize <= numResults || index === 0 || paginationOptions[index-1] < numResults" v-bind:class="[ pageSize === selectedPerPage ? 'selected' : 'unselected' ]">
+            <a v-text="pageSize" v-on:click="changePageSize(pageSize)"></a>
           </li>
         </ul>
       </div>
@@ -82,6 +99,34 @@
 
 
     <template v-show="results && results.length > 0">
+
+      <nav class="m-auto " v-if="results && results.length > 0">
+        <ul class="pagination m-2 flex-wrap p-2">
+          <li class="page-item" :class="{ 'disabled': selectedPage <= 1 }">
+            <a class="page-link" @click.prevent="prevPage()">&lt;</a>
+          </li>
+          <li class="page-item" :class="{ 'active': selectedPage == 1, 'bg-primary': selectedPage == 1, 'white-text': selectedPage == 1  }">
+            <a href="#" class="page-link" @click.prevent="changePageNumber(1)">1</a>
+          </li>
+          <li class="page-item disabled" v-if="selectedPage > 3 && pages > 4">
+            ...
+          </li>
+          <li class="page-item" :class="{ 'active': selectedPage == n, 'bg-primary': selectedPage == n, 'white-text': selectedPage == n  }" v-for="n in pages" v-if="n !== 1 && n !== pages && ((n >= selectedPage - 1 && n <= selectedPage + 1) || (n <=4 && selectedPage <= n) || (n >= pages - 3 && selectedPage >= pages - 1))">
+            <a href="#" class="page-link" @click.prevent="changePageNumber(n)" v-text="n"></a>
+          </li>
+          <li class="page-item disabled" v-if="(selectedPage < pages - 2) && pages > 4">
+            ...
+          </li>
+          <li class="page-item" :class="{ 'active': selectedPage == pages, 'bg-primary': selectedPage == pages, 'white-text': selectedPage == pages  }">
+            <a href="#" class="page-link" @click.prevent="changePageNumber(pages)" v-text="pages"></a>
+          </li>
+          <li class="page-item" :class="{ 'disabled': selectedPage >= pages }">
+            <a class="page-link" @click.prevent="nextPage()">&gt;</a>
+          </li>
+        </ul>
+      </nav>
+
+
       <div v-for="item in results" class="row py-3 result-summary">
         <div class="col-md-4 text-left">
           <!-- name -->
@@ -238,17 +283,54 @@
         query: "ebola",
         loading: false,
         paginationOptions: [10, 25, 50],
-        numPerPage: 10,
+        defaultPerPage: 10,
+        selectedPerPage: 10,
+        selectedPage: 1,
         numResults: 0,
         results: [],
+        pages: 1,
         query: '',
         loading: false,
         scripttext: ''
       }
     },
     methods: {
-      search(query) {
+      changePageSize(selectedSize) {
+        let self = this;
+        self.selectedPerPage = selectedSize;
+
+        self.search(self.query, false);
+      },
+      changePageNumber(pageNumber) {
+        let self = this;
+        self.selectedPage = pageNumber;
+
+        self.search(self.query, false);
+      },
+      calculatePages: function() {
         var self = this;
+        self.pages = Math.ceil(self.numResults / self.selectedPerPage);
+      },
+      prevPage: function() {
+        var self = this;
+        if (self.selectedPage > 1)
+          self.selectedPage -= 1
+        self.search(self.query, false);
+      },
+      nextPage: function() {
+        var self = this;
+        if (self.selectedPage < self.pages)
+          self.selectedPage += 1
+        self.search(self.query, false);
+      },
+      search(query, isNewQuery) {
+        var self = this;
+        // reset pagination if there's a new query
+        if (isNewQuery) {
+          self.query = query;
+          self.selectedPerPage = self.defaultPerPage;
+          self.selectedPage = 1;
+        }
 
         query = query || "__all__";
 
@@ -256,7 +338,8 @@
           var params = {
             "params": {
               "q": query,
-              "size": self.numPerPage,
+              "size": self.selectedPerPage,
+              "from": (self.selectedPage - 1) * self.selectedPerPage,
             }
           };
         }
@@ -265,14 +348,18 @@
 
         self.loading = true;
 
-        self.registry = [];
-        <!--TODO: set in config-- >
+        self.registry = []; <!--TODO: set in config-- >
           axios.get('http://su07:8080/api/query?', params).then(function(response) {
             console.log(`%c searching ${query}...`, 'color:hotpink')
             console.log(response)
             console.log(response.data.hits)
             self.results = response.data.hits;
             self.numResults = response.data.total.value;
+            let maxPage = Math.ceil(self.numResults / self.selectedPerPage)
+
+            if (self.numResults) {
+              self.calculatePages();
+            }
 
             self.loading = false;
           });
