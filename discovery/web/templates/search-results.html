@@ -21,6 +21,10 @@
     cursor: pointer;
   }
 
+  #pagination-page-size li {
+    margin-right: 25px;
+  }
+
   .result-summary {
     border-bottom: 1px solid #BBB;
   }
@@ -44,6 +48,7 @@
     margin-left: 0.5em;
     margin-bottom: 0.5em;
     font-size: 0.75em;
+    cursor: pointer;
   }
 
   .keyword {
@@ -76,7 +81,7 @@
   </div>
 
   <div class="jumbotron bg-light text-muted w-100">
-    <form class="row" @submit.prevent="search(query, true)">
+    <form class="row" @submit.prevent="search(query)">
       <input id="search-query" type="text" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
     </form>
 
@@ -100,7 +105,7 @@
 
     <template v-show="results && results.length > 0">
 
-      <nav class="m-auto " v-if="results && results.length > 0">
+      <nav class="m-auto d-flex justify-content-center" v-if="results && results.length > 0" id="pagination">
         <ul class="pagination m-2 flex-wrap p-2">
           <li class="page-item" :class="{ 'disabled': selectedPage <= 1 }">
             <a class="page-link" @click.prevent="prevPage()">&lt;</a>
@@ -111,13 +116,14 @@
           <li class="page-item disabled" v-if="selectedPage > 3 && pages > 4">
             ...
           </li>
-          <li class="page-item" :class="{ 'active': selectedPage == n, 'bg-primary': selectedPage == n, 'white-text': selectedPage == n  }" v-for="n in pages" v-if="n !== 1 && n !== pages && ((n >= selectedPage - 1 && n <= selectedPage + 1) || (n <=4 && selectedPage <= n) || (n >= pages - 3 && selectedPage >= pages - 1))">
+          <li class="page-item" :class="{ 'active': selectedPage == n, 'bg-primary': selectedPage == n, 'white-text': selectedPage == n  }" v-for="n in pages"
+            v-if="n !== 1 && n !== pages && ((n >= selectedPage - 1 && n <= selectedPage + 1) || (n <=4 && selectedPage <= n) || (n >= pages - 3 && selectedPage >= pages - 1))">
             <a href="#" class="page-link" @click.prevent="changePageNumber(n)" v-text="n"></a>
           </li>
           <li class="page-item disabled" v-if="(selectedPage < pages - 2) && pages > 4">
             ...
           </li>
-          <li class="page-item" :class="{ 'active': selectedPage == pages, 'bg-primary': selectedPage == pages, 'white-text': selectedPage == pages  }">
+          <li class="page-item" :class="{ 'active': selectedPage == pages, 'bg-primary': selectedPage == pages, 'white-text': selectedPage == pages  }" v-if="pages !== 1">
             <a href="#" class="page-link" @click.prevent="changePageNumber(pages)" v-text="pages"></a>
           </li>
           <li class="page-item" :class="{ 'disabled': selectedPage >= pages }">
@@ -215,18 +221,18 @@
           <div class="row d-flex justify-content-end" id="variableMeasured" v-if="item.variableMeasured || item.measurementTechnique">
             <!-- variableMeasured -->
             <template v-if="Array.isArray(item.variableMeasured)">
-              <small class="measurement" v-text="measurement" v-for="measurement in item.variableMeasured">
+              <small class="measurement" v-text="measurement" v-for="measurement in item.variableMeasured" @click.prevent="search(measurement, true, true)">
               </small>
             </template>
-            <small class="measurement" v-else v-text="item.variableMeasured" v-if="item.variableMeasured">
+            <small class="measurement" v-else v-text="item.variableMeasured" v-if="item.variableMeasured" @click.prevent="search(item.variableMeasured, true, true)">
             </small>
 
             <!-- measurementTechnique -->
             <template v-if="Array.isArray(item.measurementTechnique)">
-              <small class="measurement" v-text="measurement" v-for="measurement in item.measurementTechnique">
+              <small class="measurement" v-text="measurement" v-for="measurement in item.measurementTechnique" @click.prevent="search(measurement, true, true)">
               </small>
             </template>
-            <small class="measurement" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique">
+            <small class="measurement" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique" @click.prevent="search(item.measurementTechnique, true, true)">
             </small>
           </div>
         </div>
@@ -235,10 +241,10 @@
         <div class="col-md-12">
           <div class="row d-flex justify-content-end" id="keywords" v-if="item.keywords">
             <template v-if="Array.isArray(item.keywords)">
-              <small class="keyword" v-text="keyword" v-for="keyword in item.keywords">
+              <small class="keyword" v-text="keyword" v-for="keyword in item.keywords" @click.prevent="search(keyword, true, true)">
               </small>
             </template>
-            <small class="keyword" v-text="item.keywords" v-else>
+            <small class="keyword" v-text="item.keywords" @click.prevent="search(item.keywords, true, true)" v-else>
             </small>
           </div>
         </div>
@@ -323,7 +329,7 @@
           self.selectedPage += 1
         self.search(self.query, false);
       },
-      search(query, isNewQuery) {
+      search(query, isNewQuery = true, enquoteQuery = false) {
         var self = this;
         // reset pagination if there's a new query
         if (isNewQuery) {
@@ -332,7 +338,7 @@
           self.selectedPage = 1;
         }
 
-        query = query || "__all__";
+        query = query ? (enquoteQuery ? `"${query}"` : query) : "__all__";
 
         if (query) {
           var params = {
