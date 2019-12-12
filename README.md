@@ -33,7 +33,7 @@ A Web Schema Visualization App
     Follow [this instruction](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/) to create your Github Client ID and Secret.
 8. Run dev server from discovery-app folder
     ```
-    PYTHONPATH=. python3 discovery/index.py
+    PYTHONPATH=. python3 discovery/index.py --debug
     ```
 You should now be able to access the homepage at http://localhost:8000/
 
