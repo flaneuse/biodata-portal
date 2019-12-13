@@ -7,6 +7,7 @@ $main: #63296b;
 $lightermain: #7a3e8c;
 $sec:#4a7d8f;
 $darkmode: false;
+$background-white: #F8F9FA;
 
 //MIXINS
 
@@ -26,7 +27,7 @@ $darkmode: false;
 
 @mixin theme-colors-text($dark) {
   @if $dark {
-    color: #F8F9FA !important;
+    color: $background-white !important;
   }
 }
 
@@ -1525,38 +1526,84 @@ body{
   left:-13px;
 }
 
-input[type="checkbox"] {
-  position: relative;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-  width: 2rem;
-  height: calc( 2rem / 2 );
-  background-color: #ddd;
-  border-radius: calc( 2rem / 2 );
-  outline: none;
-  transition: background 450ms ease;
-  box-shadow: 0 0 0 3px #cacaca;
-}
-input[type="checkbox"]:before, input[type="checkbox"]:after {
+// checkboxes
+/* Create a custom checkbox */
+.checkmark {
   position: absolute;
-  display: block;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: $main;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
   content: "";
-  border-radius: 100%;
-  transition: background 450ms ease, -webkit-transform 450ms ease;
-  transition: background 450ms ease, transform 450ms ease;
-  transition: background 450ms ease, transform 450ms ease, -webkit-transform 450ms ease;
+  position: absolute;
+  display: none;
 }
-input[type="checkbox"]:before {
-  width: calc( 2rem / 2 );
-  height: calc( 2rem / 2 );
-  background-color: #818181;
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
 }
-input[type="checkbox"]:checked:before {
-  background-color: #43A047;
-  -webkit-transform: translateX(100%);
-          transform: translateX(100%);
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
+
+// input[type="checkbox"] {
+//   position: relative;
+//   -webkit-appearance: none;
+//      -moz-appearance: none;
+//           appearance: none;
+//   width: 2rem;
+//   height: calc( 2rem / 2 );
+//   background-color: #ddd;
+//   border-radius: calc( 2rem / 2 );
+//   outline: none;
+//   transition: background 450ms ease;
+//   box-shadow: 0 0 0 3px #cacaca;
+// }
+// input[type="checkbox"]:before, input[type="checkbox"]:after {
+//   position: absolute;
+//   display: block;
+//   content: "";
+//   border-radius: 100%;
+//   transition: background 450ms ease, -webkit-transform 450ms ease;
+//   transition: background 450ms ease, transform 450ms ease;
+//   transition: background 450ms ease, transform 450ms ease, -webkit-transform 450ms ease;
+// }
+// input[type="checkbox"]:before {
+//   width: calc( 2rem / 2 );
+//   height: calc( 2rem / 2 );
+//   background-color: #818181;
+// }
+// input[type="checkbox"]:checked:before {
+//   background-color: #43A047;
+//   -webkit-transform: translateX(100%);
+//           transform: translateX(100%);
+// }
 
 .unselectable {
    -moz-user-select: none;
@@ -1567,7 +1614,7 @@ input[type="checkbox"]:checked:before {
 }
 
 .message{
-  background: #f8f9fa;
+  background: $background-white;
   border: 2px solid #bdbdbd;
   border-radius: 20px;
 }
@@ -1664,8 +1711,13 @@ input[type="checkbox"]:checked:before {
 }
 
 .whitefade{
-  background: #F8F9F9;
+  background: $background-white;
 }
+
+.whitefadedarker {
+  background: darken($background-white, 3%);
+}
+
 .notallowed{
   cursor: not-allowed;
 }
