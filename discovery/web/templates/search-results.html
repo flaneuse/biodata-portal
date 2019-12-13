@@ -116,11 +116,13 @@
       <input id="search-query" type="text" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
     </form>
 
-    <div id="results-count" class="d-flex align-items-center justify-content-between" v-if="results">
-      <h1 id="num-results">
-        <span v-text="numResults">
-        </span><span v-if="numResults === 10000">+</span><span> results</span>
-      </h1>
+    <div id="results-count" class="d-flex align-items-center justify-content-between" v-if="numResults">
+      <h3 id="num-results">
+        <span v-text="(selectedPage - 1) * selectedPerPage + 1"></span><span>-</span><span v-text="selectedPage * selectedPerPage"></span><span> of </span>
+        <span v-if="numResults === 10000"> over </span>
+        <span v-text="numResults.toLocaleString()"></span>
+        <span> results</span>
+      </h3>
 
       <div id="pagination-page-size" class="pagination">
         Show
@@ -136,33 +138,6 @@
 
     <template v-show="results && results.length > 0" v-if="results && results.length > 0">
 
-      <nav class="row m-auto d-flex justify-content-center" id="pagination">
-        <ul class="pagination m-2 flex-wrap p-2">
-          <li class="page-item" :class="{ 'disabled': selectedPage <= 1 }">
-            <a class="page-link" @click.prevent="prevPage()">&lt;</a>
-          </li>
-          <li class="page-item" :class="{ 'active': selectedPage == 1, 'bg-primary': selectedPage == 1, 'white-text': selectedPage == 1  }">
-            <a href="#" class="page-link" @click.prevent="changePageNumber(1)">1</a>
-          </li>
-          <li class="page-item disabled" v-if="selectedPage > 3 && pages > 4">
-            ...
-          </li>
-          <li class="page-item" :class="{ 'active': selectedPage == n, 'bg-primary': selectedPage == n, 'white-text': selectedPage == n  }" v-for="n in pages"
-            v-if="n !== 1 && n !== pages && ((n >= selectedPage - 1 && n <= selectedPage + 1) || (n <=4 && selectedPage <= n) || (n >= pages - 3 && selectedPage >= pages - 1))">
-            <a href="#" class="page-link" @click.prevent="changePageNumber(n)" v-text="n"></a>
-          </li>
-          <li class="page-item disabled" v-if="(selectedPage < pages - 2) && pages > 4">
-            ...
-          </li>
-          <li class="page-item" :class="{ 'active': selectedPage == pages, 'bg-primary': selectedPage == pages, 'white-text': selectedPage == pages  }" v-if="pages !== 1">
-            <a href="#" class="page-link" @click.prevent="changePageNumber(pages)" v-text="pages"></a>
-          </li>
-          <li class="page-item" :class="{ 'disabled': selectedPage >= pages }">
-            <a class="page-link" @click.prevent="nextPage()">&gt;</a>
-          </li>
-        </ul>
-      </nav>
-
       <div class="row">
         <div id="filters" class="col-md-3 pr-4">
           <form class="facet-group whitefadedarker" v-for="variable in facetSummary" v-if="facetSummary && facetSummary.length > 0" @change.prevent="search(query)">
@@ -171,7 +146,7 @@
             <template v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0 && count.term !== ''">
               <label :for="count.term">
                 <input class="facet-counts px-1" type="checkbox" :id="count.term" :value="count.term" :name="count.term" v-model="selectedFilters[variable.variable]">
-                <small><span v-text="count.term"></span><span v-text="' (' + count.count + ')'"></span></small>
+                <small><span v-html="count.term"></span><span v-text="' (' + count.count + ')'"></span></small>
                 <!-- <span class="checkmark"></span> -->
               </label>
             </template>
@@ -304,6 +279,33 @@
 
       </div>
   </div>
+
+  <nav class="row m-auto d-flex justify-content-center" id="pagination">
+    <ul class="pagination m-2 flex-wrap p-2">
+      <li class="page-item" :class="{ 'disabled': selectedPage <= 1 }">
+        <a class="page-link" @click.prevent="prevPage()">&lt;</a>
+      </li>
+      <li class="page-item" :class="{ 'active': selectedPage == 1, 'bg-primary': selectedPage == 1, 'white-text': selectedPage == 1  }">
+        <a href="#" class="page-link" @click.prevent="changePageNumber(1)">1</a>
+      </li>
+      <li class="page-item disabled" v-if="selectedPage > 3 && pages > 4">
+        ...
+      </li>
+      <li class="page-item" :class="{ 'active': selectedPage == n, 'bg-primary': selectedPage == n, 'white-text': selectedPage == n  }" v-for="n in pages"
+        v-if="n !== 1 && n !== pages && ((n >= selectedPage - 1 && n <= selectedPage + 1) || (n <=4 && selectedPage <= n) || (n >= pages - 3 && selectedPage >= pages - 1))">
+        <a href="#" class="page-link" @click.prevent="changePageNumber(n)" v-text="n"></a>
+      </li>
+      <li class="page-item disabled" v-if="(selectedPage < pages - 2) && pages > 4">
+        ...
+      </li>
+      <li class="page-item" :class="{ 'active': selectedPage == pages, 'bg-primary': selectedPage == pages, 'white-text': selectedPage == pages  }" v-if="pages !== 1">
+        <a href="#" class="page-link" @click.prevent="changePageNumber(pages)" v-text="pages"></a>
+      </li>
+      <li class="page-item" :class="{ 'disabled': selectedPage >= pages }">
+        <a class="page-link" @click.prevent="nextPage()">&gt;</a>
+      </li>
+    </ul>
+  </nav>
   </template>
 
 
