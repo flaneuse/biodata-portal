@@ -89,8 +89,12 @@
     font-size: 0.9em;
     font-weight: 400;
     background: #ddd;
-    padding: 0 0.5em;
     border-bottom: 1px solid;
+  }
+
+  .facet-title,
+  .facet-group label {
+    padding: 0 0.5em;
   }
 
   .facet-counts {
@@ -161,12 +165,17 @@
 
       <div class="row">
         <div id="filters" class="col-md-3 pr-4">
-          <div class="facet-group" v-for="variable in facetSummary" v-if="facetSummary && facetSummary.length > 0">
+          <form class="facet-group whitefadedarker" v-for="variable in facetSummary" v-if="facetSummary && facetSummary.length > 0" @change.prevent="search(query)">
             <div class="facet-title mb-1" v-text="variable.variable"></div>
-            <div class="facet-counts px-1" v-for="count in variable.counts" v-if="variable.counts.length > 0 && count.term !== ''">
-              <small><span v-text="count.term"></span><span v-text="' (' + count.count + ')'"></span></small>
-            </div>
-          </div>
+
+            <template v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0 && count.term !== ''">
+              <label :for="count.term">
+                <input class="facet-counts px-1" type="checkbox" :id="count.term" :value="count.term" :name="count.term" v-model="selectedFilters[variable.variable]">
+                <small><span v-text="count.term"></span><span v-text="' (' + count.count + ')'"></span></small>
+                <!-- <span class="checkmark"></span> -->
+              </label>
+            </template>
+          </form>
         </div>
 
         <div id="results" class="col-md-9">
@@ -294,10 +303,11 @@
         </div>
 
       </div>
-    </template>
-
-
   </div>
+  </template>
+
+
+</div>
 </div>
 {% endblock %}
 
@@ -330,7 +340,7 @@
     el: '#search-results',
     data: function() {
       return {
-        query: "ebola",
+        query: "",
         loading: false,
         paginationOptions: [10, 25, 50],
         defaultPerPage: 10,
@@ -342,6 +352,12 @@
         facetSize: 5,
         facets: ["funder.name.keyword", "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"],
         facetSummary: [],
+        selectedFilters: {
+          "funder.name": [],
+          "variableMeasured": [],
+          "measurementTechnique": [],
+          "keywords": []
+        },
         query: '',
         maxDescriptionLength: 75,
         loading: false,
@@ -388,6 +404,14 @@
 
         query = query ? (enquoteQuery ? `"${query}"` : query) : "__all__";
 
+        console.log(self.selectedFilters)
+
+        let selectedFilters = Object.keys(self.selectedFilters).filter(id => self.selectedFilters[id].length > 0).map(id => `${id}:"${self.selectedFilters[id].join('","')}"`).join(" AND ");
+
+        if (selectedFilters.length > 0) {
+          query = query === "__all__" ? selectedFilters : `${query} AND ${selectedFilters}`
+        }
+
         if (query) {
           var params = {
             "params": {
@@ -405,8 +429,6 @@
             }
           };
         }
-        console.log(params)
-
 
         self.loading = true;
 
@@ -414,7 +436,6 @@
         // TODO: set in config
         axios.get('http://su07:8080/api/query?', params).then(function(response) {
           console.log(`%c searching ${query}...`, 'color:hotpink')
-          console.log(response)
           console.log(response.data.hits)
 
           // Standardize descriptions. NOTE: needs to be done before assign to <this> to ensure proper change detection.
@@ -442,8 +463,6 @@
 
         // TODO: promise-ize this.
         axios.get('http://su07:8080/api/query?', facetParams).then(function(response) {
-          console.log('facets');
-          console.log(response);
           let allResults = [];
           self.facets.forEach(varName => {
             let summary = {};
@@ -451,7 +470,6 @@
             summary['counts'] = response.data.facets[varName].terms;
             allResults.push(summary)
           })
-          console.log(allResults)
           self.facetSummary = allResults;
           self.loading = false;
         });
