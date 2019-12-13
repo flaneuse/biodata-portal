@@ -112,11 +112,11 @@
   </div>
 
   <div class="jumbotron bg-light text-muted w-100">
-    <form class="row" @submit.prevent="search(query)">
+    <form class="row" @submit.prevent="search(query, 'queryChanged')">
       <input id="search-query" type="text" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
     </form>
 
-    <div id="results-count" class="d-flex align-items-center justify-content-between" v-if="numResults">
+    <div id="results-count" class="d-flex align-items-center mb-2 justify-content-between" v-if="numResults">
       <h3 id="num-results">
         <span v-text="(selectedPage - 1) * selectedPerPage + 1"></span><span>-</span><span v-text="selectedPage * selectedPerPage"></span><span> of </span>
         <span v-if="numResults === 10000"> over </span>
@@ -140,7 +140,7 @@
 
       <div class="row">
         <div id="filters" class="col-md-3 pr-4">
-          <form class="facet-group whitefadedarker" v-for="variable in facetSummary" v-if="facetSummary && facetSummary.length > 0" @change.prevent="search(query)">
+          <form class="facet-group whitefadedarker" v-for="variable in facetSummary" v-if="facetSummary && facetSummary.length > 0" @change.prevent="search(query, 'filtersChanged')">
             <div class="facet-title mb-1" v-text="variable.variable"></div>
 
             <template v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0 && count.term !== ''">
@@ -246,18 +246,18 @@
               <div class="row d-flex justify-content-end" id="variableMeasured" v-if="item.variableMeasured || item.measurementTechnique">
                 <!-- variableMeasured -->
                 <template v-if="Array.isArray(item.variableMeasured)">
-                  <small class="measurement" v-text="measurement" v-for="measurement in item.variableMeasured" @click.prevent="search(measurement, true, true)">
+                  <small class="measurement" v-text="measurement" v-for="measurement in item.variableMeasured" @click.prevent="search(measurement, 'queryChanged', true)">
                   </small>
                 </template>
-                <small class="measurement" v-else v-text="item.variableMeasured" v-if="item.variableMeasured" @click.prevent="search(item.variableMeasured, true, true)">
+                <small class="measurement" v-else v-text="item.variableMeasured" v-if="item.variableMeasured" @click.prevent="search(item.variableMeasured, 'queryChanged', true)">
                 </small>
 
                 <!-- measurementTechnique -->
                 <template v-if="Array.isArray(item.measurementTechnique)">
-                  <small class="measurement" v-text="measurement" v-for="measurement in item.measurementTechnique" @click.prevent="search(measurement, true, true)">
+                  <small class="measurement" v-text="measurement" v-for="measurement in item.measurementTechnique" @click.prevent="search(measurement, 'queryChanged', true)">
                   </small>
                 </template>
-                <small class="measurement" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique" @click.prevent="search(item.measurementTechnique, true, true)">
+                <small class="measurement" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique" @click.prevent="search(item.measurementTechnique, 'queryChanged', true)">
                 </small>
               </div>
             </div>
@@ -360,7 +360,6 @@
           "measurementTechnique": [],
           "keywords": []
         },
-        query: '',
         maxDescriptionLength: 75,
         loading: false,
         scripttext: ''
@@ -371,13 +370,13 @@
         let self = this;
         self.selectedPerPage = selectedSize;
 
-        self.search(self.query, false);
+        self.search(self.query, "pageChanged");
       },
       changePageNumber(pageNumber) {
         let self = this;
         self.selectedPage = pageNumber;
 
-        self.search(self.query, false);
+        self.search(self.query, "pageChanged");
       },
       calculatePages: function() {
         var self = this;
@@ -387,37 +386,46 @@
         var self = this;
         if (self.selectedPage > 1)
           self.selectedPage -= 1
-        self.search(self.query, false);
+        self.search(self.query, "pageChanged");
       },
       nextPage: function() {
         var self = this;
         if (self.selectedPage < self.pages)
           self.selectedPage += 1
-        self.search(self.query, false);
+        self.search(self.query, "pageChanged");
       },
-      search(query, isNewQuery = true, enquoteQuery = false) {
+      search(query, queryType, enquoteQuery = false) {
         var self = this;
-        // reset pagination if there's a new query
-        if (isNewQuery) {
+        // reset pagination, filters if there's a new query
+        if (queryType === "queryChanged") {
           self.query = query;
           self.selectedPerPage = self.defaultPerPage;
           self.selectedPage = 1;
-        }
+          self.selectedFilters = {
+            "funder.name": [],
+            "variableMeasured": [],
+            "measurementTechnique": [],
+            "keywords": []
+          }
+        } else if (queryType === "filtersChanged") {
+          self.selectedPerPage = self.defaultPerPage;
+          self.selectedPage = 1;
+        } else if (queryType === "pageChanged") {}
 
-        query = query ? (enquoteQuery ? `"${query}"` : query) : "__all__";
+        var queryText = query ? (enquoteQuery ? `"${query}"` : query) : "__all__";
 
         console.log(self.selectedFilters)
 
-        let selectedFilters = Object.keys(self.selectedFilters).filter(id => self.selectedFilters[id].length > 0).map(id => `${id}:"${self.selectedFilters[id].join('","')}"`).join(" AND ");
+        let selectedFilters = Object.keys(self.selectedFilters).filter(id => self.selectedFilters[id].length > 0).map(id => `${id}:("${self.selectedFilters[id].join('","')}")`).join(" AND ");
 
         if (selectedFilters.length > 0) {
-          query = query === "__all__" ? selectedFilters : `${query} AND ${selectedFilters}`
+          queryText = queryText === "__all__" ? selectedFilters : `${queryText} AND ${selectedFilters}`
         }
 
         if (query) {
           var params = {
             "params": {
-              "q": query,
+              "q": queryText,
               "size": self.selectedPerPage,
               "from": (self.selectedPage - 1) * self.selectedPerPage,
             }
@@ -425,7 +433,7 @@
 
           var facetParams = {
             "params": {
-              "q": query,
+              "q": queryText,
               "facet_size": self.facetSize,
               "facets": self.facets.join(","),
             }
@@ -434,7 +442,7 @@
 
         self.loading = true;
 
-        self.registry = [];
+        self.results = [];
         // TODO: set in config
         axios.get('http://su07:8080/api/query?', params).then(function(response) {
           console.log(`%c searching ${query}...`, 'color:hotpink')
