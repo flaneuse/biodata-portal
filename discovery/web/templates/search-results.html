@@ -25,6 +25,10 @@
     margin-right: 25px;
   }
 
+  .result-summary:first-of-type {
+    padding-top: 0 !important;
+  }
+
   .result-summary {
     border-bottom: 1px solid #BBB;
   }
@@ -74,6 +78,29 @@
     margin-bottom: 5px;
     flex-direction: column;
   }
+
+  .facet-group {
+    margin-bottom: 15px;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+  }
+
+  .facet-title {
+    font-size: 0.9em;
+    font-weight: 400;
+    background: #ddd;
+    padding: 0 0.5em;
+    border-bottom: 1px solid;
+  }
+
+  .facet-counts {
+    line-height: .8em;
+    margin-bottom: 0.4em;
+  }
+
+  .facet-counts small {
+    font-weight: 300;
+  }
 </style>
 <div id="search-results" class="container d-flex" style="min-height:100vh">
   <div v-if=loading class="loader">
@@ -103,9 +130,9 @@
     </div>
 
 
-    <template v-show="results && results.length > 0">
+    <template v-show="results && results.length > 0" v-if="results && results.length > 0">
 
-      <nav class="m-auto d-flex justify-content-center" v-if="results && results.length > 0" id="pagination">
+      <nav class="row m-auto d-flex justify-content-center" id="pagination">
         <ul class="pagination m-2 flex-wrap p-2">
           <li class="page-item" :class="{ 'disabled': selectedPage <= 1 }">
             <a class="page-link" @click.prevent="prevPage()">&lt;</a>
@@ -132,128 +159,141 @@
         </ul>
       </nav>
 
-
-      <div v-for="item in results" class="row py-3 result-summary">
-        <div class="col-md-4 text-left">
-          <!-- name -->
-          <a :href="'/dataset/' + item._id">
-            <h5 v-text="item.name" class="row"></h5>
-          </a>
-
-          <!-- other short properties -->
-          <div class="dataset-properties">
-            <div id="credit" class="row" v-if="item.creator || item.publisher || item.provider">
-
-              <div id="creator" v-if="item.creator">
-                <template v-if="Array.isArray(item.creator)  && item.creator.length > 0">
-                  <span v-text="item.creator[0].name"></span><i> et al.</i>
-
-                </template>
-                <template v-else>
-                  <span v-text="item.creator.name"></span>
-                </template>
-              </div>
-              <div id="author" v-else-if="item.author">
-                <template v-if="Array.isArray(item.author) && item.author.length > 0">
-                  <span v-text="item.author[0].name"></span><i> et al.</i>
-
-                </template>
-                <template v-else>
-                  <span v-text="item.author.name"></span>
-                </template>
-              </div>
-
-              <!-- <div id="creator-affiliation" v-text="item.creator[0].affiliation" v-if="item.creator && item.creator[0].affiliation">
-              </div>
-              <div id="creator-affiliation" v-text="item.author[0].affiliation" v-else-if="item.author && item.author[0] && item.author[0].affiliation">
-              </div> -->
-              <div id="publisher" v-text="item.publisher.name" v-else-if="item.publisher"></div>
-              <div id="provider" v-text="item.provider.name" v-else-if="item.provider"></div>
-
-              <div id="citation" class="citation" v-if="item.citation">
-                <template v-if="Array.isArray(item.citation)">
-                  <span v-for="citation in item.citation" v-text="citation"></span>
-                </template>
-                <template v-else>
-                  <span v-text="item.citation"></span>
-                </template>
-              </div>
-
-            </div>
-
-            <div id="source">
-              <template v-if="item['_id'].includes('zenodo')">
-                view on <a :href="item.url" target="_blank" rel="noreferrer">Zenodo</a>
-              </template>
-
-              <template v-if="item['_id'].includes('omicsdi')">
-                view on <a :href="item['_id']" target="_blank" rel="noreferrer">OmicsDI</a>
-              </template>
-              <template v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('NCBI GEO')">
-                view on <a :href="item.distribution.contentUrl" target="_blank" rel="noreferrer">NCBI GEO</a>
-              </template>
-              <template v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('Harvard Dataverse')">
-                view on <a :href="item['@id']" target="_blank" rel="noreferrer">Harvard Dataverse</a>
-              </template>
-            </div>
-
-
-            <div id="dateModified" v-if="item.dateModified"><span style="padding-right:4px">updated</span><span v-text="item.dateModified"></span></div>
-            <!-- <div id="dateModified" class="row" v-if="item.dateModified | moment('dddd, MMMM Do YYYY')"><span style="padding-right:4px">updated</span><span v-text="item.dateModified"></span></div> -->
-            <div id="datePublished" v-if="item.datePublished"><span style="padding-right:4px">published</span><span v-text="item.datePublished"></span></div>
-
-            <div id="license" v-if="item.license && item.license.text">
-              <a target="_blank" :href="'/'+item.license.url+'/'" v-text="item.license.text">link</a>
+      <div class="row">
+        <div id="filters" class="col-md-3 pr-4">
+          <div class="facet-group" v-for="variable in facetSummary" v-if="facetSummary && facetSummary.length > 0">
+            <div class="facet-title mb-1" v-text="variable.variable"></div>
+            <div class="facet-counts px-1" v-for="count in variable.counts" v-if="variable.counts.length > 0 && count.term !== ''">
+              <small><span v-text="count.term"></span><span v-text="' (' + count.count + ')'"></span></small>
             </div>
           </div>
         </div>
 
-        <!-- description -->
-        <div class="col-md-8 text-left" id="description" v-if="item.description">
-          <template v-if="item.descriptionExpanded">
-            <span v-html="item.longDescription"></span>
-            <span><a class="show-more" v-if="item.descriptionTooLong" href="#" @click.prevent="item.descriptionExpanded=false">(show less)</a></span>
-          </template>
-          <template v-else>
-            <span v-html="item.shortDescription"></span>
-            <span v-if="item.descriptionTooLong">... <a class="show-more" href="#" @click.prevent="item.descriptionExpanded=true">(show more)</a></span>
-          </template>
-        </div>
+        <div id="results" class="col-md-9">
+          <div v-for="item in results" class="row py-3 result-summary">
+            <div class="col-md-4 text-left">
+              <!-- name -->
+              <a :href="'/dataset/' + item._id">
+                <h5 v-text="item.name" class="row"></h5>
+              </a>
 
-        <!-- measurementTechnique -->
-        <div class="col-md-12">
-          <div class="row d-flex justify-content-end" id="variableMeasured" v-if="item.variableMeasured || item.measurementTechnique">
-            <!-- variableMeasured -->
-            <template v-if="Array.isArray(item.variableMeasured)">
-              <small class="measurement" v-text="measurement" v-for="measurement in item.variableMeasured" @click.prevent="search(measurement, true, true)">
-              </small>
-            </template>
-            <small class="measurement" v-else v-text="item.variableMeasured" v-if="item.variableMeasured" @click.prevent="search(item.variableMeasured, true, true)">
-            </small>
+              <!-- other short properties -->
+              <div class="dataset-properties">
+                <div id="credit" class="row" v-if="item.creator || item.publisher || item.provider">
+
+                  <div id="creator" v-if="item.creator">
+                    <template v-if="Array.isArray(item.creator)  && item.creator.length > 0">
+                      <span v-text="item.creator[0].name"></span><i> et al.</i>
+
+                    </template>
+                    <template v-else>
+                      <span v-text="item.creator.name"></span>
+                    </template>
+                  </div>
+                  <div id="author" v-else-if="item.author">
+                    <template v-if="Array.isArray(item.author) && item.author.length > 0">
+                      <span v-text="item.author[0].name"></span><i> et al.</i>
+
+                    </template>
+                    <template v-else>
+                      <span v-text="item.author.name"></span>
+                    </template>
+                  </div>
+
+                  <div id="creator-affiliation" v-text="item.creator[0].affiliation" v-if="item.creator && item.creator[0] && item.creator[0].affiliation">
+                  </div>
+                  <div id="creator-affiliation" v-text="item.author[0].affiliation" v-else-if="item.author && item.author[0] && item.author[0].affiliation">
+                  </div>
+                  <div id="publisher" v-text="item.publisher.name" v-else-if="item.publisher"></div>
+                  <div id="provider" v-text="item.provider.name" v-else-if="item.provider"></div>
+
+                  <div id="citation" class="citation" v-if="item.citation">
+                    <template v-if="Array.isArray(item.citation)">
+                      <span v-for="citation in item.citation" v-text="citation"></span>
+                    </template>
+                    <template v-else>
+                      <span v-text="item.citation"></span>
+                    </template>
+                  </div>
+
+                </div>
+
+                <div id="source">
+                  <template v-if="item['_id'].includes('zenodo')">
+                    view on <a :href="item.url" target="_blank" rel="noreferrer">Zenodo</a>
+                  </template>
+
+                  <template v-if="item['_id'].includes('omicsdi')">
+                    view on <a :href="item['_id']" target="_blank" rel="noreferrer">OmicsDI</a>
+                  </template>
+                  <template v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('NCBI GEO')">
+                    view on <a :href="item.distribution.contentUrl" target="_blank" rel="noreferrer">NCBI GEO</a>
+                  </template>
+                  <template v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('Harvard Dataverse')">
+                    view on <a :href="item['@id']" target="_blank" rel="noreferrer">Harvard Dataverse</a>
+                  </template>
+                </div>
+
+
+                <div id="dateModified" v-if="item.dateModified"><span style="padding-right:4px">updated</span><span v-text="item.dateModified"></span></div>
+                <!-- <div id="dateModified" class="row" v-if="item.dateModified | moment('dddd, MMMM Do YYYY')"><span style="padding-right:4px">updated</span><span v-text="item.dateModified"></span></div> -->
+                <div id="datePublished" v-if="item.datePublished"><span style="padding-right:4px">published</span><span v-text="item.datePublished"></span></div>
+
+                <div id="license" v-if="item.license && item.license.text">
+                  <a target="_blank" :href="'/'+item.license.url+'/'" v-text="item.license.text">link</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- description -->
+            <div class="col-md-8 text-left" id="description" v-if="item.description">
+              <template v-if="item.descriptionExpanded">
+                <span v-html="item.longDescription"></span>
+                <span><a class="show-more" v-if="item.descriptionTooLong" href="#" @click.prevent="item.descriptionExpanded=false">(show less)</a></span>
+              </template>
+              <template v-else>
+                <span v-html="item.shortDescription"></span>
+                <span v-if="item.descriptionTooLong">... <a class="show-more" href="#" @click.prevent="item.descriptionExpanded=true">(show more)</a></span>
+              </template>
+            </div>
 
             <!-- measurementTechnique -->
-            <template v-if="Array.isArray(item.measurementTechnique)">
-              <small class="measurement" v-text="measurement" v-for="measurement in item.measurementTechnique" @click.prevent="search(measurement, true, true)">
-              </small>
-            </template>
-            <small class="measurement" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique" @click.prevent="search(item.measurementTechnique, true, true)">
-            </small>
+            <div class="col-md-12">
+              <div class="row d-flex justify-content-end" id="variableMeasured" v-if="item.variableMeasured || item.measurementTechnique">
+                <!-- variableMeasured -->
+                <template v-if="Array.isArray(item.variableMeasured)">
+                  <small class="measurement" v-text="measurement" v-for="measurement in item.variableMeasured" @click.prevent="search(measurement, true, true)">
+                  </small>
+                </template>
+                <small class="measurement" v-else v-text="item.variableMeasured" v-if="item.variableMeasured" @click.prevent="search(item.variableMeasured, true, true)">
+                </small>
+
+                <!-- measurementTechnique -->
+                <template v-if="Array.isArray(item.measurementTechnique)">
+                  <small class="measurement" v-text="measurement" v-for="measurement in item.measurementTechnique" @click.prevent="search(measurement, true, true)">
+                  </small>
+                </template>
+                <small class="measurement" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique" @click.prevent="search(item.measurementTechnique, true, true)">
+                </small>
+              </div>
+            </div>
+
+            <!-- keywords -->
+            <div class="col-md-12">
+              <div class="row d-flex justify-content-end" id="keywords" v-if="item.keywords">
+                <template v-if="Array.isArray(item.keywords)">
+                  <small class="keyword" v-text="keyword" v-for="keyword in item.keywords" @click.prevent="search(keyword, true, true)">
+                  </small>
+                </template>
+                <small class="keyword" v-text="item.keywords" @click.prevent="search(item.keywords, true, true)" v-else>
+                </small>
+              </div>
+            </div>
           </div>
+
         </div>
 
-        <!-- keywords -->
-        <div class="col-md-12">
-          <div class="row d-flex justify-content-end" id="keywords" v-if="item.keywords">
-            <template v-if="Array.isArray(item.keywords)">
-              <small class="keyword" v-text="keyword" v-for="keyword in item.keywords" @click.prevent="search(keyword, true, true)">
-              </small>
-            </template>
-            <small class="keyword" v-text="item.keywords" @click.prevent="search(item.keywords, true, true)" v-else>
-            </small>
-          </div>
-        </div>
       </div>
-
     </template>
 
 
@@ -299,6 +339,9 @@
         numResults: 0,
         results: [],
         pages: 1,
+        facetSize: 5,
+        facets: ["funder.name.keyword", "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"],
+        facetSummary: [],
         query: '',
         maxDescriptionLength: 75,
         loading: false,
@@ -353,6 +396,14 @@
               "from": (self.selectedPage - 1) * self.selectedPerPage,
             }
           };
+
+          var facetParams = {
+            "params": {
+              "q": query,
+              "facet_size": self.facetSize,
+              "facets": self.facets.join(","),
+            }
+          };
         }
         console.log(params)
 
@@ -386,6 +437,22 @@
             self.calculatePages();
           }
 
+          self.loading = false;
+        });
+
+        // TODO: promise-ize this.
+        axios.get('http://su07:8080/api/query?', facetParams).then(function(response) {
+          console.log('facets');
+          console.log(response);
+          let allResults = [];
+          self.facets.forEach(varName => {
+            let summary = {};
+            summary['variable'] = varName.replace(".keyword", "");
+            summary['counts'] = response.data.facets[varName].terms;
+            allResults.push(summary)
+          })
+          console.log(allResults)
+          self.facetSummary = allResults;
           self.loading = false;
         });
       }
