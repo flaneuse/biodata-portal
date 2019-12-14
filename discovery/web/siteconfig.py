@@ -8,9 +8,9 @@
 
 # name also used on metadata
 SITE_NAME = "NIAID Data portal"
-SITE_DESC = 'A <a class="mainTextLight bold" data-tippy="Learn More About CD2H" data-tippy-theme="light" href="https://ctsa.ncats.nih.gov/cd2h/" target="_blank">CD2H</a> project to prompt <a data-tippy="Learn More About FAIR Principles" data-tippy-theme="light" class="mainTextLight bold" target="_blank" href="https://www.go-fair.org/fair-principles/">FAIR data-sharing</a> best practices<br /> &amp; maximize the research impact of CTSA hubs'
+SITE_DESC = 'An aggregator of open datasets, with a particular focus on allergy and infectious diseases'
 
-CONTACT_REPO = "https://github.com/data2health/rdp-portal"
+CONTACT_REPO = "https://github.com/SuLab/niaid-data-portal"
 CONTACT_EMAIL = "cd2h-metadata@googlegroups.com"
 
 # *****************************************************************************
@@ -18,7 +18,7 @@ CONTACT_EMAIL = "cd2h-metadata@googlegroups.com"
 # *****************************************************************************
 
 METADATA_CONTENT_URL = "http://discovery.biothings.io/"
-METADATA_DESC = 'A CD2H PROJECT TO PROMPT FAIR DATA-SHARING BEST PRACTICES & MAXIMIZE THE RESEARCH IMPACT OF CTSA HUBS'
+METADATA_DESC = 'An aggregator of open datasets, with a particular focus on allergy and infectious diseases'
 METADATA_FEATURED_IMAGE = "https://i.postimg.cc/zvRMbPSs/featured.jpg"
 METADATA_MAIN_COLOR = "#63296b"
 
