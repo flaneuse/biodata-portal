@@ -116,9 +116,11 @@
       <input id="search-query" type="text" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
     </form>
 
-    <div id="results-count" class="d-flex align-items-center mb-2 justify-content-between" v-if="numResults">
+    <div id="results-count" class="d-flex align-items-center mb-2 justify-content-between" v-if="numResults || numResults === 0">
       <h3 id="num-results">
-        <span v-text="(selectedPage - 1) * selectedPerPage + 1"></span><span>-</span><span v-text="selectedPage * selectedPerPage"></span><span> of </span>
+        <template v-if="numResults">
+          <span v-text="(selectedPage - 1) * selectedPerPage + 1"></span><span>-</span><span v-text="selectedPage * selectedPerPage"></span><span> of </span>
+        </template>
         <span v-if="numResults === 10000"> over </span>
         <span v-text="numResults.toLocaleString()"></span>
         <span> results</span>
@@ -348,7 +350,7 @@
         defaultPerPage: 10,
         selectedPerPage: 10,
         selectedPage: 1,
-        numResults: 0,
+        numResults: null,
         results: [],
         pages: 1,
         facetSize: 5,
