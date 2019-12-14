@@ -1,0 +1,35 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<style>
+</style>
+<div id="search-results" class="container d-flex" style="min-height:100vh">
+  <div v-if=loading class="loader">
+    <img src="/static/img/ripple.svg" />
+  </div>
+
+  <div class="jumbotron bg-light text-muted w-100">
+    NIAID datasets
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://unpkg.com/vuex"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+<!-- <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.28.11/dist/sweetalert2.all.min.js"></script> -->
+<script>
+  var app = new Vue({
+    el: '#search-results',
+    data: function() {
+      return {
+        loading: false
+      }
+    },
+    methods: {}
+  });
+</script>
+{% include "footer.html" %}
+{% endblock %}
