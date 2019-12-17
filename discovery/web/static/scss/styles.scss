@@ -2076,3 +2076,16 @@ progress[value]::-webkit-progress-value {
 	-webkit-animation: heartbeat 1.5s ease-in-out infinite both;
 	        animation: heartbeat 1.5s ease-in-out infinite both;
 }
+
+// Keywords 
+#keyword-counts {
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.keyword {
+  font-weight: 900;
+  padding: 0px 7px;
+  margin: 0px 4px;
+  color: #4a7d8f;
+}

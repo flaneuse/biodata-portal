@@ -2,16 +2,8 @@
 {% block content %}
 {% include "header.html" %}
 <style>
-  #keyword-counts {
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-
-  .keyword {
-    font-weight: 900;
-    padding: 0px 7px;
-    margin: 0px 4px;
-    color: #4a7d8f;
+  .value-annotation {
+    margin-right: 5px;
   }
 </style>
 <main id="index" style="min-height:70vh;">
@@ -39,8 +31,9 @@
       <div class="container">
         <div class="row">
           <div class="col-sm-12 col-md-4 p-3">
-            <h3 class="row text-muted lighter caps" id="dataset-counts"><b v-text="datasetTotal.toLocaleString()"></b><span v-if="datasetTotal !== 0"> datasets</span></h3>
-            <h3 class="row text-muted lighter caps" id="source-counts" v-if="sourceTotal"><b v-text="sourceTotal.toLocaleString()"></b><span> dataset repositories indexed</span></h3>
+            <h3 class="row text-muted lighter caps" id="dataset-counts"><b v-text="datasetTotal.toLocaleString()" class="value-annotation"></b><span v-if="datasetTotal !== 0">datasets</span></h3>
+            <h5 class="row text-muted lighter" id="source-counts" v-if="sourceTotal"><b v-text="sourceTotal.toLocaleString()" class="value-annotation"></b><span>dataset repositories indexed</span></h5>
+            <app-donut v-bind="{sourceCounts}" class="row"></app-donut>
           </div>
           <div class="col-sm-12 col-md-8 p-3">
             <h4>Common keywords in datasets</h4>
@@ -129,9 +122,13 @@
 <script src="./static/js/logo.js"></script>
 <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 <script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/http-vue-loader"></script>
 <script>
   var app = new Vue({
     el: '#index',
+    components: {
+      'app-donut': window.httpVueLoader('/static/components/Donut.vue')
+    },
     data: function() {
       return {
         facetSize: 50,
@@ -195,7 +192,7 @@
       cleanSources(sources) {
         let filtered = sources.filter(d => d.term.includes("_search"));
         filtered.forEach(d => {
-          d.term = d.term.replace("_search", "").replace("_transformed", "").replace(/_\d/, "")
+          d.term = d.term.replace("_search", "").replace("_transformed", "").replace(/_\d/, "").replace("_", " ");
         });
 
         let nested = d3.nest().key(d => d.term).rollup(values => d3.sum(values, d => d.count)).entries(filtered);
