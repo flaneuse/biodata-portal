@@ -1,5 +1,3 @@
-
-
 <template>
   <div>
 <!-- <h1 v-text="leaves.length"></h1> -->
@@ -49,7 +47,7 @@ module.exports = {
   methods: {
     // d3 scale functions
     calculateScales() {
-      console.log('calling scales')
+      // console.log('calling scales')
       // this.leaves = [{x0: 1, x1: 156, y0:1, y1: 146}, {x0: 157, x1: 246, y0:1, y1: 146}]
       // if (this.results && !this.results.length) {
       this.colorScale = d3.scaleOrdinal()
@@ -63,7 +61,7 @@ module.exports = {
         value: 0
       }];
 
-console.log(this.results.length)
+// console.log(this.results.length)
       this.results.forEach(d => {
         nested_root.push({
           key: d.disease,
@@ -83,7 +81,7 @@ console.log(this.results.length)
 
     // create tree objects
     prepData() {
-      console.log('calling prep data')
+      // console.log('calling prep data')
 
       let colorScale = d3.scaleOrdinal()
         .domain(this.results.map(d => d.disease))
@@ -132,40 +130,21 @@ console.log(this.results.length)
       })
 
 
-      console.log(self.leaves)
-      console.log(colorScale.domain())
-      console.log(colorScale)
-      console.log(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), this.results.length))
-      console.log(self.leaves.length)
-      console.log(this)
+      // console.log(self.leaves)
+      // console.log(colorScale.domain())
+      // console.log(colorScale)
+      // console.log(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), this.results.length))
+      // console.log(self.leaves.length)
+      // console.log(this)
     }}
   },
   mounted() {
-    console.log('Hello World')
-    console.log(this)
+    // console.log('Hello World')
+    // console.log(this)
     this.calculateScales();
     this.prepData();
   }
 }
-
-
-//
-// export default {
-//   name: 'app',
-//   components: {
-//     Histogram,
-//     AreaChart,
-//   },
-//   data() {
-//     // register any data we want to track changes of
-//     return {
-//     }
-//   },
-//   mounted() {
-//     console.log("treemap")
-//   },
-//   methods: {}
-// }
 </script>
 
 <style scoped>
