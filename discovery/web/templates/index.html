@@ -33,7 +33,7 @@
           <div class="col-sm-12 col-md-4 p-3">
             <h3 class="row text-muted lighter caps" id="dataset-counts"><b v-text="datasetTotal.toLocaleString()" class="value-annotation"></b><span v-if="datasetTotal !== 0">datasets</span></h3>
             <h5 class="row text-muted lighter" id="source-counts" v-if="sourceTotal"><b v-text="sourceTotal.toLocaleString()" class="value-annotation"></b><span>dataset repositories indexed</span></h5>
-            <app-donut v-bind="{sourceCounts}" class="row"></app-donut>
+            <app-donut v-bind="{source_counts}" class="row"></app-donut>
           </div>
           <div class="col-sm-12 col-md-8 p-3">
             <h4>Common keywords in datasets</h4>
@@ -47,24 +47,8 @@
       </div>
     </div>
 
-    <div class="jumbotron bg-light text-muted text-center">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-12 col-md-6">
-            <img class="w-100 rounded" src="/static/img/involved-01.png" style="border-radius:20px;" alt="join us" />
-          </div>
-          <div class="col-sm-12 col-md-6 p-3">
-            <h3 class="text-muted lighter caps" id="get-involved">Get Involved!</h3>
-            <img class="margin20" src="./static/img/cd2h-logo.png" width="200px" alt="logo" />
-            <p class="text-muted w-75 m-auto lighter">
-              The CD2H project uses the onboarding form to track community interest and engagement in CD2H projects and working groups. You are welcome to participate at any level, whether contributing requirements, code, or just casually following
-              the project as it progresses. Simply check the box indicating you're interested in the 'discovery engine', we will get in touch. <a target="_blank" href="mailto:data2health@gmail.com">Contact us</a> if you have any questions.
-            </p>
-            <a target="_blank" href="http://bit.ly/cd2h-onboarding-form" role="button" class="btn themeButton pulse text-light mt-4">Join Now</a>
-          </div>
-        </div>
-      </div>
-    </div>
+<a class='nav-link' href='./search'>search</a>
+<a class='nav-link' href='./niaid'>NIAID priorities</a>
 
     <div class="jumbotron bg-light text-muted text-center">
       <div class="container">
@@ -134,7 +118,7 @@
         facetSize: 50,
         datasetTotal: 0,
         sourceTotal: 0,
-        sourceCounts: [],
+        source_counts: [],
         keywordsCounts: []
       }
     },
@@ -183,10 +167,10 @@
           console.log(response.data);
           self.keywordsCounts = response.data.facets['keywords.keyword'].terms;
           self.datasetTotal = response.data.facets['_index'].total;
-          self.sourceCounts = self.cleanSources(response.data.facets['_index'].terms);
-          console.log(self.sourceCounts)
+          self.source_counts = self.cleanSources(response.data.facets['_index'].terms);
+          console.log(self.source_counts)
           console.log(self.cleanSources)
-          self.sourceTotal = self.sourceCounts.length;
+          self.sourceTotal = self.source_counts.length;
         })
       },
       cleanSources(sources) {

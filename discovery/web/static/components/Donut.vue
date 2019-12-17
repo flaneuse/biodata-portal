@@ -25,7 +25,7 @@ const margin = {
 
 module.exports = {
   name: 'app-donut',
-  props: ['sourceCounts'],
+  props: ['source_counts'],
   data() {
     return {
       width,
@@ -38,7 +38,7 @@ module.exports = {
     }
   },
   watch: {
-    sourceCounts: function(newInput, oldInput) {
+    source_counts: function(newInput, oldInput) {
       console.log('newInput')
       this.prepData(newInput);
     },
@@ -46,7 +46,8 @@ module.exports = {
   },
   methods: {
     prepData(data) {
-      this.dataLength = data.length;
+      console.log(data)
+      this.dataLength = data ? data.length : 0;
       if (this.dataLength) {
         // angle calculation for pie chart
          this.arcs = d3.pie()
@@ -61,7 +62,8 @@ module.exports = {
 
         // color scale
         let colorScale = d3.scaleOrdinal()
-          .domain(data.map(d => d.key))
+          .domain(['omicsdi', 'ncbi geo', 'zenodo', 'harvard dataverse'])
+          // .domain(data.map(d => d.key))
           .range(d3.schemeTableau10);
           // .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse());
 
@@ -79,7 +81,7 @@ module.exports = {
     }
   },
   mounted() {
-    this.prepData(this.sourceCounts);
+    this.prepData(this.source_counts);
   }
 }
 </script>

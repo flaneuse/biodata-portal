@@ -16,8 +16,13 @@
   <div class="jumbotron bg-light text-muted w-100">
     <h1 class="row">Datasets containing NIAID priority diseases</h1>
 
-    <app-treemap v-bind="{results}" v-if="results"></app-treemap>
+    <!-- <div class="d-flex flex-wrap">
+      <div v-for="term in source_counts">
+        <app-donut v-bind:source_counts="term" class="row"></app-donut>
+      </div>
+    </div> -->
 
+    <app-treemap v-bind="{results}" v-if="results"></app-treemap>
 
     <div v-for="disease in results" :id="disease.diseaseID" v-if="results" class="row mb-5">
       <div class="col-sm-12">
@@ -36,8 +41,9 @@
             <!-- <span>"</span><span v-text="term"></span><span>"</span> -->
           </small>
         </div>
+<!-- <app-donut v-bind:source_counts="disease['source_counts']" class="row"></app-donut> -->
 
-
+<!-- <app-donut source_counts="disease['source_counts']" class="row" v-if="disease.source_counts"></app-donut> -->
 
 <div class="row">
   <div class="col-sm-12 col-md-12 p-3">
@@ -50,7 +56,7 @@
 
         </div>
 
-        <!-- <app-donut v-bind="{sourceCounts}" class="row"></app-donut> -->
+        <!-- <app-donut v-bind="{source_counts}" class="row"></app-donut> -->
       </div>
     </div>
 
@@ -71,6 +77,7 @@
 <script src="https://unpkg.com/http-vue-loader"></script>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="/static/js/vue-rx.js"></script>
+<script src="/static/js/clean-facets.js"></script>
 
 <script type="module">
   var app = new Vue({
@@ -82,7 +89,7 @@
 },
     data: function() {
       return {
-        sourceCounts: [{"value":7515,"key":"omicsdi_search_0"},{"value":1227,"key":"ncbi_geo_transformed_search_0"},{"value":55,"key":"zenodo_search_0"},{"value":10,"key":"harvard_dataverse_search_0"}],
+        source_counts: [[{"key":"omicsdi","value":7515},{"key":"ncbi geo","value":1227},{"key":"zenodo","value":55},{"key":"harvard dataverse","value":10}],[{"key":"omicsdi","value":4202},{"key":"ncbi geo","value":888},{"key":"zenodo","value":14},{"key":"harvard dataverse","value":3}],[{"key":"omicsdi","value":4084},{"key":"ncbi geo","value":869},{"key":"zenodo","value":56},{"key":"harvard dataverse","value":57}],[{"key":"omicsdi","value":4184},{"key":"ncbi geo","value":554},{"key":"zenodo","value":4},{"key":"harvard dataverse","value":2}],[{"key":"omicsdi","value":2627},{"key":"ncbi geo","value":1040},{"key":"harvard dataverse","value":817},{"key":"zenodo","value":80}],[{"key":"omicsdi","value":1933},{"key":"ncbi geo","value":1213},{"key":"zenodo","value":20},{"key":"harvard dataverse","value":7}],[{"key":"omicsdi","value":1336},{"key":"ncbi geo","value":671},{"key":"harvard dataverse","value":789},{"key":"zenodo","value":44}],[{"key":"omicsdi","value":1640},{"key":"ncbi geo","value":442},{"key":"zenodo","value":109},{"key":"harvard dataverse","value":96}],[{"key":"omicsdi","value":1237},{"key":"ncbi geo","value":600},{"key":"zenodo","value":33},{"key":"harvard dataverse","value":48}],[{"key":"omicsdi","value":1000},{"key":"ncbi geo","value":514},{"key":"zenodo","value":18},{"key":"harvard dataverse","value":29}],[{"key":"omicsdi","value":612},{"key":"ncbi geo","value":351},{"key":"harvard dataverse","value":44},{"key":"zenodo","value":7}],[{"key":"omicsdi","value":800},{"key":"ncbi geo","value":125},{"key":"zenodo","value":6},{"key":"harvard dataverse","value":7}],[{"key":"omicsdi","value":565},{"key":"ncbi geo","value":298},{"key":"zenodo","value":5},{"key":"harvard dataverse","value":4}],[{"key":"omicsdi","value":487},{"key":"ncbi geo","value":92},{"key":"zenodo","value":2}],[{"key":"omicsdi","value":344},{"key":"ncbi geo","value":99},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":377},{"key":"ncbi geo","value":56},{"key":"zenodo","value":7},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":315},{"key":"ncbi geo","value":110},{"key":"zenodo","value":5},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":346},{"key":"ncbi geo","value":55},{"key":"zenodo","value":3},{"key":"harvard dataverse","value":2}],[{"key":"omicsdi","value":246},{"key":"ncbi geo","value":98},{"key":"zenodo","value":5},{"key":"harvard dataverse","value":3}],[{"key":"omicsdi","value":191},{"key":"ncbi geo","value":105},{"key":"zenodo","value":16},{"key":"harvard dataverse","value":9}],[{"key":"omicsdi","value":225},{"key":"ncbi geo","value":31},{"key":"zenodo","value":8},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":112},{"key":"zenodo","value":85},{"key":"ncbi geo","value":57},{"key":"harvard dataverse","value":9}],[{"key":"omicsdi","value":159},{"key":"ncbi geo","value":93},{"key":"zenodo","value":2},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":139},{"key":"ncbi geo","value":84},{"key":"zenodo","value":17},{"key":"harvard dataverse","value":5}],[{"key":"omicsdi","value":143},{"key":"ncbi geo","value":74},{"key":"harvard dataverse","value":7}],[{"key":"omicsdi","value":163},{"key":"ncbi geo","value":29},{"key":"harvard dataverse","value":19},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":95},{"key":"ncbi geo","value":39},{"key":"zenodo","value":20},{"key":"harvard dataverse","value":14}],[{"key":"omicsdi","value":102},{"key":"ncbi geo","value":52}],[{"key":"omicsdi","value":100},{"key":"ncbi geo","value":37},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":78},{"key":"ncbi geo","value":27},{"key":"harvard dataverse","value":1},{"key":"zenodo","value":1}],[{"key":"zenodo","value":40},{"key":"omicsdi","value":21},{"key":"ncbi geo","value":8},{"key":"harvard dataverse","value":2}],[{"key":"omicsdi","value":25},{"key":"ncbi geo","value":13},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":31},{"key":"harvard dataverse","value":4},{"key":"ncbi geo","value":2}],[{"key":"omicsdi","value":28},{"key":"ncbi geo","value":5}],[{"key":"omicsdi","value":16},{"key":"ncbi geo","value":8},{"key":"harvard dataverse","value":5}],[{"key":"omicsdi","value":8},{"key":"ncbi geo","value":5}]],
         loading: false,
         facetSize: 10,
         // Semi-automatically generated by scraping https://www.niaid.nih.gov/diseases-conditions
@@ -181,8 +188,8 @@
           },
           {
             "disease": "Primary Immune Deficiency Diseases (PIDDs)",
-            "terms": ["Primary Immune Deficiency Disease", "PIDD", "Epstein-Barr virus", "EBV"]
-            /*"terms": ["Primary Immune Deficiency Disease", "PIDD", "Epstein-Barr virus", "EBV", "Autoimmune polyglandular syndrome type 1", "APS-1", "autoimmune polyendocrinopathy-candidiasis-ectodermal dystrophy", "APECED", "BENTA", "B-cell expansion with NF-jB and T-cell anergy", "Caspase Eight Deficiency State", "CEDS", "CARD9 deficiency", "Chronic Granulomatous Disease", "CGD", "Common Variable Immunodeficiency", "CVID", "Congenital Neutropenia Syndrome", "CTLA4 Deficiency", "DOCK8 Deficiency", "GATA2 Deficiency", "Glycosylation Disorders", "Hyper-Immunoglobulin E Syndromes", "HIES", "Hyper-Immunoglobulin M Syndromes", "Interferon Gamma Deficiency", "Interleukin 12 Deficiency", "Interleukin 23 Deficiency", "Leukocyte Adhesion Deficiency", "LAD", "LRBA Deficiency", "PI3 Kinase Disease", "PLCG2-associated Antibody Deficiency and Immune Dysregulation", "PLAID", "Severe Combined Immunodeficiency", "SCID", "STAT3 Dominant-Negative Disease", "STAT3DN", "autosomal dominant hyper-IgE syndrome", "AD-HIES", "Job's Syndrome", "STAT3 Gain-of-Function Disease", "Warts, Hypogammaglobulinemia, Infections, and Myelokathexis", "WHIM Syndrome", "Wiskott-Aldrich Syndrome", "X-Linked Agammaglobulinemia", "XLA", "X-Linked Lymphoproliferative Disease", "XLP", "XMEN Disease"]*/
+            // "terms": ["Primary Immune Deficiency Disease", "PIDD", "Epstein-Barr virus", "EBV"]
+            "terms": ["Primary Immune Deficiency Disease", "PIDD", "Epstein-Barr virus", "EBV", "Autoimmune polyglandular syndrome type 1", "APS-1", "autoimmune polyendocrinopathy-candidiasis-ectodermal dystrophy", "APECED", "BENTA", "B-cell expansion with NF-jB and T-cell anergy", "Caspase Eight Deficiency State", "CEDS", "CARD9 deficiency", "Chronic Granulomatous Disease", "CGD", "Common Variable Immunodeficiency", "CVID", "Congenital Neutropenia Syndrome", "CTLA4 Deficiency", "DOCK8 Deficiency", "GATA2 Deficiency", "Glycosylation Disorders", "Hyper-Immunoglobulin E Syndromes", "HIES", "Hyper-Immunoglobulin M Syndromes", "Interferon Gamma Deficiency", "Interleukin 12 Deficiency", "Interleukin 23 Deficiency", "Leukocyte Adhesion Deficiency", "LAD", "LRBA Deficiency", "PI3 Kinase Disease", "PLCG2-associated Antibody Deficiency and Immune Dysregulation", "PLAID", "Severe Combined Immunodeficiency", "SCID", "STAT3 Dominant-Negative Disease", "STAT3DN", "autosomal dominant hyper-IgE syndrome", "AD-HIES", "Job's Syndrome", "STAT3 Gain-of-Function Disease", "Warts, Hypogammaglobulinemia, Infections, and Myelokathexis", "WHIM Syndrome", "Wiskott-Aldrich Syndrome", "X-Linked Agammaglobulinemia", "XLA", "X-Linked Lymphoproliferative Disease", "XLP", "XMEN Disease"]
           },
           {
             "disease": "Prion Diseases",
@@ -265,7 +272,8 @@
             rxjs.operators.tap(result => result['total'] = result['_index']['total']),
             rxjs.operators.tap(result => result['disease'] = diseaseObject.disease),
             rxjs.operators.tap(result => result['searchTerms'] = diseaseObject.terms),
-            rxjs.operators.tap(result => result['diseaseID'] = diseaseObject.id)
+            rxjs.operators.tap(result => result['diseaseID'] = diseaseObject.id),
+            rxjs.operators.tap(result => result['source_counts'] = cleanFacets(result['_index']['terms']))
           )
         );
       },
