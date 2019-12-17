@@ -8,13 +8,15 @@
     padding: 1px 3px;
   }
 </style>
-<div id="search-results" class="container d-flex" style="min-height:100vh">
+<div id="niaid-diseases" class="container d-flex" style="min-height:100vh">
   <div v-if=loading class="loader">
     <img src="/static/img/ripple.svg" />
   </div>
 
   <div class="jumbotron bg-light text-muted w-100">
     <h1 class="row">Datasets containing NIAID priority diseases</h1>
+
+    <app-treemap v-bind="{results}" v-if="results"></app-treemap>
 
 
     <div v-for="disease in results" :id="disease.diseaseID" v-if="results" class="row mb-5">
@@ -47,12 +49,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
 <script src="https://unpkg.com/rxjs/bundles/rxjs.umd.js"></script>
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/http-vue-loader"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="/static/js/vue-rx.js"></script>
-<!-- <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.28.11/dist/sweetalert2.all.min.js"></script> -->
-<script>
+
+<script type="module">
   var app = new Vue({
-    el: '#search-results',
+    el: '#niaid-diseases',
+    name: "NIAID-diseases",
+    components: {
+  'app-treemap': window.httpVueLoader('/static/components/Treemap.vue')
+},
     data: function() {
       return {
         loading: false,

@@ -254,7 +254,7 @@ class SearchHandler(BaseHandler):
 
 class NiaidHandler(BaseHandler):
     def get(self):
-        doc_file = "niaid.html"
+        doc_file = "niaid.vue"
         guide_template = TEMPLATE_ENV.get_template(doc_file)
         guide_output = guide_template.render()
         self.write(guide_output)
