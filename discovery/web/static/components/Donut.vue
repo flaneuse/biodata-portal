@@ -1,0 +1,112 @@
+<template>
+<div class="d-flex align-items-center">
+  <svg class='donut' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom'>
+    <g :transform='`translate(${this.margin.left + this.width / 2}, ${this.height / 2 + this.margin.top})`' id="donut-chart">
+      <path v-for="arc in arcs" :d="arc.path" :fill="arc.fill"></path>
+      <!-- <text v-for="arc in arcs" :x="arc.centroid[0]" :y="arc.centroid[1]" v-text="arc.data.key" class="donut-label"></text> -->
+    </g>
+  </svg>
+  <ul class="donut-labels">
+    <li v-for="arc in arcs" v-text="arc.data.key" v-bind:style="{ color: arc.fill}">
+    </li>
+  </ul>
+</div>
+</template>
+ <script >
+  const width = 150;
+const height = width;
+const hole_frac = 0.5;
+const margin = {
+  top: 5,
+  right: 5,
+  bottom: 5,
+  left: 5
+}
+
+module.exports = {
+  name: 'app-donut',
+  props: ['sourceCounts'],
+  data() {
+    return {
+      width,
+      height,
+      margin,
+      hole_frac,
+      dataLength: 0,
+      arcs: [],
+      colorScale: null
+    }
+  },
+  watch: {
+    sourceCounts: function(newInput, oldInput) {
+      console.log('newInput')
+      this.prepData(newInput);
+    },
+    deep: true
+  },
+  methods: {
+    prepData(data) {
+      this.dataLength = data.length;
+      if (this.dataLength) {
+        // angle calculation for pie chart
+         this.arcs = d3.pie()
+          .sort(null)
+          .value(function(d) { return d.value; })
+          (data);
+
+        // path calculation to cut out the donut hole
+        let arc = d3.arc()
+          .innerRadius(this.height / 2 * this.hole_frac)
+          .outerRadius(this.height / 2 - 1);
+
+        // color scale
+        let colorScale = d3.scaleOrdinal()
+          .domain(data.map(d => d.key))
+          .range(d3.schemeTableau10);
+          // .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse());
+
+        // calculate path, fill color.
+        this.arcs.forEach(slice => {
+          slice['path'] = arc(slice);
+          slice['centroid'] = arc.centroid(slice);
+          slice['fill'] = colorScale(slice.data.key);
+        })
+
+        console.log('arcs')
+        console.log(this.arcs)
+        console.log(this.arcs.map(arc))
+      }
+    }
+  },
+  mounted() {
+    this.prepData(this.sourceCounts);
+  }
+}
+</script>
+
+<style scoped>
+.donut path {
+  stroke: black;
+  stroke-width: 0.25;
+}
+
+.donut-label {
+  text-anchor: middle;
+}
+
+.container {
+  margin-top: 45px;
+}
+
+.donut-labels {
+  list-style: none;
+  padding-left: 10px;
+  margin: 0;
+  text-align: left;
+}
+
+.donut-labels li {
+  font-weight: 700;
+  line-height: 1.25em;
+}
+</style>
