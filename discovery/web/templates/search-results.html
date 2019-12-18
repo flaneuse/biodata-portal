@@ -319,9 +319,16 @@
 <script src="https://unpkg.com/vuex"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+<script src="https://unpkg.com/vue-router"></script>
 <!-- <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script> -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.28.11/dist/sweetalert2.all.min.js"></script> -->
 <script>
+  var router = new VueRouter({
+    mode: 'history',
+    routes: [{ path: '/', props: (route) => ({ query: route.query.q }) }
+],
+  });
+
   const store = new Vuex.Store({
     state: {
       'metadata': {},
@@ -366,6 +373,8 @@
         loading: false,
         scripttext: ''
       }
+    },
+    mounted: function() {
     },
     methods: {
       changePageSize(selectedSize) {
@@ -418,7 +427,7 @@
 
         console.log(self.selectedFilters)
 
-        let selectedFilters = Object.keys(self.selectedFilters).filter(id => self.selectedFilters[id].length > 0).map(id => `${id}:("${self.selectedFilters[id].join('","')}")`).join(" AND ");
+        let selectedFilters = Object.keys(self.selectedFilters).filter(id => self.selectedFilters[id].length > 0).map(id => `${id}.keyword:("${self.selectedFilters[id].join('","')}")`).join(" AND ");
 
         if (selectedFilters.length > 0) {
           queryText = queryText === "__all__" ? selectedFilters : `${queryText} AND ${selectedFilters}`
