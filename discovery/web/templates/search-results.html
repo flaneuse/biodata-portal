@@ -141,14 +141,15 @@
     <template v-show="results && results.length > 0" v-if="results && results.length > 0">
 
       <div class="row">
+        <!-- facet filters -->
         <div id="filters" class="col-md-3 pr-4">
           <form class="facet-group whitefadedarker" v-for="variable in facetSummary" v-if="facetSummary && facetSummary.length > 0" @change.prevent="search(query, 'filtersChanged')">
             <div class="facet-title mb-1" v-text="variable.variable"></div>
 
-            <template v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0 && count.term !== ''">
-              <label :for="count.term">
-                <input class="facet-counts px-1" type="checkbox" :id="count.term" :value="count.term" :name="count.term" v-model="selectedFilters[variable.variable]">
-                <small><span v-html="count.term"></span><span v-text="' (' + count.count + ')'"></span></small>
+            <template v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0">
+              <label :for="count.key">
+                <input class="facet-counts px-1" type="checkbox" :id="count.key" :value="count.key" :name="count.key" v-model="selectedFilters[variable.variable]">
+                <small><span v-html="count.key"></span><span v-text="' (' + count.value + ')'"></span></small>
                 <!-- <span class="checkmark"></span> -->
               </label>
             </template>
@@ -320,13 +321,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
 <script src="https://unpkg.com/vue-router"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="/static/js/clean-facets.js"></script>
 <!-- <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script> -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.28.11/dist/sweetalert2.all.min.js"></script> -->
 <script>
   var router = new VueRouter({
     mode: 'history',
-    routes: [{ path: '/', props: (route) => ({ query: route.query.q }) }
-],
+    routes: [{
+      path: '/',
+      props: (route) => ({
+        query: route.query.q
+      })
+    }],
   });
 
   const store = new Vuex.Store({
@@ -361,10 +368,10 @@
         results: [],
         pages: 1,
         facetSize: 5,
-        facets: ["funder.name.keyword", "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"],
+        facets: ["funder.name.keyword", "funding.funder.name.keyword", "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"],
         facetSummary: [],
         selectedFilters: {
-          "funder.name": [],
+          "funder": [],
           "variableMeasured": [],
           "measurementTechnique": [],
           "keywords": []
@@ -374,8 +381,7 @@
         scripttext: ''
       }
     },
-    mounted: function() {
-    },
+    mounted: function() {},
     methods: {
       changePageSize(selectedSize) {
         let self = this;
@@ -413,7 +419,7 @@
           self.selectedPerPage = self.defaultPerPage;
           self.selectedPage = 1;
           self.selectedFilters = {
-            "funder.name": [],
+            "funder": [],
             "variableMeasured": [],
             "measurementTechnique": [],
             "keywords": []
@@ -427,9 +433,8 @@
 
         console.log(self.selectedFilters)
 
-        let selectedFilters = Object.keys(self.selectedFilters).filter(id => self.selectedFilters[id].length > 0).map(id => `${id}.keyword:("${self.selectedFilters[id].join('","')}")`).join(" AND ");
-
-        if (selectedFilters.length > 0) {
+        if (Object.values(self.selectedFilters).flatMap(d => d).length > 0) {
+          let selectedFilters = getQueryFilters(self.selectedFilters);
           queryText = queryText === "__all__" ? selectedFilters : `${queryText} AND ${selectedFilters}`
         }
 
@@ -484,13 +489,10 @@
 
         // TODO: promise-ize this.
         axios.get('http://su07:8080/api/query?', facetParams).then(function(response) {
-          let allResults = [];
-          self.facets.forEach(varName => {
-            let summary = {};
-            summary['variable'] = varName.replace(".keyword", "");
-            summary['counts'] = response.data.facets[varName].terms;
-            allResults.push(summary)
-          })
+
+          let allResults = cleanFacets(response.data.facets, self.facetSize);
+
+          console.log(allResults)
           self.facetSummary = allResults;
           self.loading = false;
         });
