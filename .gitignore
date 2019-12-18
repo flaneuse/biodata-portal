@@ -113,3 +113,4 @@ biothings
 elasticsearch_dsl
 biothings_schema
 discovery/web/templates/index_dde.html
+.DS_Store
