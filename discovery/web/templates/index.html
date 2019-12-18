@@ -38,7 +38,7 @@
           <div class="col-sm-12 col-md-8 p-3">
             <h4>Common keywords in datasets</h4>
             <div class="d-flex" id="keyword-counts" v-if="keywordsCounts && keywordsCounts.length > 0">
-              <div v-for="keywordPair in keywordsCounts" v-text="keywordPair.term" class="keyword" v-bind:style="{ opacity: calcOpacity(keywordPair)}">
+              <div v-for="keywordPair in keywordsCounts" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair)}">
               </div>
             </div>
 

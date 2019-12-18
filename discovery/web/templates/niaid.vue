@@ -1,7 +1,7 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
-<style>
+<style scoped>
   .search-term {
     opacity: 0.75;
     background: #ddd;
@@ -15,7 +15,7 @@
 
   <div class="jumbotron bg-light text-muted w-100">
     <h1 class="row">Datasets containing NIAID priority diseases</h1>
-
+<!-- <app-bar-graph v-bind:counts="results"></app-bar-graph> -->
     <!-- <div class="d-flex flex-wrap">
       <div v-for="term in source_counts">
         <app-donut v-bind:source_counts="term" class="row"></app-donut>
@@ -49,7 +49,7 @@
   <div class="col-sm-12 col-md-12 p-3">
     <h6 v-text="facetSize + ' most common keywords in datasets'"></h6>
     <div class="d-flex" id="keyword-counts">
-      <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}">
+      <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}">
       </div>
     </div>
 </div>
@@ -85,7 +85,8 @@
     name: "NIAID-diseases",
     components: {
   'app-treemap': window.httpVueLoader('/static/components/Treemap.vue'),
-  'app-donut': window.httpVueLoader('/static/components/Donut.vue')
+  'app-donut': window.httpVueLoader('/static/components/Donut.vue'),
+  'app-bar-graph': window.httpVueLoader('/static/components/BarGraph.vue')
 },
     data: function() {
       return {
