@@ -16,7 +16,7 @@ cleanFacets = function(facets, facetSize = null) {
     summary['variable'] = varName.replace(".keyword", "");
     // summary['searchVariable'] = [varName];
     // basically a shim to convert term/count to key/value for consistency.
-    summary['counts'] = d3.nest().key(d => d.term).rollup(values => d3.sum(values, d => d.count)).entries(facets[varName]['terms']).sort((a, b) => b.value - a.value);
+    summary['counts'] = facets[varName]['terms'].map(d => { return {key: d.term, value: d.count}}).sort((a, b) => b.value - a.value);
     cleanedFacets.push(summary)
   })
 
