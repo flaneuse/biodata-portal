@@ -17,6 +17,7 @@ rect {
 
 .slash-line {
   stroke: white;
+  stroke: #212529;
   stroke-width: 0.75;
 }
 
@@ -32,6 +33,7 @@ rect {
   fill: #6c757d!important;
     font-size: 0.8em;
     font-weight: 300;
+    dominant-baseline: hanging;
 }
 
 .legend-label {
@@ -67,8 +69,12 @@ rect {
 
         <!-- legend -->
         <g id="color-legend" transform='translate(0, -10)'>
-          <text :x="0" :y="margin.top - 30" class="legend-title">prevalence in source</text>
-          <rect :width="margin.left - 7" height="15" :y="margin.top - 25"fill="url(#gradient-legend)" :style="`stroke: ${colorScheme(0)}`"></rect>
+          <rect width="15" height="15" :y="margin.top - 60" :style="`fill: ${colorScheme(0)}; stroke: ${colorScheme(1)}`"></rect>
+          <line :x1="0" :x2="15" :y1="margin.top - 60 + 15" :y2="margin.top - 60" class="slash-line" />
+          <text :x="20" :y="margin.top - 60" class="legend-title">not used</text>
+
+          <text :x="0" :y="margin.top - 40" class="legend-title">prevalence in source</text>
+          <rect :width="margin.left - 7" height="15" :y="margin.top - 25"fill="url(#gradient-legend)" :style="`stroke: ${colorScheme(1)}`"></rect>
           <text :x="margin.left - 7" :y="margin.top - 7" class="legend-label legend-label--max">100%</text>
           <text :x="0" :y="margin.top - 7" class="legend-label legend-label--min">0</text>
         </g>
@@ -132,7 +138,8 @@ rect {
           bottom: 75,
           left: 120
         },
-        colorScheme: d3.interpolateInferno,
+        // colorScheme: d3.interpolateMagma,
+        colorScheme: d3.interpolateYlGnBu,
         x: d3.scaleBand(),
         y: d3.scaleBand(),
 
