@@ -259,6 +259,13 @@ class NiaidHandler(BaseHandler):
         guide_output = guide_template.render()
         self.write(guide_output)
 
+class SchemaHandler(BaseHandler):
+    def get(self):
+        doc_file = "schema.vue"
+        guide_template = TEMPLATE_ENV.get_template(doc_file)
+        guide_output = guide_template.render()
+        self.write(guide_output)
+
 
 APP_LIST = [
     (r"/?", MainHandler),
@@ -280,5 +287,6 @@ APP_LIST = [
     (r"/view/([^/]+)/([^/]*)/?", VisualizerHandler),
     (r"/search/?", SearchHandler),
     (r"/niaid/?", NiaidHandler),
+    (r"/schema/?", SchemaHandler),
     (r".*", PageNotFoundHandler)
 ]
