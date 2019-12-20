@@ -15,7 +15,7 @@
 
   <div class="jumbotron bg-light text-muted w-100">
     <h1 class="row">Datasets containing NIAID priority diseases</h1>
-<!-- <app-bar-graph v-bind:counts="results"></app-bar-graph> -->
+    <app-bar-graph v-bind:counts="hardcoded"></app-bar-graph>
     <!-- <div class="d-flex flex-wrap">
       <div v-for="term in source_counts">
         <app-donut v-bind:source_counts="term" class="row"></app-donut>
@@ -90,6 +90,7 @@
 },
     data: function() {
       return {
+        hardcoded: [{"count":13,"term":"GM/NIGMS NIH HHS"},{"count":4,"term":"AR/NIAMS NIH HHS"},{"count":4,"term":"Biotechnology and Biological Sciences Research Council"},{"count":3,"term":"EB/NIBIB NIH HHS"},{"count":3,"term":"PHS HHS"},{"count":2,"term":"AI/NIAID NIH HHS"},{"count":2,"term":"CA/NCI NIH HHS"},{"count":2,"term":"EY/NEI NIH HHS"},{"count":1,"term":"Canadian Institutes of Health Research (CIHR)"},{"count":1,"term":"DK/NIDDK NIH HHS"}],
         source_counts: [[{"key":"omicsdi","value":7515},{"key":"ncbi geo","value":1227},{"key":"zenodo","value":55},{"key":"harvard dataverse","value":10}],[{"key":"omicsdi","value":4202},{"key":"ncbi geo","value":888},{"key":"zenodo","value":14},{"key":"harvard dataverse","value":3}],[{"key":"omicsdi","value":4084},{"key":"ncbi geo","value":869},{"key":"zenodo","value":56},{"key":"harvard dataverse","value":57}],[{"key":"omicsdi","value":4184},{"key":"ncbi geo","value":554},{"key":"zenodo","value":4},{"key":"harvard dataverse","value":2}],[{"key":"omicsdi","value":2627},{"key":"ncbi geo","value":1040},{"key":"harvard dataverse","value":817},{"key":"zenodo","value":80}],[{"key":"omicsdi","value":1933},{"key":"ncbi geo","value":1213},{"key":"zenodo","value":20},{"key":"harvard dataverse","value":7}],[{"key":"omicsdi","value":1336},{"key":"ncbi geo","value":671},{"key":"harvard dataverse","value":789},{"key":"zenodo","value":44}],[{"key":"omicsdi","value":1640},{"key":"ncbi geo","value":442},{"key":"zenodo","value":109},{"key":"harvard dataverse","value":96}],[{"key":"omicsdi","value":1237},{"key":"ncbi geo","value":600},{"key":"zenodo","value":33},{"key":"harvard dataverse","value":48}],[{"key":"omicsdi","value":1000},{"key":"ncbi geo","value":514},{"key":"zenodo","value":18},{"key":"harvard dataverse","value":29}],[{"key":"omicsdi","value":612},{"key":"ncbi geo","value":351},{"key":"harvard dataverse","value":44},{"key":"zenodo","value":7}],[{"key":"omicsdi","value":800},{"key":"ncbi geo","value":125},{"key":"zenodo","value":6},{"key":"harvard dataverse","value":7}],[{"key":"omicsdi","value":565},{"key":"ncbi geo","value":298},{"key":"zenodo","value":5},{"key":"harvard dataverse","value":4}],[{"key":"omicsdi","value":487},{"key":"ncbi geo","value":92},{"key":"zenodo","value":2}],[{"key":"omicsdi","value":344},{"key":"ncbi geo","value":99},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":377},{"key":"ncbi geo","value":56},{"key":"zenodo","value":7},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":315},{"key":"ncbi geo","value":110},{"key":"zenodo","value":5},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":346},{"key":"ncbi geo","value":55},{"key":"zenodo","value":3},{"key":"harvard dataverse","value":2}],[{"key":"omicsdi","value":246},{"key":"ncbi geo","value":98},{"key":"zenodo","value":5},{"key":"harvard dataverse","value":3}],[{"key":"omicsdi","value":191},{"key":"ncbi geo","value":105},{"key":"zenodo","value":16},{"key":"harvard dataverse","value":9}],[{"key":"omicsdi","value":225},{"key":"ncbi geo","value":31},{"key":"zenodo","value":8},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":112},{"key":"zenodo","value":85},{"key":"ncbi geo","value":57},{"key":"harvard dataverse","value":9}],[{"key":"omicsdi","value":159},{"key":"ncbi geo","value":93},{"key":"zenodo","value":2},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":139},{"key":"ncbi geo","value":84},{"key":"zenodo","value":17},{"key":"harvard dataverse","value":5}],[{"key":"omicsdi","value":143},{"key":"ncbi geo","value":74},{"key":"harvard dataverse","value":7}],[{"key":"omicsdi","value":163},{"key":"ncbi geo","value":29},{"key":"harvard dataverse","value":19},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":95},{"key":"ncbi geo","value":39},{"key":"zenodo","value":20},{"key":"harvard dataverse","value":14}],[{"key":"omicsdi","value":102},{"key":"ncbi geo","value":52}],[{"key":"omicsdi","value":100},{"key":"ncbi geo","value":37},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":78},{"key":"ncbi geo","value":27},{"key":"harvard dataverse","value":1},{"key":"zenodo","value":1}],[{"key":"zenodo","value":40},{"key":"omicsdi","value":21},{"key":"ncbi geo","value":8},{"key":"harvard dataverse","value":2}],[{"key":"omicsdi","value":25},{"key":"ncbi geo","value":13},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":31},{"key":"harvard dataverse","value":4},{"key":"ncbi geo","value":2}],[{"key":"omicsdi","value":28},{"key":"ncbi geo","value":5}],[{"key":"omicsdi","value":16},{"key":"ncbi geo","value":8},{"key":"harvard dataverse","value":5}],[{"key":"omicsdi","value":8},{"key":"ncbi geo","value":5}]],
         loading: false,
         facetSize: 10,
@@ -298,11 +299,11 @@
     },
     subscriptions() {
       return {
-        results: rxjs.forkJoin(...this.diseaseKeywords.map(this.fetchData)).pipe(
-          rxjs.operators.tap(results => results.sort((a, b) => b.total - a.total)),
-          rxjs.operators.tap(x => console.log(x)),
-          rxjs.operators.tap(x => this.loading = false)
-        )
+        // results: rxjs.forkJoin(...this.diseaseKeywords.map(this.fetchData)).pipe(
+        //   rxjs.operators.tap(results => results.sort((a, b) => b.total - a.total)),
+        //   rxjs.operators.tap(x => console.log(x)),
+        //   rxjs.operators.tap(x => this.loading = false)
+        // )
       }
     }
   });
