@@ -115,13 +115,14 @@ p.text-muted, small.text-muted, h1.text-muted,h2.text-muted,h3.text-muted,h4.tex
 /* CLASSES */
 
 .logoText{
-  background: rgb(0,100,118); /* Old browsers */
-  background: -moz-linear-gradient(left,  $sec 0%, $main 100%); /* FF3.6-15 */
-  background: -webkit-linear-gradient(left,  $sec 0%,$main 100%); /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to right,  $sec 0%,$main 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr= $sec, endColorstr=$main,GradientType=1 ); /* IE6-9 */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  // background: rgb(0,100,118); /* Old browsers */
+  // background: -moz-linear-gradient(left,  $sec 0%, $main 100%); /* FF3.6-15 */
+  // background: -webkit-linear-gradient(left,  $sec 0%,$main 100%); /* Chrome10-25,Safari5.1-6 */
+  // background: linear-gradient(to right,  $sec 0%,$main 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  // filter: progid:DXImageTransform.Microsoft.gradient( startColorstr= $sec, endColorstr=$main,GradientType=1 ); /* IE6-9 */
+  // -webkit-background-clip: text;
+  // -webkit-text-fill-color: transparent;
+  color: #A5E7CF;
 }
 
 // .grad{
@@ -1407,8 +1408,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c9de96', end
 .navbar {
   padding-top: 25px;
   padding-bottom: 25px;
-  background: #7e7e7e;
-  color: white !important;
+  background: #1C5D5D;
+  color: #E2FABD !important;
+  // color: white !important;
   transition: all 0.3s;
 }
 
@@ -2088,4 +2090,9 @@ progress[value]::-webkit-progress-value {
   padding: 0px 7px;
   margin: 0px 4px;
   color: #4a7d8f;
+}
+
+
+a.nav-link.h-link {
+  color: #E2FABD !important;
 }
