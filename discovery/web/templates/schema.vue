@@ -63,20 +63,20 @@ rect {
       <svg id="heatmap" class='heatmap' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom'>
         <defs>
           <linearGradient id="gradient-legend" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop v-for="n in 10" :offset="(n/10)*100 + '%'" :style="`stop-color:${colorScheme(n/10)}; stop-opacity:1`" />
+            <stop v-for="n in 10" :key="n" :offset="(n/10)*100 + '%'" :style="`stop-color:${colorScheme(n/10)}; stop-opacity:1`" />
           </linearGradient>
         </defs>
 
         <!-- legend -->
         <g id="color-legend" transform='translate(0, -10)'>
-          <rect width="15" height="15" :y="margin.top - 60" :style="`fill: ${colorScheme(0)}; stroke: ${colorScheme(1)}`"></rect>
-          <line :x1="0" :x2="15" :y1="margin.top - 60 + 15" :y2="margin.top - 60" class="slash-line" />
-          <text :x="20" :y="margin.top - 60" class="legend-title">not used</text>
+          <rect width="15" height="15" :y="margin.top - 5" :style="`fill: ${colorScheme(0)}; stroke: ${colorScheme(1)}`"></rect>
+          <line :x1="0" :x2="15" :y1="margin.top - 5 + 15" :y2="margin.top - 5" class="slash-line" />
+          <text :x="20" :y="margin.top - 5" class="legend-title">not used</text>
 
-          <text :x="0" :y="margin.top - 40" class="legend-title">prevalence in source</text>
-          <rect :width="margin.left - 7" height="15" :y="margin.top - 25"fill="url(#gradient-legend)" :style="`stroke: ${colorScheme(1)}`"></rect>
-          <text :x="margin.left - 7" :y="margin.top - 7" class="legend-label legend-label--max">100%</text>
-          <text :x="0" :y="margin.top - 7" class="legend-label legend-label--min">0</text>
+          <text :x="0" :y="margin.top - 60" class="legend-title">prevalence in source</text>
+          <rect :width="margin.left - 7" height="15" :y="margin.top - 45"fill="url(#gradient-legend)" :style="`stroke: ${colorScheme(1)}`"></rect>
+          <text :x="margin.left - 7" :y="margin.top - 27" class="legend-label legend-label--max">100%</text>
+          <text :x="0" :y="margin.top - 27" class="legend-label legend-label--min">0</text>
         </g>
 
         <!-- blank chiclets to represent no data -->
