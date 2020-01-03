@@ -119,7 +119,7 @@
     <div id="results-count" class="d-flex align-items-center mb-2 justify-content-between" v-if="numResults || numResults === 0">
       <h3 id="num-results">
         <template v-if="numResults">
-          <span v-text="(selectedPage - 1) * selectedPerPage + 1"></span><span>-</span><span v-text="selectedPage * selectedPerPage"></span><span> of </span>
+          <span v-text="selectedMin"></span><span>-</span><span v-text="selectedMax"></span><span> of </span>
         </template>
         <span v-if="numResults === 10000"> over </span>
         <span v-text="numResults.toLocaleString()"></span>
@@ -326,10 +326,12 @@
 <!-- <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script> -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.28.11/dist/sweetalert2.all.min.js"></script> -->
 <script>
+
   var router = new VueRouter({
     mode: 'history',
     routes: [{
-      path: '/',
+      path: '/search/:q',
+      component: app,
       props: (route) => ({
         query: route.query.q
       })
@@ -356,6 +358,7 @@
 
   var app = new Vue({
     el: '#search-results',
+    router: router,
     data: function() {
       return {
         query: "",
@@ -381,7 +384,27 @@
         scripttext: ''
       }
     },
-    mounted: function() {},
+    computed: {
+      selectedMin: function() {
+      return (this.selectedPage - 1) * this.selectedPerPage + 1;
+    },
+      selectedMax: function() {
+        var maxValue = this.selectedPage * this.selectedPerPage;
+      return maxValue <= this.numResults ? maxValue : this.numResults;
+    }
+
+    },
+    watch: {
+      $route(to, from) {
+        console.log(`%c route changed`, 'color:green')
+        console.log(to)
+        console.log(from)
+        this.executeSearch();
+      }
+    },
+    mounted: function() {
+      this.executeSearch();
+    },
     methods: {
       changePageSize(selectedSize) {
         let self = this;
@@ -429,39 +452,60 @@
           self.selectedPage = 1;
         } else if (queryType === "pageChanged") {}
 
-        var queryText = query ? (enquoteQuery ? `"${query}"` : query) : "__all__";
+        <!-- var queryText = query ? (enquoteQuery ? `"${query}"` : query) : "__all__"; -->
 
         console.log(self.selectedFilters)
 
-        if (Object.values(self.selectedFilters).flatMap(d => d).length > 0) {
-          let selectedFilters = getQueryFilters(self.selectedFilters);
-          queryText = queryText === "__all__" ? selectedFilters : `${queryText} AND ${selectedFilters}`
-        }
-
         if (query) {
-          var params = {
-            "params": {
-              "q": queryText,
-              "size": self.selectedPerPage,
-              "from": (self.selectedPage - 1) * self.selectedPerPage,
-            }
-          };
-
-          var facetParams = {
-            "params": {
-              "q": queryText,
-              "facet_size": self.facetSize,
-              "facets": self.facets.join(","),
-            }
-          };
+          // update route url
+        this.$router.push({path: "/search", query: { q: self.query, filters: getQueryFilters(self.selectedFilters), size: self.selectedPerPage, from: self.selectedPage}}).catch(err => {
+        });
         }
+      },
+      executeSearch() {
+        var self = this;
+        self.query = self.$route.query.q;
+
+        if(self.query){
+        self.selectedPerPage = self.$route.query.size ? self.$route.query.size : self.defaultPerPage;
+        self.selectedPage = self.$route.query.from ? self.$route.query.from : 1;
+
+        var queryText = self.query ? self.query : "__all__";
+        <!-- var queryText = query ? (enquoteQuery ? `"${query}"` : query) : "__all__"; -->
+
+        // pull out the applied filter string and convert to an object.
+        self.selectedFilters = filterString2Obj(self.$route.query.filters);
+        console.log(self)
+
+        // if (Object.values(self.selectedFilters).flatMap(d => d).length > 0) {
+        // let selectedFilters = getQueryFilters(self.selectedFilters);
+        if(self.$route.query.filters) {
+          queryText = queryText === "__all__" ? selectedFilters : `${queryText} AND ${self.$route.query.filters}`
+        }
+
+        var params = {
+          "params": {
+            "q": queryText,
+            "size": self.selectedPerPage,
+            "from": (self.selectedPage - 1) * self.selectedPerPage,
+          }
+        };
+
+        var facetParams = {
+          "params": {
+            "q": queryText,
+            "facet_size": this.facetSize,
+            "facets": this.facets.join(","),
+          }
+        };
 
         self.loading = true;
 
         self.results = [];
+
         // TODO: set in config
         axios.get('http://su07:8080/api/query?', params).then(function(response) {
-          console.log(`%c searching ${query}...`, 'color:hotpink')
+          console.log(`%c searching ${self.query}...`, 'color:hotpink')
           console.log(response.data.hits)
 
           // Standardize descriptions. NOTE: needs to be done before assign to <this> to ensure proper change detection.
@@ -489,13 +533,14 @@
 
         // TODO: promise-ize this.
         axios.get('http://su07:8080/api/query?', facetParams).then(function(response) {
-
           let allResults = cleanFacets(response.data.facets, self.facetSize);
 
           console.log(allResults)
           self.facetSummary = allResults;
           self.loading = false;
         });
+}
+
       }
     }
   });
