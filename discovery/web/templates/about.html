@@ -8,59 +8,71 @@
       <h1 class="text-center text-muted test">ABOUT <span class="logoText">{{site_name}}</span></h1>
     </div>
     <div class="m-5">
-      <p class="col-sm-12 text-muted">
+      <h3 class="col-sm-12 text-muted">
         There's increasingly more and more biomedical data available as researchers openly share their results.
-      </p>
-      <div class="container row">
-        <div class="text-muted col-sm-12 col-md-4">
+      </h3>
+      <div class="jumbotron container row mt-3 d-flex align-items-center">
+        <h3 class="text-muted col-sm-12 col-md-4">
           The problem
-        </div>
+        </h3>
         <div class="text-muted col-sm-12 col-md-8">
-          Though these data could be reused in other analyses, these datasets can often be difficult to discover. Data is scattered across general purpose data repositories, specific biomedical data sites, data aggregators, and primary literature. Moreover, the metadata that is used to describe these datasets isn't standardized &mdash; meaning that it's harder to find useful data for particular research.
+          Though these data could be reused in other analyses, these datasets can often be difficult to discover. Data is scattered across general purpose data repositories, specific biomedical data sites, data aggregators, and primary literature.
+          Moreover, the metadata that is used to describe these datasets isn't standardized &mdash; meaning that it's harder to find useful data for particular research.
         </div>
       </div>
 
-      <div class="container row">
+      <div class="jumbotron bg-light container row d-flex align-items-center">
         <div class="text-muted col-sm-12 col-md-8">
           <p>
             The {{site_name}} aggregates <a href="/about#sources"><span v-text="dataSources.length"></span> different data sources</a> together in a <a href="/search">searchable platform</a>, making it easier to find datasets.
           </p>
           <p>
-          We also standardize the dataset metadata to a common form, increasing the findability of these datasets. <a href="http://schema.org/" target="_blank" rel="noreferrer">Schema.org</a> provides a widely accepted format regonizable by major search engines and data portals. While some dataset providers already use this format to describe their datasets, others provide structured metadata in their own format.
-</p>
-          <div class="lnk">Learn more about our efforts to <a href="http://metadataplus.biothings.io/" rel="noreferrer" target="_blank">encapsulate non-standard dataset metdata in schema.org's format</a></div>
+            We also standardize the dataset metadata to a common form, increasing the findability of these datasets. <a href="http://schema.org/" target="_blank" rel="noreferrer">Schema.org</a> provides a widely accepted format regonizable by major
+            search engines and data portals.
+          </p>
+          <p>While some dataset providers already use this format to describe their datasets, others provide structured metadata in their own format. Learn more about our efforts to <a href="http://metadataplus.biothings.io/" rel="noreferrer" target="_blank">encapsulate non-standard dataset metdata in schema.org's format</a>.</p>
 
 
         </div>
-        <div class="text-muted col-sm-12 col-md-4">
+        <h3 class="text-muted col-sm-12 col-md-4 d-flex justify-content-end">
           Our solution
-        </div>
+        </h3>
       </div>
 
-      <div class="container row">
-        <div class="text-muted col-sm-12 col-md-4">
+      <div class="jumbotron container row d-flex align-items-center">
+        <h3 class="text-muted col-sm-12 col-md-4">
           The future
-        </div>
+        </h3>
         <div class="text-muted col-sm-12 col-md-8">
           <p>
-            Aggregating together open datasets which have structured metadata is only the first step. Though all the datasets harvested and aggregated on this site organize dataset metadata in the same format, they take advantage of the schema.org standard to different extents. Additionally, since the dataset metadata is provided by the data generators, they vary widely in how much information about the dataset is given and how standardized this information is.
+            Aggregating together open datasets which have structured metadata is only the first step. Though all the datasets harvested and aggregated on this site organize dataset metadata in the same format, they take advantage of the schema.org
+            standard to different extents. Additionally, since the dataset metadata is provided by the data generators, they vary widely in how much information about the dataset is given and how standardized this information is.
+            <a class="lnk" href="/schema">
+              Learn more about how the data sources use the schema.org standard.
+            </a>
           </p>
-          <a class="lnk" href="/schema">
-          Learn more about how the data sources use the schema.org standard.
-        </a>
-        <p>
-        More work will be needed to be done by the community to standardize how we apply the schema.org format and the vocabulary we use to describe things like diseases, species, and funding institutions.  
-        </p>
+          <p>
+            More work will be needed to be done by the community to standardize how we apply the schema.org format and the vocabulary we use to describe things like diseases, species, and funding institutions.
+          </p>
+          <p>
+            As a first step, the NIAID Data Dissemination Working Group has created a <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer">schema for describing biological datasets</a>, building off the schema.org standard.
+          </p>
 
         </div>
       </div>
 
-      <div class="container row">
+      <div class="container text-muted">
         <h2 id="sources">Data sources</h2>
-        <ul>
-          <li v-for="source in dataSources" v-text="source.name">
-          </li>
-        </ul>
+        <p>
+          We assemble  all the datasets from the following repositories:
+        </p>
+        <div class="sources">
+          <ul>
+            <li v-for="source in dataSources">
+              <a :href="source.url" v-text="source.name" target="_blank" rel="noreferrer"></a>
+            </li>
+          </ul>
+        </div>
 
       </div>
 
@@ -75,30 +87,45 @@
 <script>
   var app = new Vue({
     el: '#about',
-  	data: function(){
-  		return {
-        dataSources: [
-        {name: "Harvard Dataverse", link:"", description: ""},
-        {name: "NCBI GEO", link:"", description: ""},
-        {name: "Zenodo", link:"", description: ""},
-        {name: "Omicsdi", link:"", description: ""},
+    data: function() {
+      return {
+        dataSources: [{
+            name: "Harvard Dataverse",
+            url: "https://dataverse.harvard.edu/",
+            description: ""
+          },
+          {
+            name: "NCBI GEO",
+            url: "https://www.ncbi.nlm.nih.gov/geo/",
+            description: ""
+          },
+          {
+            name: "Zenodo",
+            url: "https://zenodo.org/",
+            description: ""
+          },
+          {
+            name: "Omicsdi",
+            url: "https://www.omicsdi.org/",
+            description: ""
+          },
         ]
 
-  		}
-  	},
-    methods:{
+      }
+    },
+    methods: {
 
     },
-    mounted:function(){
+    mounted: function() {
       var self = this;
-      tippy( '.fair', {
-          interactive:'true',
-          content: `<div class="alert alert-light m-0">
+      tippy('.fair', {
+        interactive: 'true',
+        content: `<div class="alert alert-light m-0">
           (Findable,Accessible,Interopeable,Reusable) <br />Click to learn more
           </div>`,
-          animation: 'fade',
-          theme:'light',
-        });
+        animation: 'fade',
+        theme: 'light',
+      });
     }
   })
 </script>
