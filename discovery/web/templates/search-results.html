@@ -175,10 +175,10 @@
             <div class="col-md-12">
               <div class="row d-flex justify-content-end" id="keywords" v-if="item.keywords">
                 <template v-if="Array.isArray(item.keywords)">
-                  <small class="keyword" v-text="keyword" v-for="keyword in item.keywords" @click.prevent="search(keyword, true, true)">
+                  <small class="keyword" v-text="keyword" v-for="keyword in item.keywords" @click.prevent="search(keyword, 'queryChanged', true)">
                   </small>
                 </template>
-                <small class="keyword" v-text="item.keywords" @click.prevent="search(item.keywords, true, true)" v-else>
+                <small class="keyword" v-text="item.keywords" @click.prevent="search(item.keywords, 'queryChanged', true)" v-else>
                 </small>
               </div>
             </div>
