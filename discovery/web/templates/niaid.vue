@@ -16,11 +16,11 @@
   <div class="jumbotron bg-light text-muted w-100">
     <h1 class="row">Datasets containing NIAID priority diseases</h1>
     <app-bar-graph v-bind:counts="hardcoded"></app-bar-graph>
-    <!-- <div class="d-flex flex-wrap">
+    <div class="d-flex flex-wrap">
       <div v-for="term in source_counts">
         <app-donut v-bind:source_counts="term" class="row"></app-donut>
       </div>
-    </div> -->
+    </div>
 
     <app-treemap v-bind="{results}" v-if="results"></app-treemap>
 
@@ -31,7 +31,7 @@
         <template>
           <div class="row">
             <div v-text="disease.total.toLocaleString() + ' results'"></div>
-            <a href="" v-text="'view ' + disease.disease + ' datasets'" class="ml-3"></a>
+            <a :href="'/search?q=' + disease.query" v-text="'view ' + disease.disease + ' datasets'" class="ml-3"></a>
           </div>
         </template>
 
@@ -275,6 +275,7 @@
             rxjs.operators.tap(result => result['total'] = result['_index']['total']),
             rxjs.operators.tap(result => result['disease'] = diseaseObject.disease),
             rxjs.operators.tap(result => result['searchTerms'] = diseaseObject.terms),
+            rxjs.operators.tap(result => result['query'] = `"${diseaseObject.terms.join('" "')}"`),
             rxjs.operators.tap(result => result['diseaseID'] = diseaseObject.id),
             rxjs.operators.tap(result => result['source_counts'] = cleanSources(result['_index']['terms']))
           )
@@ -299,11 +300,11 @@
     },
     subscriptions() {
       return {
-        // results: rxjs.forkJoin(...this.diseaseKeywords.map(this.fetchData)).pipe(
-        //   rxjs.operators.tap(results => results.sort((a, b) => b.total - a.total)),
-        //   rxjs.operators.tap(x => console.log(x)),
-        //   rxjs.operators.tap(x => this.loading = false)
-        // )
+        results: rxjs.forkJoin(...this.diseaseKeywords.map(this.fetchData)).pipe(
+          rxjs.operators.tap(results => results.sort((a, b) => b.total - a.total)),
+          rxjs.operators.tap(x => console.log(x)),
+          rxjs.operators.tap(x => this.loading = false)
+        )
       }
     }
   });
