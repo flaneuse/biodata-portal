@@ -1,122 +1,28 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
-<style>
-  #results-count h1 {
-    margin-bottom: 0;
-  }
 
-  .pagination {
-    display: inline-flex;
-  }
-
-  .pagination ul {
-    list-style-type: none;
-    margin-bottom: 0;
-  }
-
-  .pagination li {
-    display: inline-block;
-    margin-right: 5px;
-    cursor: pointer;
-  }
-
-  #pagination-page-size li {
-    margin-right: 25px;
-  }
-
-  .result-summary:first-of-type {
-    padding-top: 0 !important;
-  }
-
-  .result-summary {
-    border-bottom: 1px solid #BBB;
-  }
-
-  .selected {
-    font-weight: bold;
-  }
-
-  .unselected {
-    font-weight: 300;
-  }
-
-  .disabled {
-    opacity: 0.5;
-  }
-
-  .keyword,
-  .measurement {
-    padding: 3px 5px;
-    border-radius: 0.3em;
-    margin-left: 0.5em;
-    margin-bottom: 0.5em;
-    font-size: 0.75em;
-    cursor: pointer;
-  }
-
-  .keyword {
-    background: #63296b31;
-  }
-
-  .measurement {
-    background: #4a7d8f31;
-  }
-
-  .dataset-properties {
-    font-size: 0.85em;
-  }
-
-  .citation {
-    color: #4a7d8f;
-    line-height: 1.2em;
-  }
-
-  #credit {
-    border-bottom: 1px dashed #bbb;
-    padding-bottom: 2px;
-    margin-bottom: 5px;
-    flex-direction: column;
-  }
-
-  .facet-group {
-    margin-bottom: 15px;
-    border-top: 1px solid;
-    border-bottom: 1px solid;
-  }
-
-  .facet-title {
-    font-size: 0.9em;
-    font-weight: 400;
-    background: #ddd;
-    border-bottom: 1px solid;
-  }
-
-  .facet-title,
-  .facet-group label {
-    padding: 0 0.5em;
-  }
-
-  .facet-counts {
-    line-height: .8em;
-    margin-bottom: 0.4em;
-  }
-
-  .facet-counts small {
-    font-weight: 300;
-  }
-</style>
 <div id="search-results" class="container d-flex" style="min-height:100vh">
   <div v-if=loading class="loader">
     <img src="/static/img/ripple.svg" />
   </div>
 
-  <div class="jumbotron bg-light text-muted w-100">
+  <div class="jumbotron bg-light text-muted w-100"  v-if="!numResults">
+    <div class="jumbotron">
+
+    <h1 class="mb-5">Search {{site_name}}</h1>
+    <form class="row" @submit.prevent="search(query, 'queryChanged')">
+      <input id="search-query" type="text" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
+    </form>
+    </div>
+  </div>
+
+  <div class="jumbotron bg-light text-muted w-100"  v-if="numResults || numResults === 0">
     <form class="row" @submit.prevent="search(query, 'queryChanged')">
       <input id="search-query" type="text" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
     </form>
 
-    <div id="results-count" class="d-flex align-items-center mb-2 justify-content-between" v-if="numResults || numResults === 0">
+    <div id="results-count" class="d-flex align-items-center mb-2 justify-content-between">
       <h3 id="num-results">
         <template v-if="numResults">
           <span v-text="selectedMin"></span><span>-</span><span v-text="selectedMax"></span><span> of </span>
@@ -545,5 +451,110 @@
     }
   });
 </script>
+<style>
+  #results-count h1 {
+    margin-bottom: 0;
+  }
+
+  .pagination {
+    display: inline-flex;
+  }
+
+  .pagination ul {
+    list-style-type: none;
+    margin-bottom: 0;
+  }
+
+  .pagination li {
+    display: inline-block;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+
+  #pagination-page-size li {
+    margin-right: 25px;
+  }
+
+  .result-summary:first-of-type {
+    padding-top: 0 !important;
+  }
+
+  .result-summary {
+    border-bottom: 1px solid #BBB;
+  }
+
+  .selected {
+    font-weight: bold;
+  }
+
+  .unselected {
+    font-weight: 300;
+  }
+
+  .disabled {
+    opacity: 0.5;
+  }
+
+  .keyword,
+  .measurement {
+    padding: 3px 5px;
+    border-radius: 0.3em;
+    margin-left: 0.5em;
+    margin-bottom: 0.5em;
+    font-size: 0.75em;
+    cursor: pointer;
+  }
+
+  .keyword {
+    background: #63296b31;
+  }
+
+  .measurement {
+    background: #4a7d8f31;
+  }
+
+  .dataset-properties {
+    font-size: 0.85em;
+  }
+
+  .citation {
+    color: #4a7d8f;
+    line-height: 1.2em;
+  }
+
+  #credit {
+    border-bottom: 1px dashed #bbb;
+    padding-bottom: 2px;
+    margin-bottom: 5px;
+    flex-direction: column;
+  }
+
+  .facet-group {
+    margin-bottom: 15px;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+  }
+
+  .facet-title {
+    font-size: 0.9em;
+    font-weight: 400;
+    background: #ddd;
+    border-bottom: 1px solid;
+  }
+
+  .facet-title,
+  .facet-group label {
+    padding: 0 0.5em;
+  }
+
+  .facet-counts {
+    line-height: .8em;
+    margin-bottom: 0.4em;
+  }
+
+  .facet-counts small {
+    font-weight: 300;
+  }
+</style>
 {% include "footer.html" %}
 {% endblock %}
