@@ -1,55 +1,6 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
-<style scoped>
-svg {
-  /* background: tomato; */
-}
-
-.chiclet.no-data {
-  opacity: 0.85;
-}
-
-rect {
-  stroke: white;
-  stroke-width: 0.5;
-}
-
-.slash-line {
-  stroke: white;
-  stroke: #212529;
-  stroke-width: 0.75;
-}
-
-.axis--x text {
-  text-anchor: start;
-}
-
-#color-legend rect {
-  stroke-width: 0.5;
-}
-
-.legend-title {
-  fill: #6c757d!important;
-    font-size: 0.8em;
-    font-weight: 300;
-    dominant-baseline: hanging;
-}
-
-.legend-label {
-  font-weight: 300;
-  font-size: 0.8em;
-  dominant-baseline: hanging;
-}
-
-.legend-label--min {
-  text-anchor: start
-}
-.legend-label--max {
-  text-anchor: end
-}
-
-</style>
 <div id="schema" class="container d-flex" style="min-height:100vh">
   <div v-if=loading class="loader">
     <img src="/static/img/ripple.svg" />
@@ -57,10 +8,12 @@ rect {
 
   <div class="jumbotron bg-light text-muted w-100">
     <h1 class="row" v-if="results" v-text="'There are ' + schemaTotal + ' schema.org Dataset properties'"></h1>
-    <h1 class="row" v-if="results" v-text="'... but only ' + results.filter(d => d.total).length + ' are used in our dataset repositories.'"></h1>
+    <h1 class="row mb-3" v-if="results" v-text="'... but only ' + results.filter(d => d.total).length + ' are used in our dataset repositories.'"></h1>
 
-    <div class="d-flex align-items-center">
-      <svg id="heatmap" class='heatmap' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom'>
+    <div class="d-flex justify-content-between">
+      <div>
+
+      <svg id="heatmap" class='heatmap' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom' class="mr-5">
         <defs>
           <linearGradient id="gradient-legend" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop v-for="n in 10" :key="n" :offset="(n/10)*100 + '%'" :style="`stop-color:${colorScheme(n/10)}; stop-opacity:1`" />
@@ -82,8 +35,10 @@ rect {
         <!-- blank chiclets to represent no data -->
         <g :transform='`translate(${this.margin.left}, ${this.margin.top})`' id="nodata-heatmap">
           <g v-for="property in results" class="property-row">
-              <rect v-for="repo in repos" :id="property.property + '-' + repo + '-nodata'" class="chiclet no-data" :x="x(repo)" :y="y(property.property)" :width="x.bandwidth()" :height="y.bandwidth()" :fill="colorScheme(0)"></rect>
-              <line v-for="repo in repos" :x1="x(repo)" :x2="x(repo) + x.bandwidth()" :y1="y(property.property) + y.bandwidth()" :y2="y(property.property)" class="slash-line" />
+            <g v-for="repo in repos">
+              <rect :id="property.property + '-' + repo + '-nodata'" class="chiclet no-data" :x="x(repo)" :y="y(property.property)" :width="x.bandwidth()" :height="y.bandwidth()" :fill="colorScheme(0)"></rect>
+              <line :x1="x(repo) + 3" :x2="x(repo) - 3 + x.bandwidth()" :y1="y(property.property) + y.bandwidth()" :y2="y(property.property)" class="slash-line" />
+              </g>
           </g>
         </g>
 
@@ -100,6 +55,28 @@ rect {
         <g ref='xAxisBottom' class="axis axis--x axis--x-bottom" :transform='`translate(${margin.left}, ${this.margin.bottom + height - 5})`' />
         <g ref='yAxisRight' class="axis axis--y axis--y-right" :transform='`translate(${margin.left + width}, ${this.margin.top})`' />
       </svg>
+    </div>
+
+      <div id="schema-explanation" class="ml-2">
+        <p>
+          As part of the {{ site_name }} project, we coerce metadata about each of the datasets pulled from the repositories into a common format, based off of <a href="http://schema.org/Dataset" rel="noreferrer" target="_blank">schema.org's Dataset schema</a>.
+        </p>
+        <p>
+          This schema is intended to be descriptive and flexible, encompassing 119 different properties. But not all of these properties are used equally within the repositories &mdash; or even at all.
+        </p>
+        <p>
+        <span v-if="results" v-text="'Only ' + results.filter(d => d.total).length + ' properties are used at least once in any of the repositories. '"></span>
+        Of those, only the <b>description</b> and <b>name</b> are nearly universally used. In other cases, a property is required in some data sources but absent in the others, like <b>variableMeasured</b> in omicsdi. For some variables, there seems to be a consensus on which synonym tends to be used: <b>citation</b> is commonly used, despite the fact that there is a similar property, <b>publication</b>, available in the schema.
+        </p>
+        <p>
+          To promote greater uniformity in how biological datasets are described in their metadata, the NIAID Data Dissemination Working Group has developed a <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer">NIAID-specific dataset schema</a>. This schema focuses on a minimal set of metadata in the schema.org Dataset standard that we consider essential to describe and find biolgical datasets. Additionally, the schema extends the schema.org schema to add a few new properties specific to biological datasets.
+        </p>
+
+        <p class="mt-4">
+          <a href="/about#sources">Learn more about our data sources</a>
+        </p>
+      </div>
+
     </div>
 
 </div>
@@ -327,5 +304,51 @@ rect {
     }
   });
 </script>
+
+<style scoped>
+.chiclet.no-data {
+  opacity: 0.85;
+}
+
+rect {
+  stroke: white;
+  stroke-width: 0.5;
+  rx: 3px;
+}
+
+.slash-line {
+  stroke: white;
+  stroke: #212529;
+  stroke-width: 0.75;
+}
+
+.axis--x text {
+  text-anchor: start;
+}
+
+#color-legend rect {
+  stroke-width: 0.5;
+}
+
+.legend-title {
+  fill: #6c757d!important;
+    font-size: 0.8em;
+    font-weight: 300;
+    dominant-baseline: hanging;
+}
+
+.legend-label {
+  font-weight: 300;
+  font-size: 0.8em;
+  dominant-baseline: hanging;
+}
+
+.legend-label--min {
+  text-anchor: start
+}
+.legend-label--max {
+  text-anchor: end
+}
+</style>
 {% include "footer.html" %}
 {% endblock %}
