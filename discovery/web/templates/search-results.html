@@ -302,9 +302,6 @@
     },
     watch: {
       $route(to, from) {
-        console.log(`%c route changed`, 'color:green')
-        console.log(to)
-        console.log(from)
         this.executeSearch();
       }
     },
@@ -381,7 +378,6 @@
 
         // pull out the applied filter string and convert to an object.
         self.selectedFilters = filterString2Obj(self.$route.query.filters);
-        console.log(self)
 
         // if (Object.values(self.selectedFilters).flatMap(d => d).length > 0) {
         // let selectedFilters = getQueryFilters(self.selectedFilters);
