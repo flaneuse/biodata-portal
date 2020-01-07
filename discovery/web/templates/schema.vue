@@ -313,6 +313,9 @@
 rect {
   stroke: white;
   stroke-width: 0.5;
+}
+
+.chiclet {
   rx: 3px;
 }
 
