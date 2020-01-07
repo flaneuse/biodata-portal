@@ -3,9 +3,9 @@
 
 /* Substitute values of main and sec to change look of site main colors */
 
-$main: #63296b;
-$lightermain: #7a3e8c;
-$sec:#4a7d8f;
+$main: #1C5D5D;
+$lightermain: #A5E7CF;
+$sec: #A5E7CF;
 $darkmode: false;
 $background-white: #F8F9FA;
 
@@ -122,7 +122,7 @@ p.text-muted, small.text-muted, h1.text-muted,h2.text-muted,h3.text-muted,h4.tex
   // filter: progid:DXImageTransform.Microsoft.gradient( startColorstr= $sec, endColorstr=$main,GradientType=1 ); /* IE6-9 */
   // -webkit-background-clip: text;
   // -webkit-text-fill-color: transparent;
-  color: #A5E7CF;
+  color: $sec;
 }
 
 // .grad{
@@ -2079,6 +2079,7 @@ progress[value]::-webkit-progress-value {
 	        animation: heartbeat 1.5s ease-in-out infinite both;
 }
 
+// COLORS
 // Keywords
 #keyword-counts {
   flex-wrap: wrap;
@@ -2089,7 +2090,7 @@ progress[value]::-webkit-progress-value {
   font-weight: 900;
   padding: 0px 7px;
   margin: 0px 4px;
-  color: #4a7d8f;
+  color: $main;
 }
 
 

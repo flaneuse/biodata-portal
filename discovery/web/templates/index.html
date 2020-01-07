@@ -150,7 +150,7 @@
           }
         }
 
-        axios.get('http://su07:8080/api/query?', params).then(function(response) {
+        axios.get("{{api_url}}" + "query?", params).then(function(response) {
           console.log(response.data);
           self.keywordsCounts = response.data.facets['keywords.keyword'].terms;
           self.datasetTotal = response.data.facets['_index'].total;

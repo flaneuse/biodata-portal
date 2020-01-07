@@ -224,7 +224,7 @@
         }
 
         return (
-          rxjs.from(axios.get('http://su07:8080/api/query?', params)).pipe(
+          rxjs.from(axios.get("{{api_url}}" + 'query?', params)).pipe(
             rxjs.operators.pluck("data", "facets", "_index"),
             // rxjs.operators.tap(x => console.log(x)),
             rxjs.operators.map(result => {

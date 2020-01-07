@@ -9,6 +9,7 @@
 # name also used on metadata
 SITE_NAME = "NIAID Data portal"
 SITE_DESC = 'An aggregator of open datasets, with a particular focus on allergy and infectious diseases'
+API_URL = "http://su07:8080/api/"
 
 CONTACT_REPO = "https://github.com/SuLab/niaid-data-portal"
 CONTACT_EMAIL = "cd2h-metadata@googlegroups.com"
@@ -20,14 +21,14 @@ CONTACT_EMAIL = "cd2h-metadata@googlegroups.com"
 METADATA_CONTENT_URL = "http://discovery.biothings.io/"
 METADATA_DESC = 'An aggregator of open datasets, with a particular focus on allergy and infectious diseases'
 METADATA_FEATURED_IMAGE = "https://i.postimg.cc/zvRMbPSs/featured.jpg"
-METADATA_MAIN_COLOR = "#63296b"
+METADATA_MAIN_COLOR = "#1C5D5D"
 
 # *****************************************************************************
 # DATA DISCOVERY ENGINE - COLORS (REQ)
 # *****************************************************************************
 
-MAIN_COLOR = "#63296b"
-SEC_COLOR = "#4a7d8f"
+MAIN_COLOR = "#1C5D5D"
+SEC_COLOR = "#A5E7CF"
 
 # *****************************************************************************
 # DATA DISCOVERY ENGINE - IMAGES (REQ)
