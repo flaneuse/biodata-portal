@@ -46,7 +46,6 @@ module.exports = {
   },
   methods: {
     prepData(data) {
-      console.log(data)
       this.dataLength = data ? data.length : 0;
       if (this.dataLength) {
         // angle calculation for pie chart
@@ -73,10 +72,6 @@ module.exports = {
           slice['centroid'] = arc.centroid(slice);
           slice['fill'] = colorScale(slice.data.key);
         })
-
-        console.log('arcs')
-        console.log(this.arcs)
-        console.log(this.arcs.map(arc))
       }
     }
   },
