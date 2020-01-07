@@ -17,44 +17,47 @@
     <h1 class="row">Datasets containing NIAID priority diseases</h1>
     <app-bar-graph v-bind:counts="hardcoded"></app-bar-graph>
     <div class="d-flex flex-wrap">
-      <div v-for="term in source_counts">
+      <!-- <div v-for="term in source_counts">
         <app-donut v-bind:source_counts="term" class="row"></app-donut>
-      </div>
+      </div> -->
     </div>
 
     <app-treemap v-bind="{results}" v-if="results"></app-treemap>
 
     <div v-for="disease in results" :id="disease.diseaseID" v-if="results" class="row mb-5">
+
       <div class="col-sm-12">
         <h4 class="row" v-text="disease.disease"></h4>
 
-        <template>
           <div class="row">
             <div v-text="disease.total.toLocaleString() + ' results'"></div>
             <a :href="'/search?q=' + disease.query" v-text="'view ' + disease.disease + ' datasets'" class="ml-3"></a>
           </div>
-        </template>
 
         <div class="row">
-          <small class="search-term mr-2 mb-1" v-for="term in disease.searchTerms.sort()">
+          <small class="search-term mr-2 mb-1" v-for="term in disease.searchTerms">
             <span v-text="term"></span>
-            <!-- <span>"</span><span v-text="term"></span><span>"</span> -->
           </small>
         </div>
-<!-- <app-donut v-bind:source_counts="disease['source_counts']" class="row"></app-donut> -->
 
-<!-- <app-donut source_counts="disease['source_counts']" class="row" v-if="disease.source_counts"></app-donut> -->
+<div class="d-flex">
+  <app-bar-graph v-bind:counts="disease.funders_counts"></app-bar-graph>
+  <app-donut v-bind:source_counts="disease.source_counts"></app-donut>
 
-<div class="row">
-  <div class="col-sm-12 col-md-12 p-3">
-    <h6 v-text="facetSize + ' most common keywords in datasets'"></h6>
-    <div class="d-flex" id="keyword-counts">
-      <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}">
+  <div class="row">
+    <div class="col-sm-12 col-md-12 p-3">
+      <h6 v-text="facetSize + ' most common keywords in datasets'"></h6>
+      <div class="d-flex" id="keyword-counts">
+        <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}">
+        </div>
       </div>
     </div>
+  </div>
 </div>
 
-        </div>
+
+
+
 
         <!-- <app-donut v-bind="{source_counts}" class="row"></app-donut> -->
       </div>
@@ -269,7 +272,7 @@
         }
 
         return (
-          rxjs.from(axios.get('http://su07:8080/api/query?', params)).pipe(
+          rxjs.from(axios.get("{{api_url}}" + 'query?', params)).pipe(
             rxjs.operators.pluck("data"),
             rxjs.operators.pluck("facets"),
             rxjs.operators.tap(result => result['total'] = result['_index']['total']),
@@ -277,6 +280,7 @@
             rxjs.operators.tap(result => result['searchTerms'] = diseaseObject.terms),
             rxjs.operators.tap(result => result['query'] = `"${diseaseObject.terms.join('" "')}"`),
             rxjs.operators.tap(result => result['diseaseID'] = diseaseObject.id),
+            rxjs.operators.tap(result => result['funders_counts'] = combineFunders(result, 9, true)),
             rxjs.operators.tap(result => result['source_counts'] = cleanSources(result['_index']['terms']))
           )
         );

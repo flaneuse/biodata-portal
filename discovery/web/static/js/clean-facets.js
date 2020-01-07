@@ -38,12 +38,20 @@ cleanSources = function(sources) {
   return (nested);
 }
 
-combineFunders = function(facets, facetSize) {
+combineFunders = function(facets, facetSize, includeUnknown = false) {
   let combined = facets['funder.name.keyword']['terms'].concat(facets['funding.funder.name.keyword']['terms']);
   let nested = d3.nest().key(d => d.term).rollup(values => d3.sum(values, d => d.count)).entries(combined).sort((a, b) => b.value - a.value);
 
   if (facetSize) {
     nested = nested.slice(0, facetSize);
+  }
+
+  if (includeUnknown) {
+    nested.push({
+      key: "unknown",
+      value: facets['total'] - facets['funder.name.keyword']['total'] - facets['funding.funder.name.keyword']['total']
+    })
+    nested.sort((a, b) => b.value - a.value);
   }
 
   return (nested);

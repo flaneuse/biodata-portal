@@ -1,25 +1,28 @@
-<template v-if="dataLength">
-<div class="d-flex align-items-center">
+<template>
+<div class="d-flex align-items-center" v-if="colorScale">
   <svg class='svg-bargraph' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom'>
     <g :transform='`translate(${this.margin.left}, ${this.margin.top})`' id="bar-chart">
-      <rect v-for="count in counts" :id="count.term" class="bar" :x="x(0)" :y="y(count.term)" :fill="colorScale(count.count)" :width="x(count.count) - x(0)" :height="y.bandwidth()"></rect>
+      <rect v-for="count in counts" :id="count.key" class="bar" :x="x(0)" :y="y(count.key)" fill="black" :width="x(count.value) - x(0)" :height="y.bandwidth()"></rect>
+      <text v-for="count in counts" class="y-axis--label" :x="x(0) - 4" :y="y(count.key)+y.bandwidth()/2" v-text="count.key" v-bind:style="{ fontSize: y.bandwidth()*0.95 + 'px' }"></text>
+      <!-- <rect v-for="count in counts" :id="count.key" class="bar" :x="x(0)" :y="y(count.key)" :fill="colorScale(count.value)" :width="x(count.value) - x(0)" :height="y.bandwidth()"></rect> -->
     </g>
 
     <!-- container for axes -->
-    <g ref='xAxis2' class="axis axis--x" :transform='`translate(${margin.left}, ${this.margin.top + 5})`' />
-    <g ref='yAxis2' class="axis axis--y" :transform='`translate(${margin.left}, ${this.margin.top})`' />
+    <g ref='xAxis' class="axis axis--x" :transform='`translate(${margin.left}, ${this.margin.top + 5})`' />
+    <g ref='yAxis' class="axis axis--y" :transform='`translate(${margin.left}, ${this.margin.top})`' />
+
   </svg>
 </div>
 </template>
 
  <script>
-  const width = 150;
+  const width = 100;
   const height = 125;
   const margin = {
   top: 5,
   right: 5,
   bottom: 5,
-  left: 50
+  left: 250
 };
 
 module.exports = {
@@ -46,62 +49,53 @@ module.exports = {
     deep: true
   },
   methods: {
-    prepData(data) {
-      console.log("data in BarGraph")
-      console.log(data)
+    prepData() {
+      let data = this.counts;
+
       this.dataLength = data ? data.length : 0;
       if (this.dataLength) {
-        console.log('hi data!')
         this.x = d3.scaleLinear()
         .range([0, this.width])
-        .domain(d3.extent(data.map(d => d.count)));
+        .domain(d3.extent(data.map(d => d.value)));
 
         this.y = d3.scaleBand()
-        .domain(data.map(d => d.term))
+        .domain(data.map(d => d.key))
         .rangeRound([0, this.height])
         .paddingInner(0.05)
         .paddingOuter(0.05);
 
         this.colorScale = d3.scaleSequential(d3.interpolateRdPu)
-        .domain(d3.extent(data.map(d => d.count)));
-
-        this.renderAxes()
-
-        console.log(this.colorScale)
+        .domain(d3.extent(data.map(d => d.value)));
     }
   },
-  renderAxes() {
-    console.log('rendering axes')
-
+  renderAxes: function() {
     const xAxis = d3.axisBottom()
-    .scale(this.x)
+    .scale(this.x).ticks(10);
 
     const yAxis = d3.axisLeft()
     .scale(this.y)
-      .tickSizeOuter(0);
 
-console.log(yAxis)
-      const xTopRef = d3.select(this.$refs.xAxis2);
+    const xAx = d3.select(this.$refs.xAxis)
+    console.log(xAx)
+    xAx.remove();
 
-      xTopRef
-      .call(xAxis)
-      .select('.domain').remove();
-
-      d3.select(".axis--y").call(yAxis)
-
+    d3.select(this.$refs.yAxis).call(yAxis);
   }
   },
   mounted() {
-    console.log("hi bar graph!")
-    console.log(this)
-    console.log(this.counts)
-    this.prepData(this.counts);
+    this.prepData();
     this.renderAxes();
   }
 }
 </script>
 
 <style scoped>
+text.y-axis--label {
+  fill: #AAA;
+  dominant-baseline: middle;
+  text-anchor: end;
+}
+
 svg {
   /* background: tomato; */
 }
