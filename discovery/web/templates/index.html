@@ -43,6 +43,9 @@
     <div id="search-suggestions" class="d-flex">
       <span>try</span>
       <ul>
+        <li>
+          <a href="niaid">NIAID priorities</a>
+        </li>
         <li v-for="suggestion in suggestedQueries">
           <a :href="'/search?q=' + suggestion.searchTerms" v-text="suggestion.label"></a>
         </li>
