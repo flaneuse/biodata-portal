@@ -49,6 +49,7 @@
       <div class="row">
         <!-- facet filters -->
         <div id="filters" class="col-md-3 pr-4">
+          <small class="d-flex justify-content-end"><a @click="clearFilters()" href="">clear filters</a></small>
           <form class="facet-group whitefadedarker" v-for="variable in facetSummary" v-if="facetSummary && facetSummary.length > 0" @change.prevent="search(query, 'filtersChanged')">
             <div class="facet-title mb-1" v-text="variable.variable"></div>
 
@@ -309,6 +310,16 @@
       this.executeSearch();
     },
     methods: {
+      clearFilters() {
+        this.selectedFilters = {
+                "funder": [],
+                "variableMeasured": [],
+                "measurementTechnique": [],
+                "keywords": []
+              };
+
+        this.search(this.query, 'filtersChanged');
+      },
       changePageSize(selectedSize) {
         let self = this;
         self.selectedPerPage = selectedSize;
