@@ -5,6 +5,17 @@
   .value-annotation {
     margin-right: 5px;
   }
+
+  #search-suggestions ul {
+    list-style: none;
+  }
+
+#search-suggestions li {
+    display: inline-flex;
+    padding-right: 15px;
+}
+
+
 </style>
 <main id="index" style="min-height:70vh;">
   <div class="">
@@ -24,10 +35,24 @@
         <a class="text-muted" href="/about"><small>Learn More <i class="fas fa-chevron-right"></i></small></a>
       </div>
 
-      <form class="row d-flex justify-content-center" @submit.prevent="search(query)">
-        <input id="search-query" type="text" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
-      </form>
+<div id="search-bar" class="d-flex justify-content-center mb-4 text-muted">
+  <div class="d-flex flex-column">
+    <form class="mb-1" @submit.prevent="search(query)">
+      <input id="search-query" type="text" v-model='query' name="query" class="form-control" placeholder="search datasets">
+    </form>
+    <div id="search-suggestions" class="d-flex">
+      <span>try</span>
+      <ul>
+        <li v-for="suggestion in suggestedQueries">
+          <a :href="'/search?q=' + suggestion.searchTerms" v-text="suggestion.label"></a>
+        </li>
+      </ul>
     </div>
+  </div>
+
+
+</div>
+</div>
 
 
     <div class="bg-light text-muted text-center">
@@ -103,7 +128,12 @@
         sourceTotal: 0,
         query: null,
         source_counts: [],
-        keywordsCounts: []
+        keywordsCounts: [],
+        suggestedQueries: [
+        {label: "E. coli", searchTerms: '"E. coli" "Escherichia coli" "Shiga Toxin-Producing E. coli" "STEC"'},
+        {label: "Tuberculosis", searchTerms: 'Tuberculosis TB'},
+        {label: "Ebola", searchTerms: "Ebola EBOV EVD"}
+        ]
       }
     },
     watch: {
