@@ -64,7 +64,7 @@
           <div class="col-sm-12 col-md-4 p-3">
             <h3 class="row text-muted lighter caps" id="dataset-counts"><b v-text="datasetTotal.toLocaleString()" class="value-annotation"></b><span v-if="datasetTotal !== 0">datasets</span></h3>
             <h5 class="row text-muted lighter" id="source-counts" v-if="sourceTotal"><b v-text="sourceTotal.toLocaleString()" class="value-annotation"></b><span>dataset repositories indexed</span></h5>
-            <app-donut v-bind="{source_counts}" class="row"></app-donut>
+            <app-donut v-bind:source_counts="source_counts" v-bind:width="150" class="row"></app-donut>
           </div>
           <div class="col-sm-12 col-md-8 p-3">
             <h4>Common keywords in datasets</h4>

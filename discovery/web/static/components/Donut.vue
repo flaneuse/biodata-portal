@@ -13,8 +13,6 @@
 </div>
 </template>
  <script >
-  const width = 150;
-const height = width;
 const hole_frac = 0.5;
 const margin = {
   top: 5,
@@ -25,11 +23,10 @@ const margin = {
 
 module.exports = {
   name: 'app-donut',
-  props: ['source_counts'],
+  props: ['source_counts', 'width'],
   data() {
     return {
-      width,
-      height,
+      height:0,
       margin,
       hole_frac,
       dataLength: 0,
@@ -46,6 +43,8 @@ module.exports = {
   },
   methods: {
     prepData(data) {
+      this.height = this.width;
+
       this.dataLength = data ? data.length : 0;
       if (this.dataLength) {
         // angle calculation for pie chart
