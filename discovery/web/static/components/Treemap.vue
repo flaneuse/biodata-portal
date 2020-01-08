@@ -1,10 +1,10 @@
 <template>
-<div>
+<div id="treemap-container">
   <svg class='treemap' :width='width' :height='height'>
     <g v-for="d in leaves" :transform='`translate(${d.x0}, ${d.y0})`'>
       <a :href="`/${route}#${d.anchor}`">
-        <rect :width="d.x1-d.x0" :height="d.y1 - d.y0" :fill="d.fill"></rect>
-        <text text-anchor='middle' :dy="(d.y1 - d.y0)/2" :dx="(d.x1 - d.x0)/2" v-if="d.value > 900" class="treemap-text" v-text="d.data.id">
+        <rect :data-tippy-info="`${d.data.id}: ${d.value} results`" :width="d.x1-d.x0" :height="d.y1 - d.y0" :fill="d.fill"></rect>
+        <text :data-tippy-info="`${d.data.id}: ${d.value} results`" text-anchor='middle' :dy="(d.y1 - d.y0)/2" :dx="(d.x1 - d.x0)/2" v-if="d.value > 900" class="treemap-text" v-text="d.data.id">
       </text>
       </a>
     </g>
@@ -127,6 +127,34 @@ module.exports = {
   mounted() {
     this.calculateScales();
     this.prepData();
+
+
+    tippy( '#treemap-container',{
+        target:'.treemap rect',
+        content: 'Loading...',
+        maxWidth:'200px',
+        placement:'auto',
+        animation: 'fade',
+        theme:'light',
+        onShow(instance) {
+          let info = instance.reference.dataset.tippyInfo;
+          instance.setContent("<div class='text-muted m-0'>"+info+"</div>")
+        }
+      });
+
+    tippy( '.treemap',{
+        target:'text',
+        content: 'Loading...',
+        maxWidth:'200px',
+        placement:'auto',
+        animation: 'fade',
+        theme:'light',
+        onShow(instance) {
+          let info = instance.reference.dataset.tippyInfo;
+          instance.setContent("<div class='text-muted m-0'>"+info+"</div>")
+        }
+      });
+
   }
 }
 </script>

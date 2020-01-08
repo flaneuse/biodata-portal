@@ -9,8 +9,8 @@
   }
 
   .num-results {
-    padding: 2px 10px;
-    border-radius: 5px;
+    /* padding: 2px 10px;
+    border-radius: 5px; */
   }
 
   .disease-title {
@@ -133,6 +133,7 @@
 <script src="/static/js/vue-rx.js"></script>
 <script src="/static/js/clean-facets.js"></script>
 <script src="/static/js/chroma.min.js"></script>
+<script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 
 <script type="module">
   var app = new Vue({
