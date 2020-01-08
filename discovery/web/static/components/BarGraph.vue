@@ -58,7 +58,7 @@ module.exports = {
       if (this.dataLength) {
         this.x = d3.scaleLinear()
         .range([0, this.width])
-        .domain(d3.extent(data.map(d => d.value)));
+        .domain([0, d3.max(data.map(d => d.value))]);
 
         this.y = d3.scaleBand()
         .domain(data.map(d => d.key))
