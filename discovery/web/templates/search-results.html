@@ -156,18 +156,18 @@
               <div class="row d-flex justify-content-end" id="variableMeasured" v-if="item.variableMeasured || item.measurementTechnique">
                 <!-- variableMeasured -->
                 <template v-if="Array.isArray(item.variableMeasured)">
-                  <small class="measurement mainBackDark" v-text="measurement" v-for="measurement in item.variableMeasured" @click.prevent="search(measurement, 'queryChanged', true)">
+                  <small :data-tippy-info='`Search for "${measurement}"`' class="launch-search measurement mainBackDark" v-text="measurement" v-for="measurement in item.variableMeasured" @click.prevent="search(measurement, 'queryChanged', true)">
                   </small>
                 </template>
-                <small class="measurement mainBackDark" v-else v-text="item.variableMeasured" v-if="item.variableMeasured" @click.prevent="search(item.variableMeasured, 'queryChanged', true)">
+                <small :data-tippy-info='`Search for "${item.variableMeasured}"`' class="launch-search measurement mainBackDark" v-else v-text="item.variableMeasured" v-if="item.variableMeasured" @click.prevent="search(item.variableMeasured, 'queryChanged', true)">
                 </small>
 
                 <!-- measurementTechnique -->
                 <template v-if="Array.isArray(item.measurementTechnique)">
-                  <small class="measurement mainBackDark" v-text="measurement" v-for="measurement in item.measurementTechnique" @click.prevent="search(measurement, 'queryChanged', true)">
+                  <small :data-tippy-info='`Search for "${measurement}"`' class="launch-search measurement mainBackDark" v-text="measurement" v-for="measurement in item.measurementTechnique" @click.prevent="search(measurement, 'queryChanged', true)">
                   </small>
                 </template>
-                <small class="measurement mainBackDark" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique" @click.prevent="search(item.measurementTechnique, 'queryChanged', true)">
+                <small :data-tippy-info='`Search for "${item.measurementTechnique}"`' class="launch-search measurement mainBackDark" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique" @click.prevent="search(item.measurementTechnique, 'queryChanged', true)">
                 </small>
               </div>
             </div>
@@ -176,10 +176,10 @@
             <div class="col-md-12">
               <div class="row d-flex justify-content-end" id="keywords" v-if="item.keywords">
                 <template v-if="Array.isArray(item.keywords)">
-                  <small class="keyword mainBackLight" v-text="keyword" v-for="keyword in item.keywords" @click.prevent="search(keyword, 'queryChanged', true)">
+                  <small :data-tippy-info='`Search for "${keyword}"`' class="launch-search keyword keyword-arr mainBackLight" v-text="keyword" v-for="keyword in item.keywords" @click.prevent="search(keyword, 'queryChanged', true)">
                   </small>
                 </template>
-                <small class="keyword mainBackLight" v-text="item.keywords" @click.prevent="search(item.keywords, 'queryChanged', true)" v-else>
+                <small :data-tippy-info='`Search for "${item.keywords}"`' class="launch-search keyword keyword-str mainBackLight" v-text="item.keywords" @click.prevent="search(item.keywords, 'queryChanged', true)" v-else>
                 </small>
               </div>
             </div>
@@ -230,7 +230,7 @@
 <script src="https://unpkg.com/vue-router"></script>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="/static/js/clean-facets.js"></script>
-<!-- <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script> -->
+<script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.28.11/dist/sweetalert2.all.min.js"></script> -->
 <script>
 
@@ -308,6 +308,20 @@
     },
     mounted: function() {
       this.executeSearch();
+
+
+      tippy( 'body',{
+      target:'.launch-search',
+      content: 'Loading...',
+      maxWidth:'200px',
+      placement:'bottom',
+      animation: 'fade',
+      theme:'light',
+      onShow(instance) {
+      let info = instance.reference.dataset.tippyInfo;
+      instance.setContent("<div class='text-muted m-0'>"+info+"</div>")
+      }
+      });
     },
     methods: {
       clearFilters() {
