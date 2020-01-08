@@ -7,7 +7,7 @@
     <img src="/static/img/ripple.svg" />
   </div>
 
-  <div class="jumbotron bg-light text-muted w-100"  v-if="!numResults">
+  <div class="jumbotron bg-light text-muted w-100"  v-if="!numResults && numResults !== 0">
     <div class="jumbotron">
 
     <h1 class="mb-5">Search {{site_name}}</h1>
@@ -68,7 +68,8 @@
             <div class="col-md-4 text-left">
               <!-- name -->
               <a :href="'/dataset/' + item._id">
-                <h5 v-text="item.name" class="row"></h5>
+                <h5 v-text="item.name" class="row" v-if="item.name"></h5>
+                <h5 v-text="'Unnamed dataset'" class="row" v-if="!item.name"></h5>
               </a>
 
               <!-- other short properties -->
@@ -134,13 +135,29 @@
                 <div id="datePublished" v-if="item.datePublished"><span style="padding-right:4px">published</span><span v-text="item.datePublished"></span></div>
 
                 <div id="license" v-if="item.license && item.license.text">
-                  <a target="_blank" :href="'/'+item.license.url+'/'" v-text="item.license.text">link</a>
+                  <a target="_blank" :href="'/'+item.license.url+'/'" v-html="item.license.text">link</a>
                 </div>
               </div>
             </div>
 
             <!-- description -->
             <div class="col-md-8 text-left" id="description" v-if="item.description">
+              <a :href="item.distribution.contentUrl" target="_blank" rel="noreferrer" v-if="item.distribution">
+              <img class="repo-icon float-right" src="/static/img/repositories/geo.gif" v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('NCBI GEO')"/>
+              </a>
+
+              <a :href="item.url" target="_blank" rel="noreferrer">
+                <img class="repo-icon float-right" src="/static/img/repositories/zenodo.svg"  v-if="item['_id'].includes('zenodo')" />
+              </a>
+
+              <a :href="item['@id']" target="_blank" rel="noreferrer">
+                <img class="repo-icon float-right" src="/static/img/repositories/dataverse_small.png" v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('Harvard Dataverse')"/>
+              </a>
+
+              <a :href="item['_id']" target="_blank" rel="noreferrer">
+              <img class="repo-icon float-right" src="/static/img/repositories/omicsdi.png" v-if="item['_id'].includes('omicsdi')"/>
+            </a>
+
               <template v-if="item.descriptionExpanded">
                 <span v-html="item.longDescription"></span>
                 <span><a class="show-more" v-if="item.descriptionTooLong" href="#" @click.prevent="item.descriptionExpanded=false">(show less)</a></span>
@@ -570,6 +587,10 @@
 
   .facet-counts small {
     font-weight: 300;
+  }
+
+  .repo-icon {
+    height: 30px;
   }
 </style>
 {% include "footer.html" %}
