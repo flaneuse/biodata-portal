@@ -7,66 +7,104 @@
     background: #ddd;
     padding: 1px 3px;
   }
+
+  .num-results {
+    padding: 2px 10px;
+    border-radius: 5px;
+  }
+
+  .disease-title {
+    margin-bottom: 0 !important;
+  }
+
+  h6.summary-title {
+    background: #ddd;
+    padding: 0.25em;
+    font-weight: 100;
+    text-transform: uppercase;
+}
+
+.summary-container {
+  margin-right: 1em;
+}
+
 </style>
 <div id="niaid-diseases" class="container d-flex" style="min-height:100vh">
   <div v-if=loading class="loader">
     <img src="/static/img/ripple.svg" />
   </div>
 
-  <div class="jumbotron bg-light text-muted w-100">
+  <div class="jumbotron bg-light text-muted w-100" v-if="numResults">
     <h1 class="row">Datasets containing NIAID priority diseases</h1>
-    <app-bar-graph v-bind:counts="hardcoded"></app-bar-graph>
-    <div class="d-flex flex-wrap">
-      <!-- <div v-for="term in source_counts">
-        <app-donut v-bind:source_counts="term" class="row"></app-donut>
-      </div> -->
-    </div>
+    <p class="row" v-html="`<span>Of the ${diseaseKeywords.length} priority diseases and conditions for the National Institute of Allergy and Infectious Diseases, <b>${results[0].disease}</b> has the most results within the ` + '{{site_name}}' + '.</span>'">
+    </p>
 
-    <app-treemap v-bind="{results}" v-if="results"></app-treemap>
+<!-- TREEMAP -->
+<div id="niaid-treemap" class="mb-5">
+  <h5>Number of results per disease area</h5>
+  <app-treemap v-bind:results="results" v-bind:route="'niaid'" v-if="numResults"></app-treemap>
+</div>
 
-    <div v-for="disease in results" :id="disease.diseaseID" v-if="results" class="row mb-5">
+  <!-- LOOP OVER INDIVIDUAL DISEASES -->
+    <div v-for="disease in results" :id="disease.diseaseID" class="disease-summary border-bottom mb-5">
 
-      <div class="col-sm-12">
-        <h4 class="row" v-text="disease.disease"></h4>
-
-          <div class="row">
-            <div v-text="disease.total.toLocaleString() + ' results'"></div>
-            <a :href="'/search?q=' + disease.query" v-text="'view ' + disease.disease + ' datasets'" class="ml-3"></a>
-          </div>
-
-        <div class="row">
-          <small class="search-term mr-2 mb-1" v-for="term in disease.searchTerms">
-            <span v-text="term"></span>
-          </small>
+      <!-- NUMBER OF RESULTS -->
+        <div class="row d-flex align-items-center justify-content-between mb-1">
+        <div class="d-flex align-items-center">
+          <h4 class="disease-title" v-text="disease.disease"></h4>
+          <small class="ml-2" @click="disease.showTerms = !disease.showTerms" v-text="disease.showTerms ? 'hide search terms' : 'show search terms'"></small>
         </div>
 
-<div class="d-flex">
-  <app-bar-graph v-bind:counts="disease.funders_counts"></app-bar-graph>
-  <app-donut v-bind:source_counts="disease.source_counts"></app-donut>
+        <div class="d-flex">
+          <div v-text="disease.total.toLocaleString() + ' results'" class="num-results" v-bind:style="{background: colorScale(disease.total), color: textColorScale(disease.total)}"></div>
+          <a :href="'/search?q=' + disease.query" v-text="'view ' + disease.disease + ' datasets'" class="ml-3"></a>
+        </div>
+        </div>
 
-  <div class="row">
-    <div class="col-sm-12 col-md-12 p-3">
-      <h6 v-text="facetSize + ' most common keywords in datasets'"></h6>
+    <!-- SEARCH TERMS -->
+        <div class="row" v-show="disease.showTerms">
+            <small class="search-term mr-2 mb-1" v-for="term in disease.searchTerms">
+              <span v-text="term"></span>
+            </small>
+        </div>
+
+<div class="d-flex flex-wrap">
+
+<!-- SOURCE -->
+<div class="summary-container">
+  <h6 class="summary-title">source</h6>
+    <app-donut v-bind:source_counts="disease.source_counts" v-bind:width="100"></app-donut>
+</div>
+
+<!-- FUNDER -->
+<div class="summary-container">
+  <h6 class="summary-title">funder</h6>
+  <app-bar-graph v-bind:counts="disease.funders_counts"></app-bar-graph>
+</div>
+
+<!-- VARIABLE MEASURED -->
+<div class="summary-container">
+  <h6 class="summary-title">variable measured</h6>
+  <app-bar-graph v-bind:counts="disease.variable_count"></app-bar-graph>
+</div>
+<!-- MEASUREMENT TECHNIQUE -->
+<div class="summary-container">
+  <h6 class="summary-title">measurement technique</h6>
+  <app-bar-graph v-bind:counts="disease.technique_count"></app-bar-graph>
+</div>
+
+<!-- KEYWORDS -->
+    <div class="p-3">
+      <h6 v-text="facetSize + ' most common keywords'" class="summary-title"></h6>
       <div class="d-flex" id="keyword-counts">
         <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}">
         </div>
       </div>
     </div>
-  </div>
 </div>
-
-
-
-
-
-        <!-- <app-donut v-bind="{source_counts}" class="row"></app-donut> -->
-      </div>
     </div>
 
-
   </div>
-
-
 
 </div>
 {% endblock %}
@@ -81,6 +119,7 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="/static/js/vue-rx.js"></script>
 <script src="/static/js/clean-facets.js"></script>
+<script src="/static/js/chroma.min.js"></script>
 
 <script type="module">
   var app = new Vue({
@@ -93,10 +132,10 @@
 },
     data: function() {
       return {
-        hardcoded: [{"count":13,"term":"GM/NIGMS NIH HHS"},{"count":4,"term":"AR/NIAMS NIH HHS"},{"count":4,"term":"Biotechnology and Biological Sciences Research Council"},{"count":3,"term":"EB/NIBIB NIH HHS"},{"count":3,"term":"PHS HHS"},{"count":2,"term":"AI/NIAID NIH HHS"},{"count":2,"term":"CA/NCI NIH HHS"},{"count":2,"term":"EY/NEI NIH HHS"},{"count":1,"term":"Canadian Institutes of Health Research (CIHR)"},{"count":1,"term":"DK/NIDDK NIH HHS"}],
-        source_counts: [[{"key":"omicsdi","value":7515},{"key":"ncbi geo","value":1227},{"key":"zenodo","value":55},{"key":"harvard dataverse","value":10}],[{"key":"omicsdi","value":4202},{"key":"ncbi geo","value":888},{"key":"zenodo","value":14},{"key":"harvard dataverse","value":3}],[{"key":"omicsdi","value":4084},{"key":"ncbi geo","value":869},{"key":"zenodo","value":56},{"key":"harvard dataverse","value":57}],[{"key":"omicsdi","value":4184},{"key":"ncbi geo","value":554},{"key":"zenodo","value":4},{"key":"harvard dataverse","value":2}],[{"key":"omicsdi","value":2627},{"key":"ncbi geo","value":1040},{"key":"harvard dataverse","value":817},{"key":"zenodo","value":80}],[{"key":"omicsdi","value":1933},{"key":"ncbi geo","value":1213},{"key":"zenodo","value":20},{"key":"harvard dataverse","value":7}],[{"key":"omicsdi","value":1336},{"key":"ncbi geo","value":671},{"key":"harvard dataverse","value":789},{"key":"zenodo","value":44}],[{"key":"omicsdi","value":1640},{"key":"ncbi geo","value":442},{"key":"zenodo","value":109},{"key":"harvard dataverse","value":96}],[{"key":"omicsdi","value":1237},{"key":"ncbi geo","value":600},{"key":"zenodo","value":33},{"key":"harvard dataverse","value":48}],[{"key":"omicsdi","value":1000},{"key":"ncbi geo","value":514},{"key":"zenodo","value":18},{"key":"harvard dataverse","value":29}],[{"key":"omicsdi","value":612},{"key":"ncbi geo","value":351},{"key":"harvard dataverse","value":44},{"key":"zenodo","value":7}],[{"key":"omicsdi","value":800},{"key":"ncbi geo","value":125},{"key":"zenodo","value":6},{"key":"harvard dataverse","value":7}],[{"key":"omicsdi","value":565},{"key":"ncbi geo","value":298},{"key":"zenodo","value":5},{"key":"harvard dataverse","value":4}],[{"key":"omicsdi","value":487},{"key":"ncbi geo","value":92},{"key":"zenodo","value":2}],[{"key":"omicsdi","value":344},{"key":"ncbi geo","value":99},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":377},{"key":"ncbi geo","value":56},{"key":"zenodo","value":7},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":315},{"key":"ncbi geo","value":110},{"key":"zenodo","value":5},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":346},{"key":"ncbi geo","value":55},{"key":"zenodo","value":3},{"key":"harvard dataverse","value":2}],[{"key":"omicsdi","value":246},{"key":"ncbi geo","value":98},{"key":"zenodo","value":5},{"key":"harvard dataverse","value":3}],[{"key":"omicsdi","value":191},{"key":"ncbi geo","value":105},{"key":"zenodo","value":16},{"key":"harvard dataverse","value":9}],[{"key":"omicsdi","value":225},{"key":"ncbi geo","value":31},{"key":"zenodo","value":8},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":112},{"key":"zenodo","value":85},{"key":"ncbi geo","value":57},{"key":"harvard dataverse","value":9}],[{"key":"omicsdi","value":159},{"key":"ncbi geo","value":93},{"key":"zenodo","value":2},{"key":"harvard dataverse","value":1}],[{"key":"omicsdi","value":139},{"key":"ncbi geo","value":84},{"key":"zenodo","value":17},{"key":"harvard dataverse","value":5}],[{"key":"omicsdi","value":143},{"key":"ncbi geo","value":74},{"key":"harvard dataverse","value":7}],[{"key":"omicsdi","value":163},{"key":"ncbi geo","value":29},{"key":"harvard dataverse","value":19},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":95},{"key":"ncbi geo","value":39},{"key":"zenodo","value":20},{"key":"harvard dataverse","value":14}],[{"key":"omicsdi","value":102},{"key":"ncbi geo","value":52}],[{"key":"omicsdi","value":100},{"key":"ncbi geo","value":37},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":78},{"key":"ncbi geo","value":27},{"key":"harvard dataverse","value":1},{"key":"zenodo","value":1}],[{"key":"zenodo","value":40},{"key":"omicsdi","value":21},{"key":"ncbi geo","value":8},{"key":"harvard dataverse","value":2}],[{"key":"omicsdi","value":25},{"key":"ncbi geo","value":13},{"key":"zenodo","value":1}],[{"key":"omicsdi","value":31},{"key":"harvard dataverse","value":4},{"key":"ncbi geo","value":2}],[{"key":"omicsdi","value":28},{"key":"ncbi geo","value":5}],[{"key":"omicsdi","value":16},{"key":"ncbi geo","value":8},{"key":"harvard dataverse","value":5}],[{"key":"omicsdi","value":8},{"key":"ncbi geo","value":5}]],
         loading: false,
         facetSize: 10,
+        numResults: 0,
+        colorScale: null,
         facets: ["_index", "funder.name.keyword", "funding.funder.name.keyword", "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"],
         // Semi-automatically generated by scraping https://www.niaid.nih.gov/diseases-conditions
         // then manually looked at word counts from individual pages, cross-referencing with the physical websites, with a bit of random common synonyms thrown in:
@@ -257,6 +296,8 @@
         ]
       }
     },
+    mounted: function() {
+    },
     methods: {
       fetchData(diseaseObject) {
         this.loading = true;
@@ -279,8 +320,14 @@
             rxjs.operators.tap(result => result['disease'] = diseaseObject.disease),
             rxjs.operators.tap(result => result['searchTerms'] = diseaseObject.terms),
             rxjs.operators.tap(result => result['query'] = `"${diseaseObject.terms.join('" "')}"`),
-            rxjs.operators.tap(result => result['diseaseID'] = diseaseObject.id),
+            rxjs.operators.tap(result => result['diseaseID'] = diseaseObject.disease.replace(/\s+/g, "-")),
             rxjs.operators.tap(result => result['funders_counts'] = combineFunders(result, 9, true)),
+            rxjs.operators.tap(result => result['variable_count'] = result['variableMeasured.keyword']['terms'].map(d => {
+              return({"key": d.term, "value": d.count})
+            })),
+            rxjs.operators.tap(result => result['technique_count'] = result['measurementTechnique.keyword']['terms'].map(d => {
+              return({"key": d.term, "value": d.count})
+            })),
             rxjs.operators.tap(result => result['source_counts'] = cleanSources(result['_index']['terms']))
           )
         );
@@ -296,6 +343,11 @@
             opacityScale = d3.scaleLinear().domain(limits).range([lowerLimit, 1]);
           }
           return (opacityScale(keywordPair.count))
+      },
+      textColorScale(value) {
+        let color = this.colorScale(value);
+
+        return chroma.contrast(color, 'white') >= 2.5 ? "white" : "#6c757d";
       }
     },
     observableMethods: {
@@ -306,8 +358,13 @@
       return {
         results: rxjs.forkJoin(...this.diseaseKeywords.map(this.fetchData)).pipe(
           rxjs.operators.tap(results => results.sort((a, b) => b.total - a.total)),
+          rxjs.operators.tap(results => results.forEach(d => d['showTerms'] = false)),
           rxjs.operators.tap(x => console.log(x)),
-          rxjs.operators.tap(x => this.loading = false)
+          rxjs.operators.tap(results => this.numResults = results.length),
+          rxjs.operators.tap(results => this.colorScale = d3.scaleOrdinal()
+            .domain(results.map(d => d.disease))
+            .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), results.length))),
+          rxjs.operators.tap(_ => this.loading = false)
         )
       }
     }
