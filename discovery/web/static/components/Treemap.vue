@@ -3,8 +3,8 @@
   <svg class='treemap' :width='width' :height='height'>
     <g v-for="d in leaves" :transform='`translate(${d.x0}, ${d.y0})`'>
       <a :href="`/${route}#${d.anchor}`">
-        <rect :data-tippy-info="`${d.data.id}: ${d.value} results`" :width="d.x1-d.x0" :height="d.y1 - d.y0" :fill="d.fill"></rect>
-        <text :data-tippy-info="`${d.data.id}: ${d.value} results`" text-anchor='middle' :dy="(d.y1 - d.y0)/2" :dx="(d.x1 - d.x0)/2" v-if="d.value > 900" class="treemap-text" v-text="d.data.id">
+        <rect :data-tippy-info="`${d.data.id}: ${d.value.toLocaleString()} results`" :width="d.x1-d.x0" :height="d.y1 - d.y0" :fill="d.fill"></rect>
+        <text :data-tippy-info="`${d.data.id}: ${d.value.toLocaleString()} results`" text-anchor='middle' :dy="(d.y1 - d.y0)/2" :dx="(d.x1 - d.x0)/2" v-if="d.value > 900" class="treemap-text" v-text="d.data.id">
       </text>
       </a>
     </g>
@@ -13,7 +13,6 @@
 </template>
 
 <script>
-const width = 800;
 const height = 350;
 const margin = {
   top: 5,
@@ -27,7 +26,7 @@ module.exports = {
   props: ['results', 'route'],
   data() {
     return {
-      width,
+      width:0,
       height,
       margin,
       numLeaves: 0,
@@ -45,6 +44,8 @@ module.exports = {
   methods: {
     // d3 scale functions
     calculateScales() {
+      this.width = d3.select("#treemap-container").node().getBoundingClientRect().width;
+      console.log(this.width)
       this.colorScale = d3.scaleOrdinal()
         .domain(this.results.map(d => d.disease))
         .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), this.results.length).reverse());
