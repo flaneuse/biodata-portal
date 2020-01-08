@@ -140,8 +140,6 @@ module.exports = {
           d.words = this.splitText(d.data.id);
         })
 
-        console.log(self.leaves)
-
       }
     }
   },
