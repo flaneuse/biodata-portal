@@ -271,7 +271,7 @@
             "terms": ["Plague", "Yersinia pestis", "Y. pestis"]
           },
           {
-            "disease": "Primary Immune Deficiency Diseases (PIDDs)",
+            "disease": "Primary Immune Deficiency Diseases",
             // "terms": ["Primary Immune Deficiency Disease", "PIDD", "Epstein-Barr virus", "EBV"]
             "terms": ["Primary Immune Deficiency Disease", "PIDD", "Epstein-Barr virus", "EBV", "Autoimmune polyglandular syndrome type 1", "APS-1", "autoimmune polyendocrinopathy-candidiasis-ectodermal dystrophy", "APECED", "BENTA", "B-cell expansion with NF-jB and T-cell anergy", "Caspase Eight Deficiency State", "CEDS", "CARD9 deficiency", "Chronic Granulomatous Disease", "CGD", "Common Variable Immunodeficiency", "CVID", "Congenital Neutropenia Syndrome", "CTLA4 Deficiency", "DOCK8 Deficiency", "GATA2 Deficiency", "Glycosylation Disorders", "Hyper-Immunoglobulin E Syndromes", "HIES", "Hyper-Immunoglobulin M Syndromes", "Interferon Gamma Deficiency", "Interleukin 12 Deficiency", "Interleukin 23 Deficiency", "Leukocyte Adhesion Deficiency", "LAD", "LRBA Deficiency", "PI3 Kinase Disease", "PLCG2-associated Antibody Deficiency and Immune Dysregulation", "PLAID", "Severe Combined Immunodeficiency", "SCID", "STAT3 Dominant-Negative Disease", "STAT3DN", "autosomal dominant hyper-IgE syndrome", "AD-HIES", "Job's Syndrome", "STAT3 Gain-of-Function Disease", "Warts, Hypogammaglobulinemia, Infections, and Myelokathexis", "WHIM Syndrome", "Wiskott-Aldrich Syndrome", "X-Linked Agammaglobulinemia", "XLA", "X-Linked Lymphoproliferative Disease", "XLP", "XMEN Disease"]
           },
