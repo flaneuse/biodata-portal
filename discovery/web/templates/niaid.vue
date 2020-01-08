@@ -18,7 +18,7 @@
   }
 
   .disease-title-container {
-    padding: 2px 10px;
+    padding: 5px 10px;
   }
 
   h6.summary-title {
@@ -33,12 +33,32 @@
   margin-right: 1em;
 }
 
-.light, .light a{
-  color: white !important;
+.light {
+  color: white;
 }
 
-.dark, .dark a {
-  color: #6c757d!important;
+.dark {
+  color: #6c757d;
+}
+
+.search-link {
+  background: white;
+  padding: 0 8px;
+  border: none;
+  border-radius: 4px;
+  /* box-shadow: 2px 2px 5px #6c757d; */
+}
+
+.search-link.dark {
+  background: #6c757d;
+}
+
+.search-link.dark:hover {
+  background: #545b62 !important;
+}
+
+.search-link.light:hover {
+  background: #dde0e2 !important;
 }
 
 </style>
@@ -65,12 +85,14 @@
         <div class="row d-flex align-items-center justify-content-between mb-1 disease-title-container" v-bind:style="{background: colorScale(disease.total)}" v-bind:class="textColorScale(disease.total)">
         <div class="d-flex align-items-center">
           <h4 class="disease-title" v-text="disease.disease"></h4>
-          <small class="ml-2 pointer" @click="disease.showTerms = !disease.showTerms" v-text="disease.showTerms ? 'hide search terms' : 'show search terms'"></small>
+          <small class="ml-3 pointer" @click="disease.showTerms = !disease.showTerms" v-text="disease.showTerms ? 'hide search terms' : 'show search terms'"></small>
         </div>
 
         <div class="d-flex">
           <div v-text="disease.total.toLocaleString() + ' results'" class="num-results"></div>
-          <a :href="'/search?q=' + disease.query" v-text="'view ' + disease.disease + ' datasets'" class="ml-3"></a>
+          <button class="ml-3 search-link"  v-bind:class="textColorScale(disease.total)">
+            <a :href="'/search?q=' + disease.query" v-text="'view ' + disease.disease + ' datasets'" v-bind:style="{color: colorScale(disease.total)}"></a>
+            </button>
         </div>
         </div>
 
