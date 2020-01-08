@@ -3,13 +3,13 @@
   <svg class='svg-bargraph' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom'>
     <g :transform='`translate(${this.margin.left}, ${this.margin.top})`' id="bar-chart">
       <rect v-for="count in counts" :id="count.key" class="bar" :x="x(0)" :y="y(count.key)" fill="black" :width="x(count.value) - x(0)" :height="y.bandwidth()"></rect>
-      <text v-for="count in counts" class="y-axis--label" :x="x(0) - 4" :y="y(count.key)+y.bandwidth()/2" v-text="count.key" v-bind:style="{ fontSize: count.fontSize  + 'px' }"></text>
+      <text :data-tippy-info='`<b>${count.key}</b>: ${count.value}`' v-for="count in counts" class="y-axis--label" :x="x(0) - 4" :y="y(count.key)+y.bandwidth()/2" v-text="count.key" v-bind:style="{ fontSize: count.fontSize  + 'px' }"></text>
       <!-- <rect v-for="count in counts" :id="count.key" class="bar" :x="x(0)" :y="y(count.key)" :fill="colorScale(count.value)" :width="x(count.value) - x(0)" :height="y.bandwidth()"></rect> -->
     </g>
 
     <!-- container for axes -->
-    <g ref='xAxis' class="axis axis--x" :transform='`translate(${margin.left}, ${this.margin.top + 5})`' />
-    <g ref='yAxis' class="axis axis--y" :transform='`translate(${margin.left}, ${this.margin.top})`' />
+    <!-- <g ref='xAxis' class="axis axis--x" :transform='`translate(${margin.left}, ${this.margin.top + 5})`' />
+    <g ref='yAxis' class="axis axis--y" :transform='`translate(${margin.left}, ${this.margin.top})`' /> -->
 
   </svg>
 </div>
@@ -22,7 +22,7 @@
   top: 5,
   right: 5,
   bottom: 5,
-  left: 250
+  left: 100
 };
 
 module.exports = {
@@ -90,6 +90,21 @@ module.exports = {
   mounted() {
     this.prepData();
     // this.renderAxes();
+    //
+        tippy('body',
+        {
+            target:'text',
+            content: 'Loading...',
+            maxWidth:'200px',
+            placement:'auto',
+            animation: 'fade',
+            theme:'light',
+            onShow(instance) {
+              let info = instance.reference.dataset.tippyInfo;
+              instance.setContent("<div class='text-muted m-0'>"+info+"</div>")
+            }
+          });
+
   }
 }
 </script>
