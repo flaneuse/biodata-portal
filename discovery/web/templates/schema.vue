@@ -36,7 +36,7 @@
         <g :transform='`translate(${this.margin.left}, ${this.margin.top})`' id="nodata-heatmap">
           <g v-for="property in results" class="property-row">
             <g v-for="repo in repos">
-              <rect :id="property.property + '-' + repo + '-nodata'" class="chiclet no-data" :x="x(repo)" :y="y(property.property)" :width="x.bandwidth()" :height="y.bandwidth()" :fill="colorScheme(0)"></rect>
+              <rect :data-tippy-info="`<b>NO</b> datasets in <b>${repo}</b> use <b>${property.property}</b>`" :id="property.property + '-' + repo + '-nodata'" class="chiclet no-data" :x="x(repo)" :y="y(property.property)" :width="x.bandwidth()" :height="y.bandwidth()" :fill="colorScheme(0)"></rect>
               <line :x1="x(repo) + 3" :x2="x(repo) - 3 + x.bandwidth()" :y1="y(property.property) + y.bandwidth()" :y2="y(property.property)" class="slash-line" />
               </g>
           </g>
@@ -45,7 +45,8 @@
         <!-- heatmap of actual data -->
         <g :transform='`translate(${this.margin.left}, ${this.margin.top})`' id="heatmap-chart">
           <g v-for="property in results" :id="property.property" class="property-row">
-              <rect v-for="repo in property.counts" :id="property.property + '-' + repo.key" class="chiclet" :x="repo.x" :y="repo.y" :fill="repo.fill" :width="x.bandwidth()" :height="y.bandwidth()"></rect>
+              <rect :data-tippy-info="repo.key === 'AVERAGE' ? `<b>${repo.percent.toLocaleString(undefined, {style:'percent'})}</b> of datasets use <b>${property.property}</b> on average` :
+              `<b>${repo.percent.toLocaleString(undefined, {style:'percent'})}</b> of datasets in <b>${repo.key}</b> use <b>${property.property}</b>`" v-for="repo in property.counts" :id="property.property + '-' + repo.key" class="chiclet" :x="repo.x" :y="repo.y" :fill="repo.fill" :width="x.bandwidth()" :height="y.bandwidth()"></rect>
           </g>
         </g>
 
@@ -84,16 +85,14 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script src="https://unpkg.com/vuex">
-</script>
-<script src = "https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js">
-</script>
+<script src="https://unpkg.com/vuex"></script>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
 <script src="https://unpkg.com/rxjs/bundles/rxjs.umd.js"></script>
-<script src = "https://unpkg.com/vue/dist/vue.js" >
-</script>
+<script src = "https://unpkg.com/vue/dist/vue.js"></script>
 <script src="/static/js/vue-rx.js"></script><script src = "https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" ></script>
-  <script src = "https://d3js.org/d3.v5.min.js" ></script>
-  <script src = "/static/js/clean-facets.js" ></script>
+<script src = "https://d3js.org/d3.v5.min.js" ></script>
+<script src = "/static/js/clean-facets.js" ></script>
+<script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 
   <script type = "module">
   var app = new Vue({
@@ -240,6 +239,32 @@
     },
     mounted() {
       // this.getSchemaDotorg();
+      //
+      tippy( '#heatmap-chart',{
+              target:'rect',
+              content: 'Loading...',
+              maxWidth:'200px',
+              placement:'auto',
+              animation: 'fade',
+              theme:'light',
+              onShow(instance) {
+                let info = instance.reference.dataset.tippyInfo;
+                instance.setContent("<div class='text-muted m-0'>"+info+"</div>")
+              }
+            });
+
+      tippy( '#nodata-heatmap',{
+              target:'rect',
+              content: 'Loading...',
+              maxWidth:'200px',
+              placement:'auto',
+              animation: 'fade',
+              theme:'light',
+              onShow(instance) {
+                let info = instance.reference.dataset.tippyInfo;
+                instance.setContent("<div class='text-muted m-0'>"+info+"</div>")
+              }
+            });
     },
     observableMethods: {},
     subscriptions() {
