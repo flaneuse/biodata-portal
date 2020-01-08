@@ -70,20 +70,21 @@
 
   <div class="jumbotron bg-light text-muted w-100" v-if="numResults">
     <h1 class="row">Datasets containing NIAID priority diseases</h1>
-    <p class="row" v-html="`<span>Of the ${diseaseKeywords.length} priority diseases and conditions for the National Institute of Allergy and Infectious Diseases, <b>${results[0].disease}</b> has the most results within the ` + '{{site_name}}' + '.</span>'">
+    <p class="row"
+      v-html="`<span>Of the ${diseaseKeywords.length} priority diseases and conditions for the National Institute of Allergy and Infectious Diseases, <b>${results[0].disease}</b> has the most results within the ` + '{{site_name}}' + '.</span>'">
     </p>
 
-<!-- TREEMAP -->
-<div id="niaid-treemap" class="mb-5">
-  <h5>Number of results per disease area</h5>
-  <app-treemap v-bind:results="results" v-bind:route="'niaid'" v-if="numResults"></app-treemap>
-</div>
+    <!-- TREEMAP -->
+    <div id="niaid-treemap" class="mb-5">
+      <h5>Number of datasets per disease area</h5>
+      <app-treemap v-bind:results="results" v-bind:route="'niaid'" v-if="numResults"></app-treemap>
+    </div>
 
-  <!-- LOOP OVER INDIVIDUAL DISEASES -->
-    <div v-for="disease in results" :id="disease.diseaseID" class="disease-summary border-bottom mb-5" >
+    <!-- LOOP OVER INDIVIDUAL DISEASES -->
+    <div v-for="disease in results" :id="disease.diseaseID" class="disease-summary border-bottom mb-5">
 
       <!-- NUMBER OF RESULTS -->
-        <div class="row d-flex align-items-center justify-content-between mb-1 disease-title-container" v-bind:style="{background: colorScale(disease.total)}" v-bind:class="textColorScale(disease.total)">
+      <div class="row d-flex align-items-center justify-content-between mb-1 disease-title-container" v-bind:style="{background: colorScale(disease.total)}" v-bind:class="textColorScale(disease.total)">
         <div class="d-flex align-items-center">
           <h4 class="disease-title" v-text="disease.disease"></h4>
           <small class="ml-3 pointer" @click="disease.showTerms = !disease.showTerms" v-text="disease.showTerms ? 'hide search terms' : 'show search terms'"></small>
@@ -91,53 +92,54 @@
 
         <div class="d-flex">
           <div v-text="disease.total.toLocaleString() + ' results'" class="num-results"></div>
-          <button class="ml-3 search-link"  v-bind:class="textColorScale(disease.total)">
+          <button class="ml-3 search-link" v-bind:class="textColorScale(disease.total)">
             <a :href="'/search?q=' + disease.query" v-text="'view ' + disease.disease + ' datasets'" v-bind:style="{color: colorScale(disease.total)}"></a>
-            </button>
-        </div>
-        </div>
-
-    <!-- SEARCH TERMS -->
-        <div class="row" v-show="disease.showTerms">
-            <small class="search-term mr-2 mb-1" v-for="term in disease.searchTerms">
-              <span v-text="term"></span>
-            </small>
-        </div>
-
-<div class="d-flex flex-wrap">
-
-<!-- SOURCE -->
-<div class="summary-container">
-  <h6 class="summary-title">source</h6>
-    <app-donut v-bind:source_counts="disease.source_counts" v-bind:width="100"></app-donut>
-</div>
-
-<!-- FUNDER -->
-<div class="summary-container">
-  <h6 class="summary-title">funder</h6>
-  <app-bar-graph v-bind:counts="disease.funders_counts"></app-bar-graph>
-</div>
-
-<!-- VARIABLE MEASURED -->
-<div class="summary-container">
-  <h6 class="summary-title">variable measured</h6>
-  <app-bar-graph v-bind:counts="disease.variable_count"></app-bar-graph>
-</div>
-<!-- MEASUREMENT TECHNIQUE -->
-<div class="summary-container">
-  <h6 class="summary-title">measurement technique</h6>
-  <app-bar-graph v-bind:counts="disease.technique_count"></app-bar-graph>
-</div>
-
-<!-- KEYWORDS -->
-    <div class="p-3">
-      <h6 v-text="facetSize + ' most common keywords'" class="summary-title"></h6>
-      <div class="d-flex" id="keyword-counts">
-        <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}">
+          </button>
         </div>
       </div>
-    </div>
-</div>
+
+      <!-- SEARCH TERMS -->
+      <div class="row" v-show="disease.showTerms">
+        <small class="search-term mr-2 mb-1" v-for="term in disease.searchTerms">
+          <span v-text="term"></span>
+        </small>
+      </div>
+
+      <div class="d-flex flex-wrap">
+
+        <!-- SOURCE -->
+        <div class="summary-container">
+          <h6 class="summary-title">source</h6>
+          <app-donut v-bind:source_counts="disease.source_counts" v-bind:width="100"></app-donut>
+        </div>
+
+        <!-- FUNDER -->
+        <div class="summary-container">
+          <h6 class="summary-title">funder</h6>
+          <app-bar-graph v-bind:counts="disease.funders_counts"></app-bar-graph>
+        </div>
+
+        <!-- VARIABLE MEASURED -->
+        <div class="summary-container">
+          <h6 class="summary-title">variable measured</h6>
+          <app-bar-graph v-bind:counts="disease.variable_count"></app-bar-graph>
+        </div>
+
+        <!-- MEASUREMENT TECHNIQUE -->
+        <div class="summary-container">
+          <h6 class="summary-title">measurement technique</h6>
+          <app-bar-graph v-bind:counts="disease.technique_count"></app-bar-graph>
+        </div>
+
+        <!-- KEYWORDS -->
+        <div class="p-3">
+          <h6 v-text="facetSize + ' most common keywords'" class="summary-title"></h6>
+          <div class="d-flex" id="keyword-counts">
+            <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>

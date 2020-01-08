@@ -96,7 +96,7 @@ module.exports = {
             target:'text',
             content: 'Loading...',
             maxWidth:'200px',
-            placement:'auto',
+            placement:'right',
             animation: 'fade',
             theme:'light',
             onShow(instance) {
