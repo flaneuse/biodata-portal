@@ -3,7 +3,7 @@
   <svg class='svg-bargraph' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom'>
     <g :transform='`translate(${this.margin.left}, ${this.margin.top})`' id="bar-chart">
       <rect v-for="count in counts" :id="count.key" class="bar" :x="x(0)" :y="y(count.key)" fill="black" :width="x(count.value) - x(0)" :height="y.bandwidth()"></rect>
-      <text v-for="count in counts" class="y-axis--label" :x="x(0) - 4" :y="y(count.key)+y.bandwidth()/2" v-text="count.key" v-bind:style="{ fontSize: y.bandwidth()*0.95 + 'px' }"></text>
+      <text v-for="count in counts" class="y-axis--label" :x="x(0) - 4" :y="y(count.key)+y.bandwidth()/2" v-text="count.key" v-bind:style="{ fontSize: count.fontSize  + 'px' }"></text>
       <!-- <rect v-for="count in counts" :id="count.key" class="bar" :x="x(0)" :y="y(count.key)" :fill="colorScale(count.value)" :width="x(count.value) - x(0)" :height="y.bandwidth()"></rect> -->
     </g>
 
@@ -34,6 +34,7 @@ module.exports = {
       height,
       margin,
       dataLength: 0,
+      fontSizeMax: 14,
       data: [],
       x: d3.scaleLinear(),
       y: d3.scaleBand(),
@@ -53,6 +54,7 @@ module.exports = {
       let data = this.counts;
 
       this.dataLength = data ? data.length : 0;
+
       if (this.dataLength) {
         this.x = d3.scaleLinear()
         .range([0, this.width])
@@ -66,25 +68,28 @@ module.exports = {
 
         this.colorScale = d3.scaleSequential(d3.interpolateRdPu)
         .domain(d3.extent(data.map(d => d.value)));
+
+        data.forEach(d => {
+          d['fontSize'] = this.y.bandwidth()*0.95 > this.fontSizeMax ? this.fontSizeMax : this.y.bandwidth()*0.95;
+        })
     }
   },
-  renderAxes: function() {
-    const xAxis = d3.axisBottom()
-    .scale(this.x).ticks(10);
-
-    const yAxis = d3.axisLeft()
-    .scale(this.y)
-
-    const xAx = d3.select(this.$refs.xAxis)
-    console.log(xAx)
-    xAx.remove();
-
-    d3.select(this.$refs.yAxis).call(yAxis);
-  }
+  // renderAxes: function() {
+  //   const xAxis = d3.axisBottom()
+  //   .scale(this.x).ticks(10);
+  //
+  //   const yAxis = d3.axisLeft()
+  //   .scale(this.y)
+  //
+  //   const xAx = d3.select(this.$refs.xAxis)
+  //   xAx.remove();
+  //
+  //   d3.select(this.$refs.yAxis).call(yAxis);
+  // }
   },
   mounted() {
     this.prepData();
-    this.renderAxes();
+    // this.renderAxes();
   }
 }
 </script>
