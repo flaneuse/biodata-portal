@@ -1,8 +1,8 @@
 <template>
-<div class="d-flex align-items-center">
+<div class="d-flex align-items-center" id="donut-container">
   <svg class='donut' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom'>
     <g :transform='`translate(${this.margin.left + this.width / 2}, ${this.height / 2 + this.margin.top})`' id="donut-chart">
-      <path v-for="arc in arcs" :d="arc.path" :fill="arc.fill"></path>
+      <path :data-tippy-info='`<b>${arc.data.key}</b>: ${arc.data.value.toLocaleString()} datasets`' v-for="arc in arcs" :d="arc.path" :fill="arc.fill"></path>
       <!-- <text v-for="arc in arcs" :x="arc.centroid[0]" :y="arc.centroid[1]" v-text="arc.data.key" class="donut-label"></text> -->
     </g>
   </svg>
@@ -76,6 +76,19 @@ module.exports = {
   },
   mounted() {
     this.prepData(this.source_counts);
+
+    tippy( '#donut-container',{
+        target:'path',
+        content: 'Loading...',
+        maxWidth:'200px',
+        placement:'auto',
+        animation: 'fade',
+        theme:'light',
+        onShow(instance) {
+          let info = instance.reference.dataset.tippyInfo;
+          instance.setContent("<div class='text-muted m-0'>"+info+"</div>")
+        }
+      });
   }
 }
 </script>
