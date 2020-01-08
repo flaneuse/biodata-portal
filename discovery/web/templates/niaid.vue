@@ -11,6 +11,7 @@
   .num-results {
     /* padding: 2px 10px;
     border-radius: 5px; */
+    font-size: 1.25em;
   }
 
   .disease-title {
