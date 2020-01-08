@@ -17,15 +17,28 @@
     margin-bottom: 0 !important;
   }
 
+  .disease-title-container {
+    padding: 2px 10px;
+  }
+
   h6.summary-title {
-    background: #ddd;
+    /* background: #ddd; */
     padding: 0.25em;
     font-weight: 100;
     text-transform: uppercase;
+    margin: 0 !important;
 }
 
 .summary-container {
   margin-right: 1em;
+}
+
+.light, .light a{
+  color: white !important;
+}
+
+.dark, .dark a {
+  color: #6c757d!important;
 }
 
 </style>
@@ -46,17 +59,17 @@
 </div>
 
   <!-- LOOP OVER INDIVIDUAL DISEASES -->
-    <div v-for="disease in results" :id="disease.diseaseID" class="disease-summary border-bottom mb-5">
+    <div v-for="disease in results" :id="disease.diseaseID" class="disease-summary border-bottom mb-5" >
 
       <!-- NUMBER OF RESULTS -->
-        <div class="row d-flex align-items-center justify-content-between mb-1">
+        <div class="row d-flex align-items-center justify-content-between mb-1 disease-title-container" v-bind:style="{background: colorScale(disease.total)}" v-bind:class="textColorScale(disease.total)">
         <div class="d-flex align-items-center">
           <h4 class="disease-title" v-text="disease.disease"></h4>
-          <small class="ml-2" @click="disease.showTerms = !disease.showTerms" v-text="disease.showTerms ? 'hide search terms' : 'show search terms'"></small>
+          <small class="ml-2 pointer" @click="disease.showTerms = !disease.showTerms" v-text="disease.showTerms ? 'hide search terms' : 'show search terms'"></small>
         </div>
 
         <div class="d-flex">
-          <div v-text="disease.total.toLocaleString() + ' results'" class="num-results" v-bind:style="{background: colorScale(disease.total), color: textColorScale(disease.total)}"></div>
+          <div v-text="disease.total.toLocaleString() + ' results'" class="num-results"></div>
           <a :href="'/search?q=' + disease.query" v-text="'view ' + disease.disease + ' datasets'" class="ml-3"></a>
         </div>
         </div>
@@ -347,7 +360,7 @@
       textColorScale(value) {
         let color = this.colorScale(value);
 
-        return chroma.contrast(color, 'white') >= 2.5 ? "white" : "#6c757d";
+        return chroma.contrast(color, 'white') >= 2.5 ? "light" : "dark";
       }
     },
     observableMethods: {
