@@ -56,7 +56,7 @@
             <template v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0">
               <label :for="count.key">
                 <input class="facet-counts px-1" type="checkbox" :id="count.key" :value="count.key" :name="count.key" v-model="selectedFilters[variable.variable]">
-                <small><span v-html="count.key"></span><span v-text="' (' + count.value + ')'"></span></small>
+                <small><span v-html="count.key"></span><span v-text="' (' + count.value.toLocaleString() + ')'"></span></small>
                 <!-- <span class="checkmark"></span> -->
               </label>
             </template>
@@ -295,10 +295,11 @@
         results: [],
         pages: 1,
         facetSize: 5,
-        facets: ["funder.name.keyword", "funding.funder.name.keyword", "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"],
+        facets: ["funder.name.keyword", "funding.funder.name.keyword", "_index", "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"],
         facetSummary: [],
         selectedFilters: {
           "funder": [],
+          "source": [],
           "variableMeasured": [],
           "measurementTechnique": [],
           "keywords": []
@@ -344,6 +345,7 @@
       clearFilters() {
         this.selectedFilters = {
                 "funder": [],
+                "source": [],
                 "variableMeasured": [],
                 "measurementTechnique": [],
                 "keywords": []
@@ -388,6 +390,7 @@
           self.selectedPage = 1;
           self.selectedFilters = {
             "funder": [],
+            "source": [],
             "variableMeasured": [],
             "measurementTechnique": [],
             "keywords": []
@@ -424,8 +427,11 @@
         // if (Object.values(self.selectedFilters).flatMap(d => d).length > 0) {
         // let selectedFilters = getQueryFilters(self.selectedFilters);
         if(self.$route.query.filters) {
-          queryText = queryText === "__all__" ? selectedFilters : `${queryText} AND ${self.$route.query.filters}`
+          queryText = queryText === "__all__" ? self.selectedFilters : `${queryText} AND ${self.$route.query.filters}`
         }
+
+
+        console.log(queryText)
 
         var params = {
           "params": {

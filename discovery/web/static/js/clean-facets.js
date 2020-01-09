@@ -3,14 +3,22 @@
 cleanFacets = function(facets, facetSize = null) {
   let cleanedFacets = [];
 
+  // Adding special cleanup function for funders / funding
   cleanedFacets.push({
     "variable": "funder",
     // "searchVariable": ["funder.name.keyword", "funding.funder.name.keyword"],
     "counts": combineFunders(facets, facetSize)
   })
 
+  // Add special cleanup function for indices.
+  cleanedFacets.push({
+    "variable": "source",
+    // "searchVariable": ["funder.name.keyword", "funding.funder.name.keyword"],
+    "counts": cleanSources(facets['_index']['terms'])
+  })
 
-  let facetVars = ["variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"];
+
+  let facetVars = [ "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"];
   facetVars.forEach(varName => {
     let summary = {};
     summary['variable'] = varName.replace(".keyword", "");
@@ -58,13 +66,10 @@ combineFunders = function(facets, facetSize, includeUnknown = false) {
 }
 
 getQueryFilters = function(selectedFilters) {
-  console.log(selectedFilters)
   let query_string = Object.keys(selectedFilters)
     .filter(id => selectedFilters[id].length > 0)
     .map(id => reduceQuery(id, selectedFilters))
     .join(" AND ")
-
-  console.log(query_string);
 
   return (query_string)
 }
@@ -74,15 +79,19 @@ reduceQuery = function(id, selectedFilters) {
   let query_string;
   if (id === "funder") {
     query_string = `(funder.name.keyword:${query_values} OR funding.funder.name.keyword:${query_values})`;
+  } else if (id === "source") {
+    query_string = `(${selectedFilters[id].map(d => `_index:${d.replace(/\s/, "_")}*`).join(" OR ")})`;
   } else {
     query_string = `${id}.keyword:${query_values}`;
   }
+  console.log(query_string)
   return (query_string)
 }
 
 filterString2Obj = function(filterStr) {
   let filterObj = {
     "funder": [],
+    "source": [],
     "variableMeasured": [],
     "measurementTechnique": [],
     "keywords": []
@@ -90,14 +99,17 @@ filterString2Obj = function(filterStr) {
 
   if (filterStr) {
     let filters = filterStr.split(" AND ");
-    console.log(filters)
 
+    console.log(filters)
 
 
     filters.forEach(d => {
       if (d.search("funder.name") > -1) {
         let value = d.split(":").slice(-1)[0].replace("(", "[").replace("))", ")").replace(")", "]");
         filterObj["funder"] = JSON.parse(value);
+      } else if (d.search("_index") > -1){
+        let value = d.replace("(", "").replace(")", "").replace(/\*/g, "").replace(/_index:/g, "").replace("_", " ").split(" OR ");
+        filterObj["source"] = value;
       } else {
         let filterComponents = d.replace(".keyword", "").split(":");
         let key = filterComponents[0];
@@ -105,8 +117,8 @@ filterString2Obj = function(filterStr) {
         filterObj[key] = value;
       }
     })
-    console.log(filterObj)
   }
+  console.log(filterObj)
 
   return (filterObj)
 }
