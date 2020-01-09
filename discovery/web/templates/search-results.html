@@ -383,9 +383,12 @@
       },
       search(query, queryType, enquoteQuery = false) {
         var self = this;
+
+        var queryText = query ? (enquoteQuery ? `"${query}"` : query) : "__all__";
+
         // reset pagination, filters if there's a new query
         if (queryType === "queryChanged") {
-          self.query = query;
+          self.query = queryText;
           self.selectedPerPage = self.defaultPerPage;
           self.selectedPage = 1;
           self.selectedFilters = {
@@ -399,8 +402,6 @@
           self.selectedPerPage = self.defaultPerPage;
           self.selectedPage = 1;
         } else if (queryType === "pageChanged") {}
-
-        <!-- var queryText = query ? (enquoteQuery ? `"${query}"` : query) : "__all__"; -->
 
         console.log(self.selectedFilters)
 
