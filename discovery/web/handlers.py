@@ -248,7 +248,7 @@ class GuideSpecialHandler(BaseHandler):
 
 class SearchHandler(BaseHandler):
     def get(self):
-        doc_file = "search-results.html"
+        doc_file = "search-results.vue"
         guide_template = TEMPLATE_ENV.get_template(doc_file)
         guide_output = guide_template.render()
         self.write(guide_output)
