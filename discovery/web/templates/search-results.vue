@@ -49,18 +49,32 @@
       <div class="row">
         <!-- facet filters -->
         <div id="filters" class="col-md-3 pr-4">
-          <small class="d-flex justify-content-end"><a @click="clearFilters()" href="">clear filters</a></small>
-          <form class="facet-group whitefadedarker" v-for="variable in facetSummary" v-if="facetSummary && facetSummary.length > 0" @change.prevent="search(query, 'filtersChanged')">
+          <!-- clear filters button -->
+          <small class="d-flex justify-content-end"><a @click.prevent="clearFilters()" href="">clear filters</a></small>
+
+
+          <template v-if="facetSummary && facetSummary.length > 0">
+          <!-- loop: filter form group for each facet variable -->
+          <form class="facet-group whitefadedarker" v-for="variable in facetSummary" @change.prevent="search(query, 'filtersChanged')">
+            <!-- facet title -->
             <div class="facet-title mb-1" v-text="variable.variable"></div>
 
-            <template v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0">
+            <!-- checkbox + label for each option -->
+            <template v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0 && index < selectedFacetSize[variable.variable]">
               <label :for="count.key">
-                <input class="facet-counts px-1" type="checkbox" :id="count.key" :value="count.key" :name="count.key" v-model="selectedFilters[variable.variable]">
+                <input class="facet-counts px-1" type="checkbox" :id="variable.variable + '-' + count.key" :value="count.key" :name="count.key" v-model="selectedFilters[variable.variable]">
                 <small><span v-html="count.key"></span><span v-text="' (' + count.value.toLocaleString() + ')'"></span></small>
-                <!-- <span class="checkmark"></span> -->
               </label>
             </template>
+
+            <!-- show more option -->
+            <small class="d-flex justify-content-end" v-if="variable.counts.length > selectedFacetSize[variable.variable]">
+              <a @click.prevent="showMore(variable.variable)" href="" :id="`${variable.variable}_show-more`">
+                show more
+              </a>
+            </small>
           </form>
+          </template>
         </div>
 
         <div id="results" class="col-md-9">
@@ -287,16 +301,27 @@
       return {
         query: "",
         loading: false,
+        maxDescriptionLength: 75,
+
+        pages: 1,
         paginationOptions: [10, 25, 50],
         defaultPerPage: 10,
         selectedPerPage: 10,
         selectedPage: 1,
+
         numResults: null,
         results: [],
-        pages: 1,
-        facetSize: 5,
+
+        facetSize: 1000,
+        facetsPerShowMore: 5,
+        selectedFacetSize: {
+          "funder": 5,
+          "source": 5,
+          "variableMeasured": 5,
+          "measurementTechnique": 5,
+          "keywords": 5
+        },
         facets: ["funder.name.keyword", "funding.funder.name.keyword", "_index", "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"],
-        facetSummary: [],
         selectedFilters: {
           "funder": [],
           "source": [],
@@ -304,9 +329,7 @@
           "measurementTechnique": [],
           "keywords": []
         },
-        maxDescriptionLength: 75,
-        loading: false,
-        scripttext: ''
+        facetSummary: []
       }
     },
     computed: {
@@ -342,7 +365,7 @@
       });
     },
     methods: {
-      clearFilters() {
+      resetFilters() {
         this.selectedFilters = {
                 "funder": [],
                 "source": [],
@@ -351,7 +374,21 @@
                 "keywords": []
               };
 
+        this.selectedFacetSize = {
+                "funder": 5,
+                "source": 5,
+                "variableMeasured": 5,
+                "measurementTechnique": 5,
+                "keywords": 5
+        };
+      },
+      clearFilters() {
+        this.resetFilters();
+
         this.search(this.query, 'filtersChanged');
+      },
+      showMore(variableName) {
+        this.selectedFacetSize[variableName] += this.facetsPerShowMore;
       },
       changePageSize(selectedSize) {
         let self = this;
@@ -391,13 +428,7 @@
           self.query = queryText;
           self.selectedPerPage = self.defaultPerPage;
           self.selectedPage = 1;
-          self.selectedFilters = {
-            "funder": [],
-            "source": [],
-            "variableMeasured": [],
-            "measurementTechnique": [],
-            "keywords": []
-          }
+          this.resetFilters();
         } else if (queryType === "filtersChanged") {
           self.selectedPerPage = self.defaultPerPage;
           self.selectedPage = 1;
@@ -430,9 +461,6 @@
         if(self.$route.query.filters) {
           queryText = queryText === "__all__" ? self.selectedFilters : `${queryText} AND ${self.$route.query.filters}`
         }
-
-
-        console.log(queryText)
 
         var params = {
           "params": {
