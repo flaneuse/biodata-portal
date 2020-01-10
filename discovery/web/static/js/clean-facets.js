@@ -100,14 +100,10 @@ filterString2Obj = function(filterStr) {
   if (filterStr) {
     let filters = filterStr.split(" AND ");
 
-    console.log(filters)
-
-
     filters.forEach(d => {
       if (d.search("funder.name") > -1) {
         // Assuming first and second entries are identical (which they should be)
         let value = `[${d.match(/funder\.name\.keyword\:\((.+)\)\sOR/)[1]}]`;
-        console.log(value)
         filterObj["funder"] = JSON.parse(value);
       } else if (d.search("_index") > -1){
         let value = d.replace("(", "").replace(")", "").replace(/\*/g, "").replace(/_index:/g, "").replace("_", " ").split(" OR ");
@@ -120,7 +116,6 @@ filterString2Obj = function(filterStr) {
       }
     })
   }
-  console.log(filterObj)
 
   return (filterObj)
 }
