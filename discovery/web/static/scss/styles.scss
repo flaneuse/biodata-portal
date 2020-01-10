@@ -9,6 +9,8 @@ $sec: #A5E7CF;
 $darkmode: false;
 $background-white: #F8F9FA;
 
+$header-height: 90px;
+
 //MIXINS
 
 @mixin hor-gradient($from, $to) {
@@ -2104,4 +2106,12 @@ a.nav-link.h-link {
 
 .font-awesome {
   font-family: helvetica, FontAwesome, sans-serif !important;
+}
+
+
+:target::before {
+  content: "";
+  display: block;
+  height: $header-height; /* fixed header height*/
+  margin: -$header-height 0 0; /* negative fixed header height */
 }
