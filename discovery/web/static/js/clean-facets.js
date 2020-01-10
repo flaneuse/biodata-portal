@@ -84,7 +84,6 @@ reduceQuery = function(id, selectedFilters) {
   } else {
     query_string = `${id}.keyword:${query_values}`;
   }
-  console.log(query_string)
   return (query_string)
 }
 
