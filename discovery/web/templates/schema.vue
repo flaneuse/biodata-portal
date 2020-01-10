@@ -7,10 +7,17 @@
   </div>
 
   <div class="jumbotron bg-light text-muted w-100">
-    <h1 class="row" v-if="results" v-text="'There are ' + schemaTotal + ' schema.org Dataset properties'"></h1>
-    <h1 class="row mb-3" v-if="results" v-text="'... but only ' + results.filter(d => d.total).length + ' are used in our dataset repositories.'"></h1>
+    <h1 class="row">Dataset schema in {{site_name}}</h1>
+    <p class="row">
+      <span>
+      A critical part of assembling datasets from different sources is making sure that they
+      use a common schema to describe these datasets. We rely on <a href="http://schema.org/Dataset" rel="noreferrer" target="_blank">schema.org's Dataset schema</a>, but each source uses the standard differently. <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer"><small class="badge badge-pill badge-secondary pointer">Use NIAID's Minimal Dataset Schema</small></a>
+      </span>
+    </p>
+    <h4 class="row" v-if="results" v-text="'There are ' + schemaTotal + ' schema.org Dataset properties'"></h4>
+    <h4 class="row mb-3" v-if="results" v-text="'... but only ' + results.filter(d => d.total).length + ' are used by any of our dataset repositories.'"></h4>
 
-    <div class="d-flex justify-content-between">
+    <div class="d-flex flex-wrap justify-content-between">
       <div>
 
       <svg id="heatmap" class='heatmap' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom' class="mr-5">
@@ -74,7 +81,9 @@
         </p>
 
         <p class="mt-4">
-          <a href="/about#sources">Learn more about our data sources</a>
+
+          <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer"><small class="badge badge-pill badge-secondary pointer">Use NIAID's Minimal Dataset Schema</small></a>
+          <a href="/about#sources"><small class="badge badge-pill badge-secondary pointer">View data sources</small></a>
         </p>
       </div>
 
@@ -376,6 +385,10 @@ rect {
 }
 .legend-label--max {
   text-anchor: end
+}
+
+#schema-explanation {
+  flex: 1;
 }
 </style>
 {% include "footer.html" %}
