@@ -280,242 +280,248 @@
 <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.28.11/dist/sweetalert2.all.min.js"></script> -->
 <script>
+var router = new VueRouter({
+  mode: 'history',
+  routes: [{
+    path: '/search/:q',
+    component: app,
+    props: (route) => ({
+      query: route.query.q
+    })
+  }],
+});
 
-  var router = new VueRouter({
-    mode: 'history',
-    routes: [{
-      path: '/search/:q',
-      component: app,
-      props: (route) => ({
-        query: route.query.q
-      })
-    }],
-  });
+const store = new Vuex.Store({
+  state: {
+    'metadata': {},
+  },
+  strict: true,
+  mutations: {
+    saveMetadata(state, payload) {
+      state.metadata = payload['metadata']
+    },
+  },
+  getters: {
+    // exposed as store.getters.nameOfGetter
+    getMetadata: state => {
+      return state.metadata
+    },
+  }
+});
 
-  const store = new Vuex.Store({
-    state: {
-      'metadata': {},
-    },
-    strict: true,
-    mutations: {
-      saveMetadata(state, payload) {
-        state.metadata = payload['metadata']
+var app = new Vue({
+  el: '#search-results',
+  name: "search-results",
+  router: router,
+  data: function() {
+    return {
+      query: "",
+      loading: false,
+      maxDescriptionLength: 75,
+
+      pages: 1,
+      paginationOptions: [10, 25, 50],
+      defaultPerPage: 10,
+      selectedPerPage: 10,
+      selectedPage: 1,
+
+      numResults: null,
+      results: [],
+
+      facetSize: 1000,
+      facetsPerShowMore: 5,
+      selectedFacetSize: {
+        "funder": 5,
+        "source": 5,
+        "variableMeasured": 5,
+        "measurementTechnique": 5,
+        "keywords": 5
       },
-    },
-    getters: {
-      // exposed as store.getters.nameOfGetter
-      getMetadata: state => {
-        return state.metadata
+      facets: ["funder.name.keyword", "funding.funder.name.keyword", "_index", "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"],
+      selectedFilters: {
+        "funder": [],
+        "source": [],
+        "variableMeasured": [],
+        "measurementTechnique": [],
+        "keywords": []
       },
+      selectedFilterText: {
+        "funder": null,
+        "source": null,
+        "variableMeasured": null,
+        "measurementTechnique": null,
+        "keywords": null
+      },
+      facetSummary: [],
+      // filteredFacetSummary: []
     }
-  });
-
-  var app = new Vue({
-    el: '#search-results',
-    name: "search-results",
-    router: router,
-    data: function() {
-      return {
-        query: "",
-        loading: false,
-        maxDescriptionLength: 75,
-
-        pages: 1,
-        paginationOptions: [10, 25, 50],
-        defaultPerPage: 10,
-        selectedPerPage: 10,
-        selectedPage: 1,
-
-        numResults: null,
-        results: [],
-
-        facetSize: 1000,
-        facetsPerShowMore: 5,
-        selectedFacetSize: {
-          "funder": 5,
-          "source": 5,
-          "variableMeasured": 5,
-          "measurementTechnique": 5,
-          "keywords": 5
-        },
-        facets: ["funder.name.keyword", "funding.funder.name.keyword", "_index", "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"],
-        selectedFilters: {
-          "funder": [],
-          "source": [],
-          "variableMeasured": [],
-          "measurementTechnique": [],
-          "keywords": []
-        },
-        selectedFilterText: {
-          "funder": null,
-          "source": null,
-          "variableMeasured": null,
-          "measurementTechnique": null,
-          "keywords": null
-        },
-        facetSummary: [],
-        // filteredFacetSummary: []
-      }
-    },
-    computed: {
-      selectedMin: function() {
+  },
+  computed: {
+    selectedMin: function() {
       return (this.selectedPage - 1) * this.selectedPerPage + 1;
     },
-      selectedMax: function() {
-        var maxValue = this.selectedPage * this.selectedPerPage;
+    selectedMax: function() {
+      var maxValue = this.selectedPage * this.selectedPerPage;
       return maxValue <= this.numResults ? maxValue : this.numResults;
     },
     filteredFacetSummary: function() {
       let filtered = this.facetSummary.map(facet => {
-      let selectedVar = this.selectedFilterText[facet.variable];
-      selectedVar = selectedVar ? selectedVar.toLowerCase() : "";
-      return(
-        {
-        'counts': facet.counts.filter(d => d.key.toLowerCase().includes(selectedVar)).slice(0, this.selectedFacetSize[facet.variable]),
-        'variable': facet.variable,
-        'moreFacets': facet.counts.length > this.selectedFacetSize[facet.variable]
+        let selectedVar = this.selectedFilterText[facet.variable];
+        selectedVar = selectedVar ? selectedVar.toLowerCase() : "";
+        return ({
+          'counts': facet.counts.filter(d => d.key.toLowerCase().includes(selectedVar)).slice(0, this.selectedFacetSize[facet.variable]),
+          'variable': facet.variable,
+          'moreFacets': facet.counts.length > this.selectedFacetSize[facet.variable]
+        })
       })
-    })
 
-      return(filtered);
+      return (filtered);
     },
-    },
-    watch: {
-      $route(to, from) {
-        this.executeSearch();
-      }
-    },
-    mounted: function() {
-      this.executeSearch();
+  },
+  watch: {
+    $route(to, from) {
+      let queryChanged = to.query.q !== from.query.q || to.query.filters !== from.query.filters;
+      // If query changed between routes (either because query or filters were changed), re-call the facet function to summarize the counts per keyword, funder, etc.
+      this.executeSearch(queryChanged);
+    }
+  },
+  mounted: function() {
+    this.executeSearch();
 
 
-      tippy( 'body',{
-      target:'.launch-search',
+    tippy('body', {
+      target: '.launch-search',
       content: 'Loading...',
-      maxWidth:'200px',
-      placement:'bottom',
+      maxWidth: '200px',
+      placement: 'bottom',
       animation: 'fade',
-      theme:'light',
+      theme: 'light',
       onShow(instance) {
-      let info = instance.reference.dataset.tippyInfo;
-      instance.setContent("<div class='text-muted m-0'>"+info+"</div>")
+        let info = instance.reference.dataset.tippyInfo;
+        instance.setContent("<div class='text-muted m-0'>" + info + "</div>")
       }
-      });
+    });
+  },
+  created: function() {
+    this.debounceFilterText = _.debounce(this.selectFilterText, 500);
+  },
+  methods: {
+    resetFilters() {
+      this.selectedFilters = {
+        "funder": [],
+        "source": [],
+        "variableMeasured": [],
+        "measurementTechnique": [],
+        "keywords": []
+      };
+
+      this.selectedFacetSize = {
+        "funder": 5,
+        "source": 5,
+        "variableMeasured": 5,
+        "measurementTechnique": 5,
+        "keywords": 5
+      };
+
+      this.selectedFilterText = {
+        "funder": null,
+        "source": null,
+        "variableMeasured": null,
+        "measurementTechnique": null,
+        "keywords": null
+      }
     },
-    created: function() {
-      this.debounceFilterText = _.debounce(this.selectFilterText, 500);
+    clearFilters() {
+      this.resetFilters();
+
+      this.search(this.query, 'filtersChanged');
     },
-    methods: {
-      resetFilters() {
-        this.selectedFilters = {
-                "funder": [],
-                "source": [],
-                "variableMeasured": [],
-                "measurementTechnique": [],
-                "keywords": []
-              };
+    showMore(variableName) {
+      this.selectedFacetSize[variableName] += this.facetsPerShowMore;
+    },
+    changePageSize(selectedSize) {
+      let self = this;
+      self.selectedPerPage = selectedSize;
 
-        this.selectedFacetSize = {
-                "funder": 5,
-                "source": 5,
-                "variableMeasured": 5,
-                "measurementTechnique": 5,
-                "keywords": 5
-        };
+      self.search(self.query, "pageChanged");
+    },
+    changePageNumber(pageNumber) {
+      let self = this;
+      self.selectedPage = pageNumber;
 
-        this.selectedFilterText = {
-          "funder": null,
-          "source": null,
-          "variableMeasured": null,
-          "measurementTechnique": null,
-          "keywords": null
-        }
-      },
-      clearFilters() {
-        this.resetFilters();
-
-        this.search(this.query, 'filtersChanged');
-      },
-      showMore(variableName) {
-        this.selectedFacetSize[variableName] += this.facetsPerShowMore;
-      },
-      changePageSize(selectedSize) {
-        let self = this;
-        self.selectedPerPage = selectedSize;
-
-        self.search(self.query, "pageChanged");
-      },
-      changePageNumber(pageNumber) {
-        let self = this;
-        self.selectedPage = pageNumber;
-
-        self.search(self.query, "pageChanged");
-      },
-      calculatePages: function() {
-        var self = this;
-        self.pages = Math.ceil(self.numResults / self.selectedPerPage);
-      },
-      prevPage: function() {
-        var self = this;
-        if (self.selectedPage > 1)
-          self.selectedPage -= 1
-        self.search(self.query, "pageChanged");
-      },
-      nextPage: function() {
-        var self = this;
-        if (self.selectedPage < self.pages)
-          self.selectedPage += 1
-        self.search(self.query, "pageChanged");
-      },
-      selectFilterText(variableName) {
-        let selectedText = this.selectedFilterText[variableName].toLowerCase();
-        if(selectedText !== "") {
+      self.search(self.query, "pageChanged");
+    },
+    calculatePages: function() {
+      var self = this;
+      self.pages = Math.ceil(self.numResults / self.selectedPerPage);
+    },
+    prevPage: function() {
+      var self = this;
+      if (self.selectedPage > 1)
+        self.selectedPage -= 1
+      self.search(self.query, "pageChanged");
+    },
+    nextPage: function() {
+      var self = this;
+      if (self.selectedPage < self.pages)
+        self.selectedPage += 1
+      self.search(self.query, "pageChanged");
+    },
+    selectFilterText(variableName) {
+      let selectedText = this.selectedFilterText[variableName].toLowerCase();
+      if (selectedText !== "") {
         let selected = this.facetSummary.filter(d => d.variable === variableName)[0].counts.filter(d => d.key.toLowerCase().includes(selectedText));
         this.selectedFilters[variableName] = selected.map(d => d.key);
       } else {
-          this.selectedFilters[variableName] = [];
-        }
-        this.search(this.query, "filtersChanged");
-      },
-      search(query, queryType, enquoteQuery = false) {
-        var self = this;
+        this.selectedFilters[variableName] = [];
+      }
+      this.search(this.query, "filtersChanged");
+    },
+    search(query, queryType, enquoteQuery = false) {
+      var self = this;
 
-        var queryText = query ? (enquoteQuery ? `"${query}"` : query) : "__all__";
+      var queryText = query ? (enquoteQuery ? `"${query}"` : query) : "__all__";
 
-        // reset pagination, filters if there's a new query
-        if (queryType === "queryChanged") {
-          self.query = queryText;
-          self.selectedPerPage = self.defaultPerPage;
-          self.selectedPage = 1;
-          this.resetFilters();
-        } else if (queryType === "filtersChanged") {
-          self.selectedPerPage = self.defaultPerPage;
-          self.selectedPage = 1;
-        } else if (queryType === "pageChanged") {}
+      // reset pagination, filters if there's a new query
+      if (queryType === "queryChanged") {
+        self.query = queryText;
+        self.selectedPerPage = self.defaultPerPage;
+        self.selectedPage = 1;
+        this.resetFilters();
+      } else if (queryType === "filtersChanged") {
+        self.selectedPerPage = self.defaultPerPage;
+        self.selectedPage = 1;
+      } else if (queryType === "pageChanged") {}
 
-        if (query) {
-          // update route url
-        this.$router.push({path: "/search", query: { q: self.query, filters: getQueryFilters(self.selectedFilters), size: self.selectedPerPage, from: self.selectedPage}}).catch(err => {
-        });
-        }
-      },
-      executeSearch() {
-        var self = this;
-        self.query = self.$route.query.q;
+      if (query) {
+        // update route url
+        this.$router.push({
+          path: "/search",
+          query: {
+            q: self.query,
+            filters: getQueryFilters(self.selectedFilters),
+            size: self.selectedPerPage,
+            from: self.selectedPage
+          }
+        }).catch(err => {});
+      }
+    },
+    executeSearch(queryChanged = true) {
+      var self = this;
+      self.query = self.$route.query.q;
 
-        if(self.query){
+      if (self.query) {
         self.selectedPerPage = self.$route.query.size ? self.$route.query.size : self.defaultPerPage;
         self.selectedPage = self.$route.query.from ? self.$route.query.from : 1;
 
         var queryText = self.query ? self.query : "__all__";
-        <!-- var queryText = query ? (enquoteQuery ? `"${query}"` : query) : "__all__"; -->
 
         // pull out the applied filter string and convert to an object.
         self.selectedFilters = filterString2Obj(self.$route.query.filters);
 
         // if (Object.values(self.selectedFilters).flatMap(d => d).length > 0) {
         // let selectedFilters = getQueryFilters(self.selectedFilters);
-        if(self.$route.query.filters) {
+        if (self.$route.query.filters) {
           queryText = queryText === "__all__" ? self.selectedFilters : `(${queryText}) AND ${self.$route.query.filters}`
         }
 
@@ -569,19 +575,21 @@
         });
 
         // TODO: promise-ize this.
-        axios.get("{{api_url}}" + 'query?', facetParams).then(function(response) {
-          let allResults = cleanFacets(response.data.facets, self.facetSize);
+        if (queryChanged) {
+          axios.get("{{api_url}}" + 'query?', facetParams).then(function(response) {
+            let allResults = cleanFacets(response.data.facets, self.facetSize);
 
-          // console.log(response.data.facets)
-          // console.log(allResults)
-          self.facetSummary = allResults;
-          self.loading = false;
-        });
-}
-
+            // console.log(response.data.facets)
+            // console.log(allResults)
+            self.facetSummary = allResults;
+            self.loading = false;
+          });
+        }
       }
+
     }
-  });
+  }
+});
 </script>
 <style>
   #results-count h1 {
