@@ -7,22 +7,25 @@
     <img src="/static/img/ripple.svg" />
   </div>
 
-  <div class="jumbotron bg-light text-muted w-100"  v-if="!numResults && numResults !== 0">
+<!-- SEARCH BAR, IF NO RESULTS -->
+  <div class="jumbotron bg-light text-muted w-100" v-if="!numResults && numResults !== 0">
     <div class="jumbotron">
 
-    <h1 class="mb-5">Search {{site_name}}</h1>
-    <form class="row" @submit.prevent="search(query, 'queryChanged')">
-      <input id="search-query" type="search" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
-    </form>
+      <h1 class="mb-5">Search {{site_name}}</h1>
+      <form class="row" @submit.prevent="search(query, 'queryChanged')">
+        <input id="search-query" type="search" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets" autocomplete="off">
+      </form>
     </div>
   </div>
 
-  <div class="jumbotron bg-light text-muted w-100"  v-if="numResults || numResults === 0">
+  <div class="jumbotron bg-light text-muted w-100" v-if="numResults || numResults === 0">
+    <!-- SEARCH, IF THERE ARE RESULTS -->
     <form class="row" @submit.prevent="search(query, 'queryChanged')">
-      <input id="search-query" type="search" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets">
+      <input id="search-query" type="search" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets" autocomplete="off">
     </form>
 
     <div id="results-count" class="d-flex align-items-center mb-2 justify-content-between">
+      <!-- RESULTS COUNT -->
       <h3 id="num-results">
         <template v-if="numResults">
           <span v-text="selectedMin"></span><span>-</span><span v-text="selectedMax"></span><span> of </span>
@@ -32,6 +35,7 @@
         <span> results</span>
       </h3>
 
+      <!-- PAGINATION -->
       <div id="pagination-page-size" class="pagination">
         Show
         <ul>
@@ -54,31 +58,41 @@
 
 
           <template v-if="facetSummary && facetSummary.length > 0">
-          <!-- loop: filter form group for each facet variable -->
-          <form class="facet-group whitefadedarker" v-for="variable in facetSummary" @change.prevent="search(query, 'filtersChanged')">
-            <!-- facet title -->
-            <div class="facet-title mb-1" v-text="variable.variable"></div>
+            <!-- loop: filter form group for each facet variable -->
+            <template v-for="variable in filteredFacetSummary">
+              <!-- facet title -->
+              <div class="facet-title" v-text="variable.variable"></div>
 
-            <!-- checkbox + label for each option -->
-            <template v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0 && index < selectedFacetSize[variable.variable]">
-              <label :for="count.key">
-                <input class="facet-counts px-1" type="checkbox" :id="variable.variable + '-' + count.key" :value="count.key" :name="count.key" v-model="selectedFilters[variable.variable]">
-                <small><span v-html="count.key"></span><span v-text="' (' + count.value.toLocaleString() + ')'"></span></small>
-              </label>
+              <!-- filter the filters: search box -->
+              <form class="facet-search whitefadedarker pt-1" @submit.prevent="selectFilterText(variable.variable)" @input.prevent="debounceFilterText(variable.variable)" v-if="variable.counts.length > 0">
+                <small>
+                  <input class="facet-search-box font-awesome" type="text" autocomplete="off" v-model='selectedFilterText[variable.variable]' name="selectedFilterText" :placeholder="`&#xF002; ${variable.variable}`"/>
+                  </small>
+              </form>
+
+              <form class="facet-group whitefadedarker" @change.prevent="search(query, 'filtersChanged')">
+
+                <!-- checkbox + label for each option -->
+                <fieldset v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0">
+                    <input class="facet-counts px-1" type="checkbox" :id="variable.variable + '-' + count.key" :value="count.key" :name="count.key" v-model="selectedFilters[variable.variable]">
+                    <label :for="`${variable.variable}-${count.key}`">
+                      <small v-html="`${count.key} (${count.value.toLocaleString()})`" :for="count.key"></small>
+                  </label>
+                </fieldset>
+
+                <!-- show more option -->
+                <small class="d-flex justify-content-end" v-if="variable.moreFacets">
+                  <a @click.prevent="showMore(variable.variable)" href="" :id="`${variable.variable}_show-more`">
+                    more
+                  </a>
+                </small>
+              </form>
             </template>
-
-            <!-- show more option -->
-            <small class="d-flex justify-content-end" v-if="variable.counts.length > selectedFacetSize[variable.variable]">
-              <a @click.prevent="showMore(variable.variable)" href="" :id="`${variable.variable}_show-more`">
-                show more
-              </a>
-            </small>
-          </form>
           </template>
         </div>
 
         <div id="results" class="col-md-9">
-          <div v-for="item in results" class="row py-3 result-summary">
+          <div v-for="item in results" class="row py-3 result-summary" :key="item['_id']">
             <div class="col-md-4 text-left">
               <!-- name -->
               <a :href="'/dataset/' + item._id">
@@ -157,20 +171,20 @@
             <!-- description -->
             <div class="col-md-8 text-left" id="description" v-if="item.description">
               <a :href="item.distribution.contentUrl" target="_blank" rel="noreferrer" v-if="item.distribution">
-              <img class="repo-icon float-right" src="/static/img/repositories/geo.gif" v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('NCBI GEO')"/>
+                <img class="repo-icon float-right" src="/static/img/repositories/geo.gif" v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('NCBI GEO')" />
               </a>
 
               <a :href="item.url" target="_blank" rel="noreferrer">
-                <img class="repo-icon float-right" src="/static/img/repositories/zenodo.svg"  v-if="item['_id'].includes('zenodo')" />
+                <img class="repo-icon float-right" src="/static/img/repositories/zenodo.svg" v-if="item['_id'].includes('zenodo')" />
               </a>
 
               <a :href="item['@id']" target="_blank" rel="noreferrer">
-                <img class="repo-icon float-right" src="/static/img/repositories/dataverse_small.png" v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('Harvard Dataverse')"/>
+                <img class="repo-icon float-right" src="/static/img/repositories/dataverse_small.png" v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('Harvard Dataverse')" />
               </a>
 
               <a :href="item['_id']" target="_blank" rel="noreferrer">
-              <img class="repo-icon float-right" src="/static/img/repositories/omicsdi.png" v-if="item['_id'].includes('omicsdi')"/>
-            </a>
+                <img class="repo-icon float-right" src="/static/img/repositories/omicsdi.png" v-if="item['_id'].includes('omicsdi')" />
+              </a>
 
               <template v-if="item.descriptionExpanded">
                 <span v-html="item.longDescription"></span>
@@ -190,7 +204,8 @@
                   <small :data-tippy-info='`Search for "${measurement}"`' class="launch-search measurement mainBackDark" v-text="measurement" v-for="measurement in item.variableMeasured" @click.prevent="search(measurement, 'queryChanged', true)">
                   </small>
                 </template>
-                <small :data-tippy-info='`Search for "${item.variableMeasured}"`' class="launch-search measurement mainBackDark" v-else v-text="item.variableMeasured" v-if="item.variableMeasured" @click.prevent="search(item.variableMeasured, 'queryChanged', true)">
+                <small :data-tippy-info='`Search for "${item.variableMeasured}"`' class="launch-search measurement mainBackDark" v-else v-text="item.variableMeasured" v-if="item.variableMeasured"
+                  @click.prevent="search(item.variableMeasured, 'queryChanged', true)">
                 </small>
 
                 <!-- measurementTechnique -->
@@ -198,7 +213,8 @@
                   <small :data-tippy-info='`Search for "${measurement}"`' class="launch-search measurement mainBackDark" v-text="measurement" v-for="measurement in item.measurementTechnique" @click.prevent="search(measurement, 'queryChanged', true)">
                   </small>
                 </template>
-                <small :data-tippy-info='`Search for "${item.measurementTechnique}"`' class="launch-search measurement mainBackDark" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique" @click.prevent="search(item.measurementTechnique, 'queryChanged', true)">
+                <small :data-tippy-info='`Search for "${item.measurementTechnique}"`' class="launch-search measurement mainBackDark" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique"
+                  @click.prevent="search(item.measurementTechnique, 'queryChanged', true)">
                 </small>
               </div>
             </div>
@@ -329,7 +345,15 @@
           "measurementTechnique": [],
           "keywords": []
         },
-        facetSummary: []
+        selectedFilterText: {
+          "funder": null,
+          "source": null,
+          "variableMeasured": null,
+          "measurementTechnique": null,
+          "keywords": null
+        },
+        facetSummary: [],
+        // filteredFacetSummary: []
       }
     },
     computed: {
@@ -339,8 +363,21 @@
       selectedMax: function() {
         var maxValue = this.selectedPage * this.selectedPerPage;
       return maxValue <= this.numResults ? maxValue : this.numResults;
-    }
+    },
+    filteredFacetSummary: function() {
+      let filtered = this.facetSummary.map(facet => {
+      let selectedVar = this.selectedFilterText[facet.variable];
+      selectedVar = selectedVar ? selectedVar.toLowerCase() : "";
+      return(
+        {
+        'counts': facet.counts.filter(d => d.key.toLowerCase().includes(selectedVar)).slice(0, this.selectedFacetSize[facet.variable]),
+        'variable': facet.variable,
+        'moreFacets': facet.counts.length > this.selectedFacetSize[facet.variable]
+      })
+    })
 
+      return(filtered);
+    },
     },
     watch: {
       $route(to, from) {
@@ -364,6 +401,9 @@
       }
       });
     },
+    created: function() {
+      this.debounceFilterText = _.debounce(this.selectFilterText, 500);
+    },
     methods: {
       resetFilters() {
         this.selectedFilters = {
@@ -381,6 +421,14 @@
                 "measurementTechnique": 5,
                 "keywords": 5
         };
+
+        this.selectedFilterText = {
+          "funder": null,
+          "source": null,
+          "variableMeasured": null,
+          "measurementTechnique": null,
+          "keywords": null
+        }
       },
       clearFilters() {
         this.resetFilters();
@@ -418,6 +466,16 @@
           self.selectedPage += 1
         self.search(self.query, "pageChanged");
       },
+      selectFilterText(variableName) {
+        let selectedText = this.selectedFilterText[variableName].toLowerCase();
+        if(selectedText !== "") {
+        let selected = this.facetSummary.filter(d => d.variable === variableName)[0].counts.filter(d => d.key.toLowerCase().includes(selectedText));
+        this.selectedFilters[variableName] = selected.map(d => d.key);
+      } else {
+          this.selectedFilters[variableName] = [];
+        }
+        this.search(this.query, "filtersChanged");
+      },
       search(query, queryType, enquoteQuery = false) {
         var self = this;
 
@@ -433,8 +491,6 @@
           self.selectedPerPage = self.defaultPerPage;
           self.selectedPage = 1;
         } else if (queryType === "pageChanged") {}
-
-        console.log(self.selectedFilters)
 
         if (query) {
           // update route url
@@ -599,7 +655,6 @@
 
   .facet-group {
     margin-bottom: 15px;
-    border-top: 1px solid;
     border-bottom: 1px solid;
   }
 
@@ -607,11 +662,12 @@
     font-size: 0.9em;
     font-weight: 400;
     background: #ddd;
+    border-top: 1px solid;
     border-bottom: 1px solid;
   }
 
   .facet-title,
-  .facet-group label {
+  .facet-group fieldset {
     padding: 0 0.5em;
   }
 
@@ -627,6 +683,18 @@
   .repo-icon {
     height: 30px;
   }
+
+  form.facet-search {
+    padding: 0 0.5em;
+}
+
+  input.facet-search-box {
+    width: 100%;
+    color: #495057;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.55rem;
+}
 </style>
 {% include "footer.html" %}
 {% endblock %}
