@@ -42,14 +42,7 @@
 <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 <script>
   var router = new VueRouter({
-    mode: 'history',
-    routes: [{
-      path: '/search/:q',
-      component: app,
-      props: (route) => ({
-        query: route.query.q
-      })
-    }],
+    mode: 'history'
   });
 
   var app = new Vue({
@@ -65,7 +58,8 @@
     methods: {
       executeSearch() {
         if(this.query){
-          router.push({path: "/search", query: { q: this.query, size: this.defaultPerPage, from: this.defaultPage}}).catch(err => {});
+          this.$router.push({path: "search", key: this.query, query: { q: this.query, size: this.defaultPerPage, from: this.defaultPage}}).catch(err => {console.log(err)});
+          this.$router.go(0); // bit of a hack to force router execution; seems to be related to Vue's recycling of components, the fact that each component is a new Vue instance, and/or the routing conflicts b/w Tornado and Vue.
           this.query = null;
         }
       }

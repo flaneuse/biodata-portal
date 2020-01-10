@@ -312,6 +312,7 @@
 
   var app = new Vue({
     el: '#search-results',
+    name: "search-results",
     router: router,
     data: function() {
       return {
