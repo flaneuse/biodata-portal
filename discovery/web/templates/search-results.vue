@@ -515,7 +515,7 @@
         // if (Object.values(self.selectedFilters).flatMap(d => d).length > 0) {
         // let selectedFilters = getQueryFilters(self.selectedFilters);
         if(self.$route.query.filters) {
-          queryText = queryText === "__all__" ? self.selectedFilters : `${queryText} AND ${self.$route.query.filters}`
+          queryText = queryText === "__all__" ? self.selectedFilters : `(${queryText}) AND ${self.$route.query.filters}`
         }
 
         var params = {
@@ -541,6 +541,7 @@
         // TODO: set in config
         axios.get("{{api_url}}" + 'query?', params).then(function(response) {
           console.log(`%c searching ${self.query}...`, 'color:hotpink')
+          // console.log(response)
           console.log(response.data.hits)
 
           // Standardize descriptions. NOTE: needs to be done before assign to <this> to ensure proper change detection.
@@ -570,7 +571,8 @@
         axios.get("{{api_url}}" + 'query?', facetParams).then(function(response) {
           let allResults = cleanFacets(response.data.facets, self.facetSize);
 
-          console.log(allResults)
+          // console.log(response.data.facets)
+          // console.log(allResults)
           self.facetSummary = allResults;
           self.loading = false;
         });
