@@ -493,6 +493,8 @@ var app = new Vue({
         self.selectedPage = 1;
       } else if (queryType === "pageChanged") {}
 
+
+console.log(getQueryFilters(self.selectedFilters))
       if (query) {
         // update route url
         this.$router.push({
@@ -522,7 +524,7 @@ var app = new Vue({
         // if (Object.values(self.selectedFilters).flatMap(d => d).length > 0) {
         // let selectedFilters = getQueryFilters(self.selectedFilters);
         if (self.$route.query.filters) {
-          queryText = queryText === "__all__" ? self.selectedFilters : `(${queryText}) AND ${self.$route.query.filters}`
+          queryText = queryText === "__all__" ? self.$route.query.filters : `(${queryText}) AND ${self.$route.query.filters}`;
         }
 
         var params = {
