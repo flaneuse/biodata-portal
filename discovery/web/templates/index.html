@@ -46,7 +46,7 @@
         <li>
           <a href="niaid">NIAID priorities</a>
         </li>
-        <li v-for="suggestion in suggestedQueries" :key="suggstion.label">
+        <li v-for="suggestion in suggestedQueries" :key="suggestion.label">
           <a :href="'/search?q=' + suggestion.searchTerms" v-text="suggestion.label"></a>
         </li>
       </ul>
@@ -113,6 +113,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
 <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
 <script src="./static/js/logo.js"></script>
+<script src="./static/js/clean-facets.js"></script>
 <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://unpkg.com/http-vue-loader"></script>
@@ -187,21 +188,9 @@
           console.log(response.data);
           self.keywordsCounts = response.data.facets['keywords.keyword'].terms;
           self.datasetTotal = response.data.facets['_index'].total;
-          self.source_counts = self.cleanSources(response.data.facets['_index'].terms);
-          console.log(self.source_counts)
-          console.log(self.cleanSources)
+          self.source_counts = cleanSources(response.data.facets['_index'].terms);
           self.sourceTotal = self.source_counts.length;
         })
-      },
-      cleanSources(sources) {
-        let filtered = sources.filter(d => d.term.includes("_search"));
-        filtered.forEach(d => {
-          d.term = d.term.replace("_search", "").replace("_transformed", "").replace(/_\d/, "").replace("_", " ");
-        });
-
-        let nested = d3.nest().key(d => d.term).rollup(values => d3.sum(values, d => d.count)).entries(filtered);
-
-        return (nested);
       },
       showHelp() {
         this.help = !this.help
