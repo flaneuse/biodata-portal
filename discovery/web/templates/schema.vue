@@ -41,8 +41,8 @@
 
         <!-- blank chiclets to represent no data -->
         <g :transform='`translate(${this.margin.left}, ${this.margin.top})`' id="nodata-heatmap">
-          <g v-for="property in results" class="property-row">
-            <g v-for="repo in repos">
+          <g v-for="property in results" class="property-row" :key="property.property + '_group'">
+            <g v-for="repo in repos" :key="property.property + '-' + repo + '-nodata'">
               <rect :data-tippy-info="`<b>NO</b> datasets in <b>${repo}</b> use <b>${property.property}</b>`" :id="property.property + '-' + repo + '-nodata'" class="chiclet no-data" :x="x(repo)" :y="y(property.property)" :width="x.bandwidth()" :height="y.bandwidth()" :fill="colorScheme(0)"></rect>
               <line :x1="x(repo) + 3" :x2="x(repo) - 3 + x.bandwidth()" :y1="y(property.property) + y.bandwidth()" :y2="y(property.property)" class="slash-line" />
               </g>
@@ -51,9 +51,10 @@
 
         <!-- heatmap of actual data -->
         <g :transform='`translate(${this.margin.left}, ${this.margin.top})`' id="heatmap-chart">
-          <g v-for="property in results" :id="property.property" class="property-row">
+          <g v-for="property in results" :id="property.property + '-data'" class="property-row" :id="property.property + '-' + repo + '-data'">
               <rect :data-tippy-info="repo.key === 'AVERAGE' ? `<b>${repo.percent.toLocaleString(undefined, {style:'percent'})}</b> of datasets use <b>${property.property}</b> on average` :
-              `<b>${repo.percent.toLocaleString(undefined, {style:'percent'})}</b> of datasets in <b>${repo.key}</b> use <b>${property.property}</b>`" v-for="repo in property.counts" :id="property.property + '-' + repo.key" class="chiclet" :x="repo.x" :y="repo.y" :fill="repo.fill" :width="x.bandwidth()" :height="y.bandwidth()"></rect>
+              `<b>${repo.percent.toLocaleString(undefined, {style:'percent'})}</b> of datasets in <b>${repo.key}</b> use <b>${property.property}</b>`"
+              v-for="repo in property.counts" :key="property.property + '-' + repo.key" :id="property.property + '-' + repo.key" class="chiclet" :x="repo.x" :y="repo.y" :fill="repo.fill" :width="x.bandwidth()" :height="y.bandwidth()"></rect>
           </g>
         </g>
 

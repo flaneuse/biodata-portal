@@ -68,7 +68,7 @@
         </p>
         <div class="sources">
           <ul>
-            <li v-for="source in dataSources">
+            <li v-for="source in dataSources" :key="source.id">
               <a :href="source.url" v-text="source.name" target="_blank" rel="noreferrer"></a>
             </li>
           </ul>
@@ -91,21 +91,25 @@
       return {
         dataSources: [{
             name: "Harvard Dataverse",
+            id: "harvard_dataverse",
             url: "https://dataverse.harvard.edu/",
             description: ""
           },
           {
             name: "NCBI GEO",
+            id: "ncbi_geo",
             url: "https://www.ncbi.nlm.nih.gov/geo/",
             description: ""
           },
           {
             name: "Zenodo",
+            id: "zenodo",
             url: "https://zenodo.org/",
             description: ""
           },
           {
             name: "Omicsdi",
+            id: "omicsdi",
             url: "https://www.omicsdi.org/",
             description: ""
           },

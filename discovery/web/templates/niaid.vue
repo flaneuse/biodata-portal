@@ -81,7 +81,7 @@
     </div>
 
     <!-- LOOP OVER INDIVIDUAL DISEASES -->
-    <div v-for="disease in results" :id="disease.diseaseID" class="disease-summary border-bottom mb-5">
+    <div v-for="disease in results" :id="disease.diseaseID" :key="disease.diseaseID" class="disease-summary border-bottom mb-5">
 
       <!-- NUMBER OF RESULTS -->
       <div class="row d-flex align-items-center justify-content-between mb-1 disease-title-container" v-bind:style="{background: colorScale(disease.total)}" v-bind:class="textColorScale(disease.total)">
@@ -100,7 +100,7 @@
 
       <!-- SEARCH TERMS -->
       <div class="row" v-show="disease.showTerms">
-        <small class="search-term mr-2 mb-1" v-for="term in disease.searchTerms">
+        <small class="search-term mr-2 mb-1" v-for="term in disease.searchTerms" :key="term">
           <span v-text="term"></span>
         </small>
       </div>
@@ -135,7 +135,7 @@
         <div class="p-3">
           <h6 v-text="facetSize + ' most common keywords'" class="summary-title"></h6>
           <div class="d-flex" id="keyword-counts">
-            <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}">
+            <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}" :key:"disease.disease + "_" + keywordPair.term">
             </div>
           </div>
         </div>

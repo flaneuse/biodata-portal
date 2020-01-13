@@ -2,12 +2,12 @@
 <div class="d-flex align-items-center" id="donut-container">
   <svg class='donut' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom'>
     <g :transform='`translate(${this.margin.left + this.width / 2}, ${this.height / 2 + this.margin.top})`' id="donut-chart">
-      <path :data-tippy-info='`<b>${arc.data.key}</b>: ${arc.data.value.toLocaleString()} datasets`' v-for="arc in arcs" :d="arc.path" :fill="arc.fill"></path>
+      <path :data-tippy-info='`<b>${arc.data.key}</b>: ${arc.data.value.toLocaleString()} datasets`' v-for="arc in arcs" :d="arc.path" :fill="arc.fill" :id="arc.data.key" :key="arc.data.key"></path>
       <!-- <text v-for="arc in arcs" :x="arc.centroid[0]" :y="arc.centroid[1]" v-text="arc.data.key" class="donut-label"></text> -->
     </g>
   </svg>
   <ul class="donut-labels">
-    <li v-for="arc in arcs" v-text="arc.data.key" v-bind:style="{ color: arc.fill}">
+    <li v-for="arc in arcs" v-text="arc.data.key" v-bind:style="{ color: arc.fill}" :id="arc.data.key + '_label'" :key="arc.data.key + '_label'">
     </li>
   </ul>
 </div>

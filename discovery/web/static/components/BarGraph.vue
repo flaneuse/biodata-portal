@@ -2,8 +2,8 @@
 <div class="d-flex align-items-center" v-if="colorScale">
   <svg class='svg-bargraph' :width='width + margin.left + margin.right' :height='height + margin.top + margin.bottom'>
     <g :transform='`translate(${this.margin.left}, ${this.margin.top})`' id="bar-chart">
-      <rect :data-tippy-info='`<b>${count.key}</b>: ${count.value.toLocaleString()}`' v-for="count in counts" :id="count.key" class="bar" :x="x(0)" :y="y(count.key)" :width="x(count.value) - x(0)" :height="y.bandwidth()"></rect>
-      <text :data-tippy-info='`<b>${count.key}</b>: ${count.value.toLocaleString()}`' v-for="count in counts" class="y-axis--label" :x="x(0) - 4" :y="y(count.key)+y.bandwidth()/2" v-text="count.label" v-bind:style="{ fontSize: count.fontSize  + 'px' }"></text>
+      <rect :data-tippy-info='`<b>${count.key}</b>: ${count.value.toLocaleString()}`' v-for="count in counts" :id="count.key" :key="count.key" class="bar" :x="x(0)" :y="y(count.key)" :width="x(count.value) - x(0)" :height="y.bandwidth()"></rect>
+      <text :data-tippy-info='`<b>${count.key}</b>: ${count.value.toLocaleString()}`' v-for="count in counts" :key="count.key + '_label'" class="y-axis--label" :x="x(0) - 4" :y="y(count.key)+y.bandwidth()/2" v-text="count.label" v-bind:style="{ fontSize: count.fontSize  + 'px' }"></text>
       <!-- <rect v-for="count in counts" :id="count.key" class="bar" :x="x(0)" :y="y(count.key)" :fill="colorScale(count.value)" :width="x(count.value) - x(0)" :height="y.bandwidth()"></rect> -->
     </g>
 

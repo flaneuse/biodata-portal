@@ -39,7 +39,7 @@
       <div id="pagination-page-size" class="pagination">
         Show
         <ul>
-          <li v-for="(pageSize, index) in paginationOptions" v-if="pageSize <= numResults || index === 0 || paginationOptions[index-1] < numResults" v-bind:class="[ pageSize === selectedPerPage ? 'selected' : 'unselected' ]">
+          <li v-for="(pageSize, index) in paginationOptions" v-if="pageSize <= numResults || index === 0 || paginationOptions[index-1] < numResults" v-bind:class="[ pageSize === selectedPerPage ? 'selected' : 'unselected' ]" :key="'page-size-' + pageSize">
             <a v-text="pageSize" v-on:click="changePageSize(pageSize)"></a>
           </li>
         </ul>
@@ -59,7 +59,7 @@
 
           <template v-if="facetSummary && facetSummary.length > 0">
             <!-- loop: filter form group for each facet variable -->
-            <template v-for="variable in filteredFacetSummary">
+            <template v-for="variable in filteredFacetSummary" :key="'filter-' + varaible.variable">
               <!-- facet title -->
               <div class="facet-title" v-text="variable.variable"></div>
 
@@ -73,7 +73,7 @@
               <form class="facet-group whitefadedarker" @change.prevent="search(query, 'filtersChanged')">
 
                 <!-- checkbox + label for each option -->
-                <fieldset v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0">
+                <fieldset v-for="(count, index) in variable.counts" v-if="variable.counts.length > 0" :key="variable.variable + '-' + count.key">
                     <input class="facet-counts px-1" type="checkbox" :id="variable.variable + '-' + count.key" :value="count.key" :name="count.key" v-model="selectedFilters[variable.variable]">
                     <label :for="`${variable.variable}-${count.key}`">
                       <small v-html="`${count.key} (${count.value.toLocaleString()})`" :for="count.key"></small>
@@ -132,7 +132,7 @@
 
                   <div id="citation" class="citation mainTextDark" v-if="item.citation">
                     <template v-if="Array.isArray(item.citation)">
-                      <span v-for="citation in item.citation" v-text="citation"></span>
+                      <span v-for="(citation, name) in item.citation" v-text="citation" :key="name"></span>
                     </template>
                     <template v-else>
                       <span v-text="item.citation"></span>
@@ -201,7 +201,7 @@
               <div class="row d-flex justify-content-end" id="variableMeasured" v-if="item.variableMeasured || item.measurementTechnique">
                 <!-- variableMeasured -->
                 <template v-if="Array.isArray(item.variableMeasured)">
-                  <small :data-tippy-info='`Search for "${measurement}"`' class="launch-search measurement mainBackDark" v-text="measurement" v-for="measurement in item.variableMeasured" @click.prevent="search(measurement, 'queryChanged', true)">
+                  <small :data-tippy-info='`Search for "${measurement}"`' class="launch-search measurement mainBackDark" v-text="measurement" v-for="(measurement, name) in item.variableMeasured" :key="name" @click.prevent="search(measurement, 'queryChanged', true)">
                   </small>
                 </template>
                 <small :data-tippy-info='`Search for "${item.variableMeasured}"`' class="launch-search measurement mainBackDark" v-else v-text="item.variableMeasured" v-if="item.variableMeasured"
@@ -210,7 +210,7 @@
 
                 <!-- measurementTechnique -->
                 <template v-if="Array.isArray(item.measurementTechnique)">
-                  <small :data-tippy-info='`Search for "${measurement}"`' class="launch-search measurement mainBackDark" v-text="measurement" v-for="measurement in item.measurementTechnique" @click.prevent="search(measurement, 'queryChanged', true)">
+                  <small :data-tippy-info='`Search for "${measurement}"`' class="launch-search measurement mainBackDark" v-text="measurement" v-for="(measurement, name) in item.measurementTechnique" :key="name" @click.prevent="search(measurement, 'queryChanged', true)">
                   </small>
                 </template>
                 <small :data-tippy-info='`Search for "${item.measurementTechnique}"`' class="launch-search measurement mainBackDark" v-else v-text="item.measurementTechnique" v-if="item.measurementTechnique"
@@ -223,7 +223,7 @@
             <div class="col-md-12">
               <div class="row d-flex justify-content-end" id="keywords" v-if="item.keywords">
                 <template v-if="Array.isArray(item.keywords)">
-                  <small :data-tippy-info='`Search for "${keyword}"`' class="launch-search keyword keyword-arr mainBackLight" v-text="keyword" v-for="keyword in item.keywords" @click.prevent="search(keyword, 'queryChanged', true)">
+                  <small :data-tippy-info='`Search for "${keyword}"`' class="launch-search keyword keyword-arr mainBackLight" v-text="keyword" v-for="(keyword, name) in item.keywords" :key="name" @click.prevent="search(keyword, 'queryChanged', true)">
                   </small>
                 </template>
                 <small :data-tippy-info='`Search for "${item.keywords}"`' class="launch-search keyword keyword-str mainBackLight" v-text="item.keywords" @click.prevent="search(item.keywords, 'queryChanged', true)" v-else>
@@ -248,7 +248,7 @@
       <li class="page-item disabled" v-if="selectedPage > 3 && pages > 4">
         ...
       </li>
-      <li class="page-item" :class="{ 'active': selectedPage == n, 'bg-primary': selectedPage == n, 'white-text': selectedPage == n  }" v-for="n in pages"
+      <li class="page-item" :class="{ 'active': selectedPage == n, 'bg-primary': selectedPage == n, 'white-text': selectedPage == n  }" v-for="n in pages" :key="n"
         v-if="n !== 1 && n !== pages && ((n >= selectedPage - 1 && n <= selectedPage + 1) || (n <=4 && selectedPage <= n) || (n >= pages - 3 && selectedPage >= pages - 1))">
         <a href="#" class="page-link" @click.prevent="changePageNumber(n)" v-text="n"></a>
       </li>
