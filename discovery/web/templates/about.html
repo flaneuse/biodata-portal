@@ -30,7 +30,8 @@
             We also standardize the dataset metadata to a common form, increasing the findability of these datasets. <a href="http://schema.org/" target="_blank" rel="noreferrer">Schema.org</a> provides a widely accepted format regonizable by major
             search engines and data portals.
           </p>
-          <p>While some dataset providers already use this format to describe their datasets, others provide structured metadata in their own format. Learn more about our efforts to <a href="http://metadataplus.biothings.io/" rel="noreferrer" target="_blank">encapsulate non-standard dataset metdata in schema.org's format</a>.</p>
+          <p>While some dataset providers already use this format to describe their datasets, others provide structured metadata in their own format. Learn more about our efforts to <a href="http://metadataplus.biothings.io/" rel="noreferrer"
+              target="_blank">encapsulate non-standard dataset metdata in schema.org's format</a>.</p>
 
 
         </div>
@@ -55,7 +56,8 @@
             More work will be needed to be done by the community to standardize how we apply the schema.org format and the vocabulary we use to describe things like diseases, species, and funding institutions.
           </p>
           <p>
-            As a first step, the NIAID Data Dissemination Working Group has created a <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer">schema for describing biological datasets</a>, building off the schema.org standard.
+            As a first step, the NIAID Data Dissemination Working Group has created a <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer">schema for describing biological datasets</a>, building off the schema.org
+            standard.
           </p>
 
         </div>
@@ -64,7 +66,7 @@
       <div class="container text-muted">
         <h2 id="sources">Data sources</h2>
         <p>
-          We assemble  all the datasets from the following repositories:
+          We assemble the datasets from the following repositories:
         </p>
         <div class="sources">
           <ul>
@@ -73,8 +75,11 @@
             </li>
           </ul>
         </div>
-
+        <div class="row">
+          <app-suggest-source class="row"></app-suggest-source>
+        </div>
       </div>
+
 
     </div>
   </div>
@@ -84,9 +89,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
 <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
+<script src="https://unpkg.com/http-vue-loader"></script>
 <script>
   var app = new Vue({
     el: '#about',
+    components: {
+      'app-suggest-source': window.httpVueLoader('/static/components/SuggestSource.vue')
+    },
     data: function() {
       return {
         dataSources: [{
