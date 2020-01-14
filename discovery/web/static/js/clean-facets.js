@@ -47,6 +47,24 @@ cleanSources = function(sources) {
   return (nested);
 }
 
+cleanSourceName = function(source) {
+  if(source.toLowerCase() === "harvard_dataverse") {
+    return("Harvard Dataverse")
+  }
+  if(source.toLowerCase() === "omicsdi") {
+    return("Omics DI")
+  }
+  if(source.toLowerCase() === "ncbi_geo") {
+    return("NCBI GEO")
+  } else {
+    let sourceName = source.replace("_", " ").toLowerCase();
+    sourceName = sourceName[0].toUpperCase() + sourceName.slice(1);
+    return(sourceName)
+  }
+
+
+}
+
 combineFunders = function(facets, facetSize, includeUnknown = false) {
   let combined = facets['funder.name.keyword']['terms'].concat(facets['funding.funder.name.keyword']['terms']);
   let nested = d3.nest().key(d => d.term).rollup(values => d3.sum(values, d => d.count)).entries(combined).sort((a, b) => b.value - a.value);

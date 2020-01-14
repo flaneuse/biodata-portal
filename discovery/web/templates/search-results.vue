@@ -95,7 +95,7 @@
           <div v-for="item in results" class="row py-3 result-summary" :key="item['_id']">
             <div class="col-md-4 text-left">
               <!-- name -->
-              <a :href="'/dataset/' + item._id">
+              <a :href="item._id" target="_blank" rel="noreferrer">
                 <h5 v-text="item.name" class="row" v-if="item.name"></h5>
                 <h5 v-text="'Unnamed dataset'" class="row" v-if="!item.name"></h5>
               </a>
@@ -142,19 +142,7 @@
                 </div>
 
                 <div id="source">
-                  <template v-if="item['_id'].includes('zenodo')">
-                    view on <a :href="item.url" target="_blank" rel="noreferrer">Zenodo</a>
-                  </template>
-
-                  <template v-if="item['_id'].includes('omicsdi')">
-                    view on <a :href="item['_id']" target="_blank" rel="noreferrer">OmicsDI</a>
-                  </template>
-                  <template v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('NCBI GEO')">
-                    view on <a :href="item.distribution.contentUrl" target="_blank" rel="noreferrer">NCBI GEO</a>
-                  </template>
-                  <template v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('Harvard Dataverse')">
-                    view on <a :href="item['@id']" target="_blank" rel="noreferrer">Harvard Dataverse</a>
-                  </template>
+                    view on <a :href="item['_id']" target="_blank" rel="noreferrer"><span v-text="item['sourceIndex']"></span></a>
                 </div>
 
 
@@ -169,21 +157,12 @@
             </div>
 
             <!-- description -->
-            <div class="col-md-8 text-left" id="description" v-if="item.description">
-              <a :href="item.distribution.contentUrl" target="_blank" rel="noreferrer" v-if="item.distribution">
-                <img class="repo-icon float-right" src="/static/img/repositories/geo.gif" v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('NCBI GEO')" />
-              </a>
-
-              <a :href="item.url" target="_blank" rel="noreferrer">
-                <img class="repo-icon float-right" src="/static/img/repositories/zenodo.svg" v-if="item['_id'].includes('zenodo')" />
-              </a>
-
-              <a :href="item['@id']" target="_blank" rel="noreferrer">
-                <img class="repo-icon float-right" src="/static/img/repositories/dataverse_small.png" v-if="item.includedInDataCatalog && item.includedInDataCatalog.name.includes('Harvard Dataverse')" />
-              </a>
-
+            <div class="col-md-8 text-left" id="description">
               <a :href="item['_id']" target="_blank" rel="noreferrer">
-                <img class="repo-icon float-right" src="/static/img/repositories/omicsdi.png" v-if="item['_id'].includes('omicsdi')" />
+                <img class="repo-icon float-right" src="/static/img/repositories/omicsdi.png" v-if="item['_index'].includes('omicsdi')" />
+                <img class="repo-icon float-right" src="/static/img/repositories/geo.gif" v-if="item['_index'].includes('ncbi_geo')"  />
+                <img class="repo-icon float-right" src="/static/img/repositories/zenodo.svg" v-if="item['_index'].includes('zenodo')" />
+                <img class="repo-icon float-right" src="/static/img/repositories/dataverse_small.png" v-if="item['_index'].includes('harvard_dataverse')" />
               </a>
 
               <template v-if="item.descriptionExpanded">
@@ -564,6 +543,7 @@ console.log(getQueryFilters(self.selectedFilters))
             d['shortDescription'] = descriptionArray.slice(0, self.maxDescriptionLength).join(" ");
             d['descriptionTooLong'] = descriptionArray.length >= self.maxDescriptionLength;
             d['descriptionExpanded'] = false;
+            d['sourceIndex'] = cleanSourceName(d['_index']);
           })
 
           self.results = response.data.hits;
