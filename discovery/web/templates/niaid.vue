@@ -135,7 +135,7 @@
         <div class="p-3">
           <h6 v-text="facetSize + ' most common keywords'" class="summary-title"></h6>
           <div class="d-flex" id="keyword-counts">
-            <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}" :key:"disease.disease + "_" + keywordPair.term">
+            <div v-for="keywordPair in disease['keywords.keyword']['terms']" v-text="keywordPair.term" class="keyword-cloud" v-bind:style="{ opacity: calcOpacity(keywordPair, disease['keywords.keyword']['terms'])}" :key="disease.disease + '_' + keywordPair.term">
             </div>
           </div>
         </div>
