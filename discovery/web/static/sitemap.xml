@@ -1,9 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap>
-    <loc>https://discovery.biothings.io/dataset/geo/sitemap.xml</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://discovery.biothings.io/static/static-sitemap.xml</loc>
-  </sitemap>
-</sitemapindex>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://discovery.biothings.io/niaid</loc>
+  </url>
+  <url>
+    <loc>https://discovery.biothings.io/niaid/niaid-priorities</loc>
+  </url>
+  <url>
+    <loc>https://discovery.biothings.io/niaid/search</loc>
+  </url>
+  <url>
+    <loc>https://discovery.biothings.io/niaid/about</loc>
+  </url>
+  <url>
+    <loc>https://discovery.biothings.io/niaid/schema</loc>
+  </url>
+</urlset>
