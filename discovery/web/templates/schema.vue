@@ -3,7 +3,7 @@
 {% include "header.html" %}
 <div id="schema" class="container d-flex" style="min-height:100vh">
   <div v-if=loading class="loader">
-    <img src="/static/img/ripple.svg" />
+    <img src="static/img/ripple.svg" />
   </div>
 
   <div class="jumbotron bg-light text-muted w-100">
@@ -84,7 +84,7 @@
         <p class="mt-4">
 
           <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer"><small class="badge badge-pill badge-secondary pointer">Use NIAID's Minimal Dataset Schema</small></a>
-          <a href="/about#sources"><small class="badge badge-pill badge-secondary pointer">View data sources</small></a>
+          <a href="about#sources"><small class="badge badge-pill badge-secondary pointer">View data sources</small></a>
         </p>
       </div>
 
@@ -99,9 +99,10 @@
 <script src = "https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
 <script src="https://unpkg.com/rxjs/bundles/rxjs.umd.js"></script>
 <script src = "https://unpkg.com/vue/dist/vue.js"></script>
-<script src="/static/js/vue-rx.js"></script><script src = "https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" ></script>
+<script src="static/js/vue-rx.js"></script>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" ></script>
 <script src = "https://d3js.org/d3.v5.min.js" ></script>
-<script src = "/static/js/clean-facets.js" ></script>
+<script src = "static/js/clean-facets.js" ></script>
 <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 
   <script type = "module">

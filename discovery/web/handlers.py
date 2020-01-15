@@ -29,6 +29,7 @@ TEMPLATE_ENV.globals['site_desc'] = siteconfig.SITE_DESC
 TEMPLATE_ENV.globals['contact_email'] = siteconfig.CONTACT_EMAIL
 TEMPLATE_ENV.globals['contact_repo'] = siteconfig.CONTACT_REPO
 TEMPLATE_ENV.globals['api_url'] = siteconfig.API_URL
+TEMPLATE_ENV.globals['site_url'] = siteconfig.SITE_URL
 # Metadata
 TEMPLATE_ENV.globals['metadata_desc'] = siteconfig.METADATA_DESC
 TEMPLATE_ENV.globals['metadata_featured_image'] = siteconfig.METADATA_FEATURED_IMAGE

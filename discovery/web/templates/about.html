@@ -24,7 +24,7 @@
       <div class="jumbotron bg-light container row d-flex align-items-center">
         <div class="text-muted col-sm-12 col-md-8">
           <p>
-            The {{site_name}} aggregates <a href="/about#sources"><span v-text="dataSources.length"></span> different data sources</a> together in a <a href="/search">searchable platform</a>, making it easier to find datasets.
+            The {{site_name}} aggregates <a href="about#sources"><span v-text="dataSources.length"></span> different data sources</a> together in a <a href="search">searchable platform</a>, making it easier to find datasets.
           </p>
           <p>
             We also standardize the dataset metadata to a common form, increasing the findability of these datasets. <a href="http://schema.org/" target="_blank" rel="noreferrer">Schema.org</a> provides a widely accepted format regonizable by major
@@ -48,7 +48,7 @@
           <p>
             Aggregating together open datasets which have structured metadata is only the first step. Though all the datasets harvested and aggregated on this site organize dataset metadata in the same format, they take advantage of the schema.org
             standard to different extents. Additionally, since the dataset metadata is provided by the data generators, they vary widely in how much information about the dataset is given and how standardized this information is.
-            <a class="lnk" href="/schema">
+            <a class="lnk" href="schema">
               Learn more about how the data sources use the schema.org standard.
             </a>
           </p>
@@ -94,7 +94,7 @@
   var app = new Vue({
     el: '#about',
     components: {
-      'app-suggest-source': window.httpVueLoader('/static/components/SuggestSource.vue')
+      'app-suggest-source': window.httpVueLoader('static/components/SuggestSource.vue')
     },
     data: function() {
       return {

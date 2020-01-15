@@ -65,7 +65,7 @@
 </style>
 <div id="niaid-diseases" class="container d-flex" style="min-height:100vh">
   <div v-if=loading class="loader">
-    <img src="/static/img/ripple.svg" />
+    <img src="static/img/ripple.svg" />
   </div>
 
   <div class="jumbotron bg-light text-muted w-100" v-if="numResults">
@@ -93,7 +93,7 @@
         <div class="d-flex">
           <div v-text="disease.total.toLocaleString() + ' results'" class="num-results"></div>
           <button class="ml-3 search-link" v-bind:class="textColorScale(disease.total)">
-            <a :href="'/search?q=' + disease.query" v-text="'view ' + disease.disease + ' datasets'" v-bind:style="{color: colorScale(disease.total)}"></a>
+            <a :href="'search?q=' + disease.query" v-text="'view ' + disease.disease + ' datasets'" v-bind:style="{color: colorScale(disease.total)}"></a>
           </button>
         </div>
       </div>
@@ -155,9 +155,9 @@
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <script src="https://unpkg.com/http-vue-loader"></script>
 <script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="/static/js/vue-rx.js"></script>
-<script src="/static/js/clean-facets.js"></script>
-<script src="/static/js/chroma.min.js"></script>
+<script src="static/js/vue-rx.js"></script>
+<script src="static/js/clean-facets.js"></script>
+<script src="static/js/chroma.min.js"></script>
 <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 
 <script type="module">
@@ -165,9 +165,9 @@
     el: '#niaid-diseases',
     name: "NIAID-diseases",
     components: {
-  'app-treemap': window.httpVueLoader('/static/components/Treemap.vue'),
-  'app-donut': window.httpVueLoader('/static/components/Donut.vue'),
-  'app-bar-graph': window.httpVueLoader('/static/components/BarGraph.vue')
+  'app-treemap': window.httpVueLoader('static/components/Treemap.vue'),
+  'app-donut': window.httpVueLoader('static/components/Donut.vue'),
+  'app-bar-graph': window.httpVueLoader('static/components/BarGraph.vue')
 },
     data: function() {
       return {

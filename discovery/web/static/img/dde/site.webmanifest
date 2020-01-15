@@ -1,7 +1,7 @@
 {
   "name": "NIAID Data Portal",
   "short_name": "NIAID Data",
-  "start_url": "http://discovery.biothings.io/",
+  "start_url": "http://discovery.biothings.io/niaid",
   "icons": [{
       "src": "/static/img/android-chrome-192x192.png",
       "sizes": "192x192",

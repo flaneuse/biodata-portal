@@ -2,7 +2,7 @@
 <div id="treemap-container">
   <svg class='treemap' :width='width' :height='height'>
     <g v-for="d in leaves" :transform='`translate(${d.x0}, ${d.y0})`' :key="d.data.id + '_group'" :id="d.data.id + '_group'">
-      <a :href="`/${route}#${d.anchor}`">
+      <a :href="`${route}#${d.anchor}`">
         <rect :data-tippy-info="`${d.data.id}: ${d.value.toLocaleString()} results`" :width="d.x1-d.x0" :height="d.y1 - d.y0" :fill="d.fill"></rect>
         <text :data-tippy-info="`${d.data.id}: ${d.value.toLocaleString()} results`" y="0"  v-if="d.value > 900" class="treemap-text">
           <tspan v-for="(word, index) in d.words" v-text="word" :x="(d.x1 - d.x0)/2" dy="1em" :key="d.data.id + index"></tspan>

@@ -36,7 +36,6 @@ module.exports = {
   },
   watch: {
     source_counts: function(newInput, oldInput) {
-      console.log('newInput')
       this.prepData(newInput);
     },
     deep: true

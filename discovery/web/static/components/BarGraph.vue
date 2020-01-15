@@ -43,7 +43,6 @@ module.exports = {
   },
   watch: {
     counts: function(newInput, oldInput) {
-      console.log('newInput')
       this.prepData(newInput);
       this.renderAxes();
     },

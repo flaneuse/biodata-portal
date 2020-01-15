@@ -4,7 +4,7 @@
 
 <div id="search-results" class="container d-flex" style="min-height:100vh">
   <div v-if=loading class="loader">
-    <img src="/static/img/ripple.svg" />
+    <img src="static/img/ripple.svg" />
   </div>
 
 <!-- SEARCH BAR, IF NO RESULTS -->
@@ -151,7 +151,7 @@
                 <div id="datePublished" v-if="item.datePublished"><span style="padding-right:4px">published</span><span v-text="item.datePublished"></span></div>
 
                 <div id="license" v-if="item.license && item.license.text">
-                  <a target="_blank" :href="'/'+item.license.url+'/'" v-html="item.license.text">link</a>
+                  <a target="_blank" :href="item.license.url" v-html="item.license.text">link</a>
                 </div>
               </div>
             </div>
@@ -159,10 +159,10 @@
             <!-- description -->
             <div class="col-md-8 text-left" id="description">
               <a :href="item['_id']" target="_blank" rel="noreferrer">
-                <img class="repo-icon float-right" src="/static/img/repositories/omicsdi.png" v-if="item['_index'].includes('omicsdi')" />
-                <img class="repo-icon float-right" src="/static/img/repositories/geo.gif" v-if="item['_index'].includes('ncbi_geo')"  />
-                <img class="repo-icon float-right" src="/static/img/repositories/zenodo.svg" v-if="item['_index'].includes('zenodo')" />
-                <img class="repo-icon float-right" src="/static/img/repositories/dataverse_small.png" v-if="item['_index'].includes('harvard_dataverse')" />
+                <img class="repo-icon float-right" src="static/img/repositories/omicsdi.png" v-if="item['_index'].includes('omicsdi')" />
+                <img class="repo-icon float-right" src="static/img/repositories/geo.gif" v-if="item['_index'].includes('ncbi_geo')"  />
+                <img class="repo-icon float-right" src="static/img/repositories/zenodo.svg" v-if="item['_index'].includes('zenodo')" />
+                <img class="repo-icon float-right" src="static/img/repositories/dataverse_small.png" v-if="item['_index'].includes('harvard_dataverse')" />
               </a>
 
               <template v-if="item.descriptionExpanded">
@@ -255,7 +255,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
 <script src="https://unpkg.com/vue-router"></script>
 <script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="/static/js/clean-facets.js"></script>
+<script src="static/js/clean-facets.js"></script>
 <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.28.11/dist/sweetalert2.all.min.js"></script> -->
 <script>
