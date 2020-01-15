@@ -288,7 +288,7 @@ APP_LIST = [
     (r"/dataset/([^/]+)/?", DatasetHandler),
     (r"/view/([^/]+)/([^/]*)/?", VisualizerHandler),
     (r"/search/?", SearchHandler),
-    (r"/niaid/?", NiaidHandler),
+    (r"/niaid-priorities/?", NiaidHandler),
     (r"/schema/?", SchemaHandler),
     (r".*", PageNotFoundHandler)
 ]

@@ -44,7 +44,7 @@
       <span>try</span>
       <ul>
         <li>
-          <a href="niaid">NIAID priorities</a>
+          <a href="niaid-priorities">NIAID priorities</a>
         </li>
         <li v-for="suggestion in suggestedQueries" :key="suggestion.label">
           <a :href="'search?q=' + suggestion.searchTerms" v-text="suggestion.label"></a>

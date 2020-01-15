@@ -77,7 +77,7 @@
     <!-- TREEMAP -->
     <div id="niaid-treemap" class="mb-5">
       <h5>Number of datasets per disease area</h5>
-      <app-treemap v-bind:results="results" v-bind:route="'niaid'" v-if="numResults"></app-treemap>
+      <app-treemap v-bind:results="results" v-bind:route="'niaid-priorities'" v-if="numResults"></app-treemap>
     </div>
 
     <!-- LOOP OVER INDIVIDUAL DISEASES -->
