@@ -69,7 +69,9 @@
   </div>
 
   <div class="jumbotron bg-light text-muted w-100" v-if="numResults">
-    <h1 class="row">Datasets containing NIAID priority diseases</h1>
+    <div class="jumbotron bg-light bg-animated">
+      <h1 class="row">Datasets containing NIAID priority diseases</h1>
+    </div>
     <p class="row"
       v-html="`<span>Of the ${diseaseKeywords.length} priority diseases and conditions for the National Institute of Allergy and Infectious Diseases, <b>${results[0].disease}</b> has the most results within the ` + '{{site_name}}' + '.</span>'">
     </p>

@@ -5,18 +5,29 @@
   <div v-if=loading class="loader">
     <img src="static/img/ripple.svg" />
   </div>
-
   <div class="jumbotron bg-light text-muted w-100">
-    <h1 class="row">Dataset schema in {{site_name}}</h1>
-    <p class="row">
-      <span>
-      A critical part of assembling datasets from different sources is making sure that they
-      use a common schema to describe these datasets. We rely on <a href="http://schema.org/Dataset" rel="noreferrer" target="_blank">schema.org's Dataset schema</a>, but each source uses the standard differently. <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer"><small class="badge badge-pill badge-secondary pointer">Use NIAID's Minimal Dataset Schema</small></a>
-      </span>
-    </p>
-    <h4 class="row" v-if="results" v-text="'There are ' + schemaTotal + ' schema.org Dataset properties'"></h4>
-    <h4 class="row mb-3" v-if="results" v-text="'... but only ' + results.filter(d => d.total).length + ' are used by any of our dataset repositories.'"></h4>
-
+    <div class="jumbotron bg-light bg-animated">
+      <h1 class="text-center text-muted test">Dataset schema in <span class="logoText">{{site_name}}</span></h1>
+    </div>
+    <div>
+      <p>
+        A critical part of assembling datasets from different sources is making sure that they
+        use a common schema to describe these datasets.
+      </p>
+      <p>
+        We rely on <a href="http://schema.org/Dataset" rel="noreferrer" target="_blank">schema.org's Dataset schema</a>, but each source uses the standard differently. <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer"><small class="badge badge-pill badge-secondary pointer">Use NIAID's Minimal Dataset Schema</small></a>
+      </p>
+    </div>
+    <div class="pt-5 pb-5 text-center">
+      <h4 v-if="results">
+        There are <span class="mainTextLight" v-text="schemaTotal"></span> schema.org Dataset properties
+      </h4>
+    </div>
+    <div class="pt-5 pb-5 text-center">
+      <h4 v-if="results">
+        ... but only <span class="mainTextLight" v-text="results.filter(d => d.total).length"></span> are used by any of our dataset repositories.
+      </h4>
+    </div>
     <div class="d-flex flex-wrap justify-content-between">
       <div>
 

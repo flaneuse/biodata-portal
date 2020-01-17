@@ -1,26 +1,29 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
-<style></style>
 <div id="about" style="min-height: 100vh;padding-top:60px;">
   <div class="container" style="margin-top: 40px;">
-    <div class="jumbotron bg-light">
+    <div class="jumbotron bg-light bg-animated">
       <h1 class="text-center text-muted test">ABOUT <span class="logoText">{{site_name}}</span></h1>
     </div>
-    <div class="m-5">
-      <h3 class="col-sm-12 text-muted">
-        There's increasingly more and more biomedical data available as researchers openly share their results.
-      </h3>
-      <div class="jumbotron container row mt-3 d-flex align-items-center">
-        <h3 class="text-muted col-sm-12 col-md-4">
-          The problem
+    <div class="m-2">
+      <div class="mt-2 mb-5">
+        <h3 class="text-muted">
+          There's increasingly more and more biomedical data available as researchers openly share their results.
         </h3>
+      </div>
+      <div class="jumbotron container row mt-3 d-flex align-items-center">
+        <div class="text-muted col-sm-12 col-md-4 d-flex justify-content-center">
+          <div class="text-center">
+            <img src="/static/img/problem.svg" alt="1" class="w-100"/>
+            <h3>The problem</h3>
+          </div>
+        </div>
         <div class="text-muted col-sm-12 col-md-8">
           Though these data could be reused in other analyses, these datasets can often be difficult to discover. Data is scattered across general purpose data repositories, specific biomedical data sites, data aggregators, and primary literature.
           Moreover, the metadata that is used to describe these datasets isn't standardized &mdash; meaning that it's harder to find useful data for particular research.
         </div>
       </div>
-
       <div class="jumbotron bg-light container row d-flex align-items-center">
         <div class="text-muted col-sm-12 col-md-8">
           <p>
@@ -30,20 +33,26 @@
             We also standardize the dataset metadata to a common form, increasing the findability of these datasets. <a href="http://schema.org/" target="_blank" rel="noreferrer">Schema.org</a> provides a widely accepted format regonizable by major
             search engines and data portals.
           </p>
-          <p>While some dataset providers already use this format to describe their datasets, others provide structured metadata in their own format. Learn more about our efforts to <a href="http://metadataplus.biothings.io/" rel="noreferrer"
-              target="_blank">encapsulate non-standard dataset metdata in schema.org's format</a>.</p>
-
-
+          <p>
+            While some dataset providers already use this format to describe their datasets, others provide structured metadata in their own format. Learn more about our efforts to <a href="http://metadataplus.biothings.io/" rel="noreferrer"
+              target="_blank">encapsulate non-standard dataset metdata in schema.org's format</a>.
+          </p>
         </div>
-        <h3 class="text-muted col-sm-12 col-md-4 d-flex justify-content-end">
-          Our solution
-        </h3>
-      </div>
 
+        <div class="text-muted col-sm-12 col-md-4 d-flex justify-content-center">
+          <div class="text-center">
+            <img src="/static/img/solution.svg" alt="2" class="w-100"/>
+            <h3>Our solution</h3>
+          </div>
+        </div>
+      </div>
       <div class="jumbotron container row d-flex align-items-center">
-        <h3 class="text-muted col-sm-12 col-md-4">
-          The future
-        </h3>
+        <div class="text-muted col-sm-12 col-md-4 d-flex justify-content-center">
+          <div class="text-center">
+            <img src="/static/img/future.svg" alt="3" class="w-100"/>
+            <h3>The future</h3>
+          </div>
+        </div>
         <div class="text-muted col-sm-12 col-md-8">
           <p>
             Aggregating together open datasets which have structured metadata is only the first step. Though all the datasets harvested and aggregated on this site organize dataset metadata in the same format, they take advantage of the schema.org
@@ -62,25 +71,29 @@
 
         </div>
       </div>
+    </div>
+  </div>
+  <div class="container text-muted d-flex justify-content-center align-items-center">
 
-      <div class="container text-muted">
-        <h2 id="sources">Data sources</h2>
-        <p>
-          We assemble the datasets from the following repositories:
-        </p>
-        <div class="sources">
-          <ul>
-            <li v-for="source in dataSources" :key="source.id">
-              <a :href="source.url" v-text="source.name" target="_blank" rel="noreferrer"></a>
-            </li>
-          </ul>
-        </div>
-        <div class="row">
-          <app-suggest-source class="row"></app-suggest-source>
-        </div>
+  </div>
+  <div class="col-sm-12 hero mainTextDark p-5 text-center">
+    <div class="alert alert-light">
+      <h2 id="sources">Data sources</h2>
+      <p>
+        We assemble the datasets from the following repositories:
+      </p>
+      <div class="sources">
+        <ul style="list-style:none;">
+          <li v-for="source in dataSources" :key="source.id">
+            <a :href="source.url" v-text="source.name" target="_blank" rel="noreferrer"></a>
+          </li>
+        </ul>
       </div>
-
-
+    </div>
+    <div class="alert alert-light p-5">
+      <img src="static/img/icon.svg" class="w-25" alt="icon">
+      <h2>Suggest a new source</h2>
+      <app-suggest-source class="m-auto"></app-suggest-source>
     </div>
   </div>
 </div>

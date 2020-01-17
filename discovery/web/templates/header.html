@@ -1,23 +1,24 @@
 {% block content %}
 <style scoped>
-  input.search-box {
-    border-radius: 0.35rem;
-    border-color: #E2FABD !important;
-    padding: 0.125rem 0.55rem;
-    color: #495057;
-    border: 1px solid #495057;
+input.search-box {
+  border-radius: 0.35rem;
+  background: #83c5da !important;
+  border-color: #299fc4 !important;
+  padding: 0.125rem 0.55rem;
+  color: #495057;
+  border: 2px solid #495057;
 }
 
 </style>
 <header id="header">
   <title>{{site_name}}</title>
   <nav class="navbar navbar-expand-md fixed-top">
-    <a class="navbar-brand" href="#">
-      {% if site_name == "CTSA Data Discovery Engine" %}
-      <img src="static/img/dde-logo-o.svg" width="30" height="30" alt="">
-      {% endif %}
-    </a>
-    <a id="logo" class="navbar-brand mainFont caps logoText" href="/">{{site_name}}</a>
+    <div class="bg-light p-1 rounded">
+      <a class="navbar-brand" href="#">
+        <img src="static/img/icon.svg" width="30" height="30" alt="">
+      </a>
+      <a id="logo" class="navbar-brand mainFont caps mainTextDark bold" href="/">{{site_name}}</a>
+    </div>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -28,9 +29,9 @@
             <input class="form-control search-box font-awesome mainBackLight mr-2" type="text" v-model='query' name="query" placeholder="&#xF002;" />
           </form>
         </li>
-        <li class="nav-item"><a class="nav-link h-link" href="about">About</a></li>
-        <li class="nav-item"><a class="nav-link h-link" href="schema">Schema</a></li>
-        <li class="nav-item"><a class="nav-link h-link" href="niaid-priorities">NIAID Priorities</a></li>
+        <li class="nav-item"><a class="nav-link h-link text-light" href="about">About</a></li>
+        <li class="nav-item"><a class="nav-link h-link text-light" href="schema">Schema</a></li>
+        <li class="nav-item"><a class="nav-link h-link text-light" href="niaid-priorities">NIAID Priorities</a></li>
       </ul>
     </div>
   </nav>

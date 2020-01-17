@@ -3,9 +3,9 @@
 
 /* Substitute values of main and sec to change look of site main colors */
 
-$main: #1C5D5D;
-$lightermain: #A5E7CF;
-$sec: #A5E7CF;
+$main: #113B56;
+$lightermain: #214A70;
+$sec: #0F627C;
 $darkmode: false;
 $background-white: #F8F9FA;
 
@@ -86,6 +86,28 @@ p.text-muted, small.text-muted, h1.text-muted,h2.text-muted,h3.text-muted,h4.tex
   background-attachment: scroll;
 }
 
+.bg-search{
+  background-image: url('../img/search.svg');
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.bg-animated {
+  background: gray url(https://subtlepatterns.com/patterns/geometry2.png) repeat 0 0;
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  box-sizing: border-box;
+  -webkit-animation: slide 20s linear infinite;
+}
+
+@-webkit-keyframes slide {
+    from { background-position: 0 0; }
+    to { background-position: -400px 0; }
+}
+
 .buildBack{
   background-image: url('static/img/buildnew.jpg');
   background-size: cover;
@@ -115,27 +137,10 @@ p.text-muted, small.text-muted, h1.text-muted,h2.text-muted,h3.text-muted,h4.tex
 }
 
 /* CLASSES */
-
 .logoText{
-  // background: rgb(0,100,118); /* Old browsers */
-  // background: -moz-linear-gradient(left,  $sec 0%, $main 100%); /* FF3.6-15 */
-  // background: -webkit-linear-gradient(left,  $sec 0%,$main 100%); /* Chrome10-25,Safari5.1-6 */
-  // background: linear-gradient(to right,  $sec 0%,$main 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  // filter: progid:DXImageTransform.Microsoft.gradient( startColorstr= $sec, endColorstr=$main,GradientType=1 ); /* IE6-9 */
-  // -webkit-background-clip: text;
-  // -webkit-text-fill-color: transparent;
   color: $sec;
 }
 
-// .grad{
-//   /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#4a7d8f+0,63296b+100 */
-// background: rgb(74,125,143); /* Old browsers */
-// background: -moz-linear-gradient(left,  $sec 0%, $main 100%); /* FF3.6-15 */
-// background: -webkit-linear-gradient(left,  $sec 0%,$main 100%); /* Chrome10-25,Safari5.1-6 */
-// background: linear-gradient(to right,  $sec 0%,$main 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-// filter: progid:DXImageTransform.Microsoft.gradient( startColorstr= $sec, endColorstr=$main,GradientType=1 ); /* IE6-9 */
-//
-// }
 .grad{
   @include hor-gradient($sec, $main);
 }
@@ -635,7 +640,7 @@ pre code {
 }
 
 a, p, small,h1, h2, h3, h4, h4, h5, h6, text {
-  font-family: helvetica !important;
+  font-family: 'Crete Round', serif;
 }
 
 #keywords span.badge:hover{
@@ -1410,9 +1415,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c9de96', end
 .navbar {
   padding-top: 25px;
   padding-bottom: 25px;
-  background: #1C5D5D;
-  color: #E2FABD !important;
-  // color: white !important;
+  background: $sec;
   transition: all 0.3s;
 }
 
@@ -2093,11 +2096,6 @@ progress[value]::-webkit-progress-value {
   padding: 0px 7px;
   margin: 0px 4px;
   color: $main;
-}
-
-
-a.nav-link.h-link {
-  color: #E2FABD !important;
 }
 
 .pointer {
