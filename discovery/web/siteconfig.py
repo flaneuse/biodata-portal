@@ -10,8 +10,8 @@
 SITE_NAME = "NIAID Data Portal"
 SITE_DESC = 'An aggregator of open datasets, with a particular focus on allergy and infectious diseases'
 API_URL = "http://su07:8080/api/"
-# SITE_URL = "https://discovery.biothings.io/niaid/"
-SITE_URL = "http://localhost:8000/"
+SITE_URL = "https://discovery.biothings.io/niaid/"
+# SITE_URL = "http://localhost:8000/"
 
 CONTACT_REPO = "https://github.com/SuLab/niaid-data-portal"
 CONTACT_EMAIL = "cd2h-metadata@googlegroups.com"
