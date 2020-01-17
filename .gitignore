@@ -114,3 +114,9 @@ elasticsearch_dsl
 biothings_schema
 discovery/web/templates/index_dde.html
 .DS_Store
+discovery/web/static/img/repositories/zenodo.png
+niaid_portal/2020-01-16_schemadotorg_usage.svg
+niaid_portal/2020-01-16_schemadotorg_usage.png
+NIAID-data-portal.md
+schema_horiz.vue
+/niaid_portal/*
