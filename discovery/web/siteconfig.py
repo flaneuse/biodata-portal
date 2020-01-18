@@ -9,9 +9,10 @@
 # name also used on metadata
 SITE_NAME = "NIAID Data Portal"
 SITE_DESC = 'An aggregator of open datasets, with a particular focus on allergy and infectious diseases'
-API_URL = "https://crawler.biothings.io/api/"
-SITE_URL = "https://discovery.biothings.io/niaid/"
-# SITE_URL = "http://localhost:8000/"
+API_URL = "https://metadataplus.biothings.io/api/"
+# API_URL = "https://crawler.biothings.io/api/"
+# SITE_URL = "https://discovery.biothings.io/niaid/"
+SITE_URL = "http://localhost:8000/"
 
 CONTACT_REPO = "https://github.com/SuLab/niaid-data-portal"
 CONTACT_EMAIL = "cd2h-metadata@googlegroups.com"
