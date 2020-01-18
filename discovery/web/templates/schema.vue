@@ -141,7 +141,7 @@
         x: d3.scaleBand(),
         y: d3.scaleBand(),
 
-        repos: ["harvard dataverse", "ncbi geo", "zenodo", "omicsdi", "AVERAGE"],
+        repos: ["Harvard Dataverse", "NCBI GEO", "Zenodo", "Omics DI", "AVERAGE"],
         // add in funding
         properties: ["text", "alternativeHeadline", "interactivityType", "expires", "catalog", "accessModeSufficient", "video", "schemaVersion", "additionalType", "review", "workTranslation", "author", "potentialAction", "workExample",
           "isBasedOn", "contentRating", "encodings", "publisher", "comment", "educationalUse", "isAccessibleForFree", "datasetTimeInterval", "thumbnailUrl", "genre", "variablesMeasured", "accountablePerson", "accessibilityControl", "funder",

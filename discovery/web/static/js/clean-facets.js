@@ -37,24 +37,23 @@ cleanFacets = function(facets, facetSize = null) {
 }
 
 cleanSources = function(sources) {
-  let filtered  = sources.filter(d => d.term.includes("_search"));
-  filtered.forEach(d => {
-    d.term = d.term.replace("_search", "").replace("_transformed", "").replace(/_\d/, "").replace("_", " ");
+  sources.forEach(d => {
+    d.term = cleanSourceName(d.term.replace("_search", "").replace("indexed_", "").replace(/_\d/, "").replace("_", " "));
   });
 
-  let nested = d3.nest().key(d => d.term).rollup(values => d3.sum(values, d => d.count)).entries(filtered);
+  let nested = d3.nest().key(d => d.term).rollup(values => d3.sum(values, d => d.count)).entries(sources);
 
   return (nested);
 }
 
 cleanSourceName = function(source) {
-  if(source.toLowerCase() === "harvard_dataverse") {
+  if(["indexed_harvard_dataverse", "harvard_dataverse", "harvard dataverse"].includes(source.toLowerCase())) {
     return("Harvard Dataverse")
   }
-  if(source.toLowerCase() === "omicsdi") {
+  if(["indexed_omicsdi", "omicsdi"].includes(source.toLowerCase())) {
     return("Omics DI")
   }
-  if(source.toLowerCase() === "ncbi_geo") {
+  if(["indexed_ncbi_geo", "ncbi_geo", "ncbi geo"].includes(source.toLowerCase())) {
     return("NCBI GEO")
   } else {
     let sourceName = source.replace("_", " ").toLowerCase();
@@ -99,7 +98,7 @@ reduceQuery = function(id, selectedFilters) {
   if (id === "funder") {
     query_string = `(funder.name.keyword:${query_values} OR funding.funder.name.keyword:${query_values})`;
   } else if (id === "source") {
-    query_string = `(${selectedFilters[id].map(d => `_index:${d.replace(/\s/, "_")}*`).join(" OR ")})`;
+    query_string = `(${selectedFilters[id].map(d => `_index:indexed_${d.replace(/Omics DI/, "omicsdi").toLowerCase().replace(/\s/, "_")}*`).join(" OR ")})`;
   } else {
     query_string = `${id}.keyword:${query_values}`;
   }
@@ -124,7 +123,7 @@ filterString2Obj = function(filterStr) {
         let value = `[${d.match(/funder\.name\.keyword\:\((.+)\)\sOR/)[1]}]`;
         filterObj["funder"] = JSON.parse(value);
       } else if (d.search("_index") > -1){
-        let value = d.replace("(", "").replace(")", "").replace(/\*/g, "").replace(/_index:/g, "").replace("_", " ").split(" OR ");
+        let value = d.replace("(", "").replace(")", "").replace(/\*/g, "").replace(/_index:indexed_/g, "").replace("_", " ").split(" OR ");
         filterObj["source"] = value;
       } else {
         let filterComponents = d.replace(".keyword", "").split(":");
@@ -134,6 +133,7 @@ filterString2Obj = function(filterStr) {
       }
     })
   }
+  console.log(filterObj)
 
   return (filterObj)
 }

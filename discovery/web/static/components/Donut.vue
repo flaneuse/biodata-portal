@@ -31,7 +31,8 @@ module.exports = {
       hole_frac,
       dataLength: 0,
       arcs: [],
-      colorScale: null
+      colorScale: null,
+      colorDomain: ['Omics DI', 'NCBI GEO', 'Zenodo', 'Harvard Dataverse']
     }
   },
   watch: {
@@ -59,7 +60,7 @@ module.exports = {
 
         // color scale
         let colorScale = d3.scaleOrdinal()
-          .domain(['omicsdi', 'ncbi geo', 'zenodo', 'harvard dataverse'])
+          .domain(this.colorDomain)
           // .domain(data.map(d => d.key))
           .range(d3.schemeTableau10);
           // .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse());

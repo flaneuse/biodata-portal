@@ -9,7 +9,7 @@
 # name also used on metadata
 SITE_NAME = "NIAID Data Portal"
 SITE_DESC = 'An aggregator of open datasets, with a particular focus on allergy and infectious diseases'
-API_URL = "http://su07:8080/api/"
+API_URL = "https://crawler.biothings.io/api/"
 SITE_URL = "https://discovery.biothings.io/niaid/"
 # SITE_URL = "http://localhost:8000/"
 
