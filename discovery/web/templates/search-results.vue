@@ -103,7 +103,7 @@
               <!-- other short properties -->
               <div class="dataset-properties">
                 <div id="credit" class="row" v-if="item.creator || item.publisher || item.provider">
-
+                  <!-- creator / author -->
                   <div id="creator" v-if="item.creator">
                     <template v-if="Array.isArray(item.creator)  && item.creator.length > 0">
                       <span v-text="item.creator[0].name"></span><i> et al.</i>
@@ -123,6 +123,7 @@
                     </template>
                   </div>
 
+                  <!-- affiliation -->
                   <div id="creator-affiliation" v-text="item.creator[0].affiliation" v-if="item.creator && item.creator[0] && item.creator[0].affiliation">
                   </div>
                   <div id="creator-affiliation" v-text="item.author[0].affiliation" v-else-if="item.author && item.author[0] && item.author[0].affiliation">
@@ -130,6 +131,7 @@
                   <div id="publisher" v-text="item.publisher.name" v-else-if="item.publisher"></div>
                   <div id="provider" v-text="item.provider.name" v-else-if="item.provider"></div>
 
+                  <!-- citation -->
                   <div id="citation" class="citation mainTextDark" v-if="item.citation">
                     <template v-if="Array.isArray(item.citation)">
                       <span v-for="(citation, name) in item.citation" v-text="citation" :key="name"></span>
@@ -138,18 +140,35 @@
                       <span v-text="item.citation"></span>
                     </template>
                   </div>
+                </div>
 
+                <div id="funding" class="row" v-if="item.funding || item.funder">
+                  <p>
+                    Funded by:
+                  </p>
+                  <template v-if="Array.isArray(item.funding)">
+                    <div v-for="(funding, name) in item.funding" :key="name" class="funding-group">
+                      <span class="funding-name" v-text="funding.funder.name" v-if="funding.funder.name"></span>
+                      <a class="funding-name" v-text="funding.identifier" :href="'http://grantome.com/grant/NIH/' + funding.identifier" v-if="funding.identifier" target="_blank" rel="noreferrer"></a>
+                    </div>
+                  </template>
+                  <template v-if="Array.isArray(item.funder)">
+                    <div v-for="(funder, name) in item.funder" :key="name" class="funding-group">
+                      <span class="funding-name" v-text="funder.name"  v-if="funder.name"></span>
+                    </div>
+                  </template>
                 </div>
 
                 <div id="source">
                     view on <a :href="item['_id']" target="_blank" rel="noreferrer"><span v-text="item['sourceIndex']"></span></a>
                 </div>
 
-
+                <!-- dates -->
                 <div id="dateModified" v-if="item.dateModified"><span style="padding-right:4px">updated</span><span v-text="item.dateModified"></span></div>
                 <!-- <div id="dateModified" class="row" v-if="item.dateModified | moment('dddd, MMMM Do YYYY')"><span style="padding-right:4px">updated</span><span v-text="item.dateModified"></span></div> -->
                 <div id="datePublished" v-if="item.datePublished"><span style="padding-right:4px">published</span><span v-text="item.datePublished"></span></div>
 
+                <!-- license -->
                 <div id="license" v-if="item.license && item.license.text">
                   <a target="_blank" :href="item.license.url" v-html="item.license.text">link</a>
                 </div>
@@ -159,10 +178,10 @@
             <!-- description -->
             <div class="col-md-8 text-left" id="description">
               <a :href="item['_id']" target="_blank" rel="noreferrer">
-                <img class="repo-icon float-right" src="static/img/repositories/omicsdi.png" v-if="item['_index'].includes('omicsdi')" />
-                <img class="repo-icon float-right" src="static/img/repositories/geo.gif" v-if="item['_index'].includes('ncbi_geo')"  />
-                <img class="repo-icon float-right" src="static/img/repositories/zenodo.svg" v-if="item['_index'].includes('zenodo')" />
-                <img class="repo-icon float-right" src="static/img/repositories/dataverse_small.png" v-if="item['_index'].includes('harvard_dataverse')" />
+                <img class="repo-icon float-right" data-tippy-info="View on Omics DI" src="static/img/repositories/omicsdi.png" v-if="item['_index'].includes('omicsdi')" />
+                <img class="repo-icon float-right" data-tippy-info="View on NCBI GEO" src="static/img/repositories/geo.gif" v-if="item['_index'].includes('ncbi_geo')"  />
+                <img class="repo-icon float-right" data-tippy-info="View on Zenodo" src="static/img/repositories/zenodo.svg" v-if="item['_index'].includes('zenodo')" />
+                <img class="repo-icon float-right" data-tippy-info="View on Harvard Dataverse" src="static/img/repositories/dataverse_small.png" v-if="item['_index'].includes('harvard_dataverse')" />
               </a>
 
               <template v-if="item.descriptionExpanded">
@@ -376,6 +395,20 @@ var app = new Vue({
       animation: 'fade',
       theme: 'light',
       onShow(instance) {
+        let info = instance.reference.dataset.tippyInfo;
+        instance.setContent("<div class='text-muted m-0'>" + info + "</div>")
+      }
+    });
+
+    tippy('div', {
+      target: '.repo-icon',
+      content: 'Loading...',
+      maxWidth: '200px',
+      placement: 'bottom',
+      animation: 'fade',
+      theme: 'light',
+      onShow(instance) {
+        console.log("rollover")
         let info = instance.reference.dataset.tippyInfo;
         instance.setContent("<div class='text-muted m-0'>" + info + "</div>")
       }
@@ -640,7 +673,7 @@ console.log(getQueryFilters(self.selectedFilters))
     line-height: 1.2em;
   }
 
-  #credit {
+  #credit, #funding {
     border-bottom: 1px dashed #bbb;
     padding-bottom: 2px;
     margin-bottom: 5px;
