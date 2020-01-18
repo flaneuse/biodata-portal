@@ -625,6 +625,7 @@ console.log(getQueryFilters(self.selectedFilters))
     margin-bottom: 0.5em;
     font-size: 0.75em;
     cursor: pointer;
+    color: white;
   }
 
   .dataset-properties {
