@@ -146,16 +146,36 @@
                   <p class="mb-0">
                     Funded by:
                   </p>
-                  <template v-if="Array.isArray(item.funding)">
-                    <div v-for="(funding, name) in item.funding" :key="name" class="funding-group">
-                      <span class="funding-name" v-text="funding.funder.name" v-if="funding.funder.name"></span>
-                      <a class="funding-name" v-text="funding.identifier" :href="'http://grantome.com/grant/NIH/' + funding.identifier" v-if="funding.identifier" target="_blank" rel="noreferrer"></a>
-                    </div>
+
+                  <template v-if="item.fundingExpanded">
+                    <template v-if="Array.isArray(item.funding)">
+                      <div v-for="(funding, name) in item.funding" :key="name" class="funding-group">
+                        <span class="funding-name" v-text="funding.funder.name" v-if="funding.funder.name"></span>
+                        <a class="funding-name" v-text="funding.identifier" :href="'http://grantome.com/grant/NIH/' + funding.identifier" v-if="funding.identifier" target="_blank" rel="noreferrer"></a>
+                      </div>
+                    </template>
+                    <template v-if="Array.isArray(item.funder)">
+                      <div v-for="(funder, name) in item.funder" :key="name" class="funding-group">
+                        <span class="funding-name" v-text="funder.name"  v-if="funder.name"></span>
+                      </div>
+                    </template>
+
+                    <a class="show-more" v-if="item.fundersTooLong" href="#" @click.prevent="item.fundingExpanded=false">see fewer</a>
                   </template>
-                  <template v-if="Array.isArray(item.funder)">
-                    <div v-for="(funder, name) in item.funder" :key="name" class="funding-group">
-                      <span class="funding-name" v-text="funder.name"  v-if="funder.name"></span>
-                    </div>
+                  <template v-else>
+                    <template v-if="Array.isArray(item.funding)">
+                      <div v-for="(funding, index) in item.funding" class="funding-group" v-if="index < 2">
+                        <span class="funding-name" v-text="funding.funder.name" v-if="funding.funder.name"></span>
+                        <a class="funding-name" v-text="funding.identifier" :href="'http://grantome.com/grant/NIH/' + funding.identifier" v-if="funding.identifier" target="_blank" rel="noreferrer"></a>
+                      </div>
+                    </template>
+                    <template v-if="Array.isArray(item.funder)">
+                      <div v-for="(funder, index) in item.funder" class="funding-group"  v-if="index < 2">
+                        <span class="funding-name" v-text="funder.name"  v-if="funder.name"></span>
+                      </div>
+                    </template>
+
+                    <a class="show-more" href="#" @click.prevent="item.fundingExpanded=true" v-if="item.fundersTooLong">see all</a>
                   </template>
                 </div>
 
@@ -574,9 +594,10 @@ console.log(getQueryFilters(self.selectedFilters))
             let descriptionArray = d.longDescription.split(" ");
             d['shortDescription'] = descriptionArray.slice(0, self.maxDescriptionLength).join(" ");
             d['descriptionTooLong'] = descriptionArray.length >= self.maxDescriptionLength;
+            d['fundersTooLong'] = (d.funding && d.funding.length > 2) || (d.funder && d.funder.length > 2);
             d['descriptionExpanded'] = false;
             d['authorsExpanded'] = false;
-            d['fundingExpanded'] = false;
+            d['fundingExpanded'] = !((d.funding && d.funding.length > 2) || (d.funder && d.funder.length > 2));
             d['sourceIndex'] = cleanSourceName(d['_index']);
           })
 
