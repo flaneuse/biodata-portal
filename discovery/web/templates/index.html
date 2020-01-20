@@ -42,7 +42,7 @@
       <div id="search-bar" class="d-flex justify-content-center">
         <div class="d-flex flex-column">
           <form class="mb-1" @submit.prevent="search(query)">
-            <input id="search-query" type="text" v-model='query' name="query" class="form-control search-box" placeholder="search datasets">
+            <input id="search-query" type="text" v-model='query' name="query" class="form-control search-box" placeholder="search datasets" autocomplete="off">
           </form>
           <div id="search-suggestions" class="d-flex">
             <span>Try:</span>
