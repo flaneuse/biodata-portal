@@ -61,7 +61,7 @@
             <!-- loop: filter form group for each facet variable -->
             <template v-for="variable in filteredFacetSummary" :key="'filter-' + varaible.variable">
               <!-- facet title -->
-              <div class="facet-title" v-text="variable.variable"></div>
+              <p class="facet-title" v-text="variable.variable"></p>
 
               <!-- filter the filters: search box -->
               <form class="facet-search whitefadedarker pt-1" @submit.prevent="selectFilterText(variable.variable)" @input.prevent="debounceFilterText(variable.variable)" v-if="variable.counts.length > 0">
@@ -143,7 +143,7 @@
                 </div>
 
                 <div id="funding" class="row" v-if="item.funding || item.funder">
-                  <p>
+                  <p class="mb-0">
                     Funded by:
                   </p>
                   <template v-if="Array.isArray(item.funding)">
@@ -408,7 +408,6 @@ var app = new Vue({
       animation: 'fade',
       theme: 'light',
       onShow(instance) {
-        console.log("rollover")
         let info = instance.reference.dataset.tippyInfo;
         instance.setContent("<div class='text-muted m-0'>" + info + "</div>")
       }
@@ -576,6 +575,8 @@ console.log(getQueryFilters(self.selectedFilters))
             d['shortDescription'] = descriptionArray.slice(0, self.maxDescriptionLength).join(" ");
             d['descriptionTooLong'] = descriptionArray.length >= self.maxDescriptionLength;
             d['descriptionExpanded'] = false;
+            d['authorsExpanded'] = false;
+            d['fundingExpanded'] = false;
             d['sourceIndex'] = cleanSourceName(d['_index']);
           })
 
@@ -659,6 +660,7 @@ console.log(getQueryFilters(self.selectedFilters))
     font-size: 0.75em;
     cursor: pointer;
     color: white;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
   }
 
   .dataset-properties {
