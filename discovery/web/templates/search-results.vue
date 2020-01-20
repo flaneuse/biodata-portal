@@ -102,25 +102,21 @@
 
               <!-- other short properties -->
               <div class="dataset-properties">
-                <div id="credit" class="row" v-if="item.creator || item.publisher || item.provider">
+                <div id="credit" class="row" v-if="item.credit || item.creator || item.author || item.publisher || item.provider">
                   <!-- creator / author -->
-                  <div id="creator" v-if="item.creator">
-                    <template v-if="Array.isArray(item.creator)  && item.creator.length > 0">
-                      <span v-text="item.creator[0].name"></span><i> et al.</i>
-
+                  <div id="creator" v-if="item.credit">
+                    <template v-if="item.authorsExpanded">
+                      <div v-text="author.name" v-for="author in item.credit"></div>
+                      <a class="show-more" href="#" @click.prevent="item.authorsExpanded=false">hide authors</a>
                     </template>
                     <template v-else>
-                      <span v-text="item.creator.name"></span>
+                      <span v-text="item.credit[0].name"></span>
+                      <template v-if="item.credit.length > 1">
+                      <i> et al.</i>
+                      <a class="show-more" href="#" @click.prevent="item.authorsExpanded=true">see all</a>
+                      </template>
                     </template>
-                  </div>
-                  <div id="author" v-else-if="item.author">
-                    <template v-if="Array.isArray(item.author) && item.author.length > 0">
-                      <span v-text="item.author[0].name"></span><i> et al.</i>
 
-                    </template>
-                    <template v-else>
-                      <span v-text="item.author.name"></span>
-                    </template>
                   </div>
 
                   <!-- affiliation -->
@@ -508,6 +504,25 @@ var app = new Vue({
       }
       this.search(this.query, "filtersChanged");
     },
+    // Logic to get which person to display as the author
+    getAuthors(item) {
+      // (1): creator
+      if(item.creator) {
+        if(Array.isArray(item.creator)) {
+          return(item.creator);
+        } else {
+          return([item.creator]);
+        }
+      }
+      // (2): author
+      if(item.author) {
+        if(Array.isArray(item.author)) {
+          return(item.author);
+        } else {
+          return([item.author]);
+        }
+      }
+    },
     search(query, queryType, enquoteQuery = false) {
       var self = this;
 
@@ -524,8 +539,6 @@ var app = new Vue({
         self.selectedPage = 1;
       } else if (queryType === "pageChanged") {}
 
-
-console.log(getQueryFilters(self.selectedFilters))
       if (query) {
         // update route url
         this.$router.push({
@@ -595,6 +608,7 @@ console.log(getQueryFilters(self.selectedFilters))
             d['shortDescription'] = descriptionArray.slice(0, self.maxDescriptionLength).join(" ");
             d['descriptionTooLong'] = descriptionArray.length >= self.maxDescriptionLength;
             d['fundersTooLong'] = (d.funding && d.funding.length > 2) || (d.funder && d.funder.length > 2);
+            d['credit'] = self.getAuthors(d);
             d['descriptionExpanded'] = false;
             d['authorsExpanded'] = false;
             d['fundingExpanded'] = !((d.funding && d.funding.length > 2) || (d.funder && d.funder.length > 2));
