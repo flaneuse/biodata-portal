@@ -5,6 +5,7 @@
 
 $main: #113B56;
 $lightermain: #214A70;
+$lightmain: #83c5da;
 $sec: #0F627C;
 $darkmode: false;
 $background-white: #F8F9FA;
@@ -520,7 +521,7 @@ ul.tree li:last-child:before {
 }
 
 .smallButton:hover{
- background: $sec;
+ background: $lightmain !important;
 }
 
 .goLink:hover{
