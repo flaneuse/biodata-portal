@@ -39,7 +39,7 @@
       <div id="pagination-page-size" class="pagination">
         Show
         <ul>
-          <li v-for="(pageSize, index) in paginationOptions" v-if="pageSize <= numResults || index === 0 || paginationOptions[index-1] < numResults" v-bind:class="[ pageSize === selectedPerPage ? 'selected' : 'unselected' ]" :key="'page-size-' + pageSize">
+          <li v-for="(pageSize, index) in paginationOptions" v-if="pageSize <= numResults || index === 0 || paginationOptions[index-1] < numResults" v-bind:class="[ pageSize == selectedPerPage ? 'selected' : 'unselected' ]" :key="'page-size-' + pageSize">
             <a v-text="pageSize" v-on:click="changePageSize(pageSize)"></a>
           </li>
         </ul>
@@ -672,14 +672,6 @@ var app = new Vue({
 
   .result-summary {
     border-bottom: 1px solid #BBB;
-  }
-
-  .selected {
-    font-weight: bold;
-  }
-
-  .unselected {
-    font-weight: 300;
   }
 
   .disabled {

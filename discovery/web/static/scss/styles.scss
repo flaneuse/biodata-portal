@@ -8,6 +8,7 @@ $lightermain: #214A70;
 $sec: #0F627C;
 $darkmode: false;
 $background-white: #F8F9FA;
+$highlightcolor: #299fc4;
 
 $header-height: 90px;
 
@@ -2112,4 +2113,8 @@ progress[value]::-webkit-progress-value {
   display: block;
   height: $header-height; /* fixed header height*/
   margin: -$header-height 0 0; /* negative fixed header height */
+}
+
+.selected {
+  color: $highlightcolor;
 }
