@@ -15,7 +15,7 @@
         use a common schema to describe these datasets.
       </p>
       <p>
-        We rely on <a href="http://schema.org/Dataset" rel="noreferrer" target="_blank">schema.org's Dataset schema</a>, but each source uses the standard differently. <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer"><small class="badge badge-pill badge-secondary pointer">Use NIAID's Minimal Dataset Schema</small></a>
+        We rely on <a href="http://schema.org/Dataset" rel="noreferrer" target="_blank">schema.org's Dataset schema</a>, but each source uses the standard differently. <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer"><small class="badge badge-pill badge-secondary pointer">View NIAID's Minimal Dataset Schema</small></a>
       </p>
     </div>
     <div class="pt-5 pb-5 text-center">
@@ -94,7 +94,8 @@
 
         <p class="mt-4">
 
-          <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer"><small class="badge badge-pill badge-secondary pointer">Use NIAID's Minimal Dataset Schema</small></a>
+          <a href="https://discovery.biothings.io/view/niaid/" target="_blank" rel="noreferrer"><small class="badge badge-pill badge-secondary pointer">View NIAID's Minimal Dataset Schema</small></a>
+          <a href="https://discovery.biothings.io/guide/niaid/" target="_blank" rel="noreferrer"><small class="badge badge-pill badge-secondary pointer">Register a Dataset</small></a>
           <a href="about#sources"><small class="badge badge-pill badge-secondary pointer">View data sources</small></a>
         </p>
       </div>
