@@ -124,7 +124,8 @@ filterString2Obj = function(filterStr) {
         filterObj["funder"] = JSON.parse(value);
       } else if (d.search("_index") > -1){
         let value = d.replace("(", "").replace(")", "").replace(/\*/g, "").replace(/_index:indexed_/g, "").replace("_", " ").split(" OR ");
-        filterObj["source"] = value;
+        // let value = d.replace("(", "").replace(")", "").replace(/\*/g, "").replace(/_index:indexed_/g, "").replace("_", " ").split(" OR ");
+        filterObj["source"] = value.map(cleanSourceName);
       } else {
         let filterComponents = d.replace(".keyword", "").split(":");
         let key = filterComponents[0];
@@ -133,7 +134,6 @@ filterString2Obj = function(filterStr) {
       }
     })
   }
-  console.log(filterObj)
 
   return (filterObj)
 }

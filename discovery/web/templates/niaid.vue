@@ -112,7 +112,7 @@
         <!-- SOURCE -->
         <div class="summary-container">
           <h6 class="summary-title">source</h6>
-          <app-donut v-bind:source_counts="disease.source_counts" v-bind:width="100"></app-donut>
+          <app-donut v-bind:source_counts="disease.source_counts" v-bind:width="100" v-bind:color_domain="{{repo_names}}"></app-donut>
         </div>
 
         <!-- FUNDER -->

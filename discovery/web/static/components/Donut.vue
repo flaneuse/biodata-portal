@@ -23,7 +23,7 @@ const margin = {
 
 module.exports = {
   name: 'app-donut',
-  props: ['source_counts', 'width'],
+  props: ['source_counts', 'width', 'color_domain'],
   data() {
     return {
       height:0,
@@ -31,8 +31,7 @@ module.exports = {
       hole_frac,
       dataLength: 0,
       arcs: [],
-      colorScale: null,
-      colorDomain: ['Omics DI', 'NCBI GEO', 'Zenodo', 'Harvard Dataverse']
+      colorScale: null
     }
   },
   watch: {
@@ -60,7 +59,8 @@ module.exports = {
 
         // color scale
         let colorScale = d3.scaleOrdinal()
-          .domain(this.colorDomain)
+          // Set color domain so it's constant across the site
+          .domain(this.color_domain)
           // .domain(data.map(d => d.key))
           .range(d3.schemeTableau10);
           // .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), data.length).reverse());

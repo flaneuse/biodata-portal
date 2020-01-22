@@ -194,10 +194,7 @@
             <!-- description -->
             <div class="col-md-8 text-left" id="description">
               <a :href="item['_id']" target="_blank" rel="noreferrer">
-                <img class="repo-icon float-right" data-tippy-info="View on Omics DI" src="static/img/repositories/omicsdi.png" v-if="item['_index'].includes('omicsdi')" />
-                <img class="repo-icon float-right" data-tippy-info="View on NCBI GEO" src="static/img/repositories/geo.gif" v-if="item['_index'].includes('ncbi_geo')"  />
-                <img class="repo-icon float-right" data-tippy-info="View on Zenodo" src="static/img/repositories/zenodo.svg" v-if="item['_index'].includes('zenodo')" />
-                <img class="repo-icon float-right" data-tippy-info="View on Harvard Dataverse" src="static/img/repositories/dataverse_small.png" v-if="item['_index'].includes('harvard_dataverse')" />
+                <img v-for="repo in {{repo_objects}}" class="repo-icon float-right" :data-tippy-info="`View on ${repo.name}`" :src="repo.img_src" v-if="item['_index'].includes(repo.id)"/>
               </a>
 
               <template v-if="item.descriptionExpanded">

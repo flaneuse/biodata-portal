@@ -30,6 +30,10 @@ TEMPLATE_ENV.globals['contact_email'] = siteconfig.CONTACT_EMAIL
 TEMPLATE_ENV.globals['contact_repo'] = siteconfig.CONTACT_REPO
 TEMPLATE_ENV.globals['api_url'] = siteconfig.API_URL
 TEMPLATE_ENV.globals['site_url'] = siteconfig.SITE_URL
+# Repositories
+TEMPLATE_ENV.globals['repo_names'] = list(map(lambda x: x['name'], siteconfig.REPOSITORIES))
+TEMPLATE_ENV.globals['repo_objects'] = siteconfig.REPOSITORIES
+
 # Metadata
 TEMPLATE_ENV.globals['metadata_desc'] = siteconfig.METADATA_DESC
 TEMPLATE_ENV.globals['metadata_featured_image'] = siteconfig.METADATA_FEATURED_IMAGE

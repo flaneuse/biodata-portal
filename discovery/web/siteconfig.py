@@ -41,6 +41,41 @@ SEC_COLOR = "#0F627C"
 STATIC_IMAGE_FOLDER = 'niaid'
 
 # *****************************************************************************
+# REPOSITORY NAMES
+# *****************************************************************************
+
+# List of all possible repositories.
+# NOTE: if you want the names to appear in a particular way, you also need to change clean-facets.js
+REPOSITORIES = [{
+"name": "Omics DI",
+"id": "omicsdi",
+"img_src": "static/img/repositories/omicsdi.png",
+"url": "https://www.omicsdi.org/",
+"description": ""
+},
+{
+"name": "NCBI GEO",
+"id": "ncbi_geo",
+"img_src": "static/img/repositories/geo.gif",
+"url": "https://www.ncbi.nlm.nih.gov/geo/",
+"description": ""
+},
+{
+"name": "Zenodo",
+"id": "zenodo",
+"img_src": "static/img/repositories/zenodo.svg",
+"url": "https://zenodo.org/",
+"description": ""
+},
+{
+"name": "Harvard Dataverse",
+"id": "harvard_dataverse",
+"img_src": "static/img/repositories/dataverse_small.png",
+"url": "https://dataverse.harvard.edu/",
+"description": ""
+}]
+
+# *****************************************************************************
 # DATA DISCOVERY ENGINE - METADATA
 # *****************************************************************************
 
