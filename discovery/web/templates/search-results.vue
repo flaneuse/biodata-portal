@@ -112,7 +112,7 @@
               <div class="dataset-properties">
                 <div id="credit" class="row" v-if="item.credit || item.creator || item.author || item.publisher || item.provider">
                   <!-- creator / author -->
-                  <div id="creator" v-if="item.credit">
+                  <div id="creator" v-if="item.credit && item.credit.length > 0">
                     <template v-if="item.authorsExpanded">
                       <div v-text="author.name" v-for="author in item.credit"></div>
                       <a class="show-more" href="#" @click.prevent="item.authorsExpanded=false">hide authors</a>
