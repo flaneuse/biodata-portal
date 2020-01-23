@@ -8,15 +8,11 @@ import os
 
 from jinja2 import Environment, FileSystemLoader
 from tornado.httputil import url_concat
-from torngithub import GithubMixin, json_decode, json_encode
 import sass
 
 from biothings.web.api.helper import BaseHandler as BioThingsBaseHandler
 
 import discovery.web.siteconfig as siteconfig
-
-GITHUB_CALLBACK_PATH = "/oauth"
-GITHUB_SCOPE = ""
 
 TEMPLATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 TEMPLATE_LOADER = FileSystemLoader(searchpath=TEMPLATE_PATH)
@@ -44,12 +40,6 @@ sass.compile(dirname=(os.path.join(os.path.dirname(os.path.abspath(__file__)), '
 
 
 class BaseHandler(BioThingsBaseHandler):
-    def get_current_user(self):
-        user_json = self.get_secure_cookie("user")
-        if not user_json:
-            return None
-        return json_decode(user_json)
-
     def return_404(self):
         '''return a custom 404 page'''
         doc_file = "404.html"
