@@ -45,7 +45,7 @@ STATIC_IMAGE_FOLDER = 'niaid'
 # *****************************************************************************
 
 # List of all possible repositories.
-# NOTE: if you want the names to appear in a particular way, you also need to change clean-facets.js
+# NOTE: Everything should be automated; if you want to change the sort order in the heatmap in /schema, though, you need to alter schema.vue:repoOrder
 REPOSITORIES = [{
 "name": "Omics DI",
 "id": "omicsdi",

@@ -142,9 +142,9 @@
         x: d3.scaleBand(),
         y: d3.scaleBand(),
 
-        // repos: ["Harvard Dataverse", "NCBI GEO", "Zenodo", "Omics DI", "AVERAGE"],
-        repos: {{repo_names}}.concat("AVERAGE"),
-        // add in funding
+        repos: null,
+        repoOrder: ["Harvard Dataverse", "NCBI GEO", "Zenodo", "NYU Data Catalog", "Omics DI", "AVERAGE"],
+        // add in funding: custom property in addition to schema.org's Dataset props.
         properties: ["text", "alternativeHeadline", "interactivityType", "expires", "catalog", "accessModeSufficient", "video", "schemaVersion", "additionalType", "review", "workTranslation", "author", "potentialAction", "workExample",
           "isBasedOn", "contentRating", "encodings", "publisher", "comment", "educationalUse", "isAccessibleForFree", "datasetTimeInterval", "thumbnailUrl", "genre", "variablesMeasured", "accountablePerson", "accessibilityControl", "funder",
           "isPartOf", "publication", "provider", "version", "fileFormat", "contributor", "accessibilityHazard", "publisherImprint", "contentReferenceTime", "accessMode", "awards", "reviews", "conditionsOfAccess", "abstract", "producer",
@@ -312,6 +312,10 @@
             // calculate percentages, fill colors based on percents.
             rxjs.operators.tap(results => console.log(results)),
             rxjs.operators.map(([properties, totals]) => {
+              // Pull out the names of the repos and sort in a logical order.
+              this.repos = d3.map(properties.flatMap(d => d.counts), d => d.key).keys().sort((a,b) => this.repoOrder.indexOf(a) - this.repoOrder.indexOf(b));
+              this.repos = this.repos.concat("AVERAGE");
+
               properties.forEach(property => {
                 property.totalPct = property.total / totals.total;
 
