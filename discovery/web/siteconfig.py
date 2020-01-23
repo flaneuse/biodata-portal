@@ -49,6 +49,7 @@ STATIC_IMAGE_FOLDER = 'niaid'
 REPOSITORIES = [{
 "name": "Omics DI",
 "id": "omicsdi",
+"synonyms": ["omicsdi", "indexed_omicsdi"],
 "img_src": "static/img/repositories/omicsdi.png",
 "url": "https://www.omicsdi.org/",
 "description": ""
@@ -56,6 +57,7 @@ REPOSITORIES = [{
 {
 "name": "NCBI GEO",
 "id": "ncbi_geo",
+"synonyms": ["indexed_ncbi_geo", "ncbi_geo", "ncbi geo"],
 "img_src": "static/img/repositories/geo.gif",
 "url": "https://www.ncbi.nlm.nih.gov/geo/",
 "description": ""
@@ -63,6 +65,7 @@ REPOSITORIES = [{
 {
 "name": "Zenodo",
 "id": "zenodo",
+"synonyms": ["indexed_zenodo", "zenodo"],
 "img_src": "static/img/repositories/zenodo.svg",
 "url": "https://zenodo.org/",
 "description": ""
@@ -70,7 +73,17 @@ REPOSITORIES = [{
 {
 "name": "Harvard Dataverse",
 "id": "harvard_dataverse",
+"synonyms": ["indexed_harvard_dataverse", "harvard_dataverse", "harvard dataverse"],
 "img_src": "static/img/repositories/dataverse_small.png",
 "url": "https://dataverse.harvard.edu/",
 "description": ""
-}]
+},
+{
+"name": "NYU Data Catalog",
+"id": "nyu",
+"synonyms": ["indexed_nyu", "nyu"],
+"img_src": "static/img/repositories/nyu.png",
+"url": "https://datacatalog.med.nyu.edu/",
+"description": ""
+}
+]

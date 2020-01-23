@@ -254,7 +254,7 @@
               return ({
                 "property": property,
                 "total": result.total,
-                "counts": cleanSources(result.terms)
+                "counts": cleanSources(result.terms, {{repo_objects}})
               })
             })
           )

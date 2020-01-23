@@ -552,7 +552,7 @@ var app = new Vue({
           path: "/search",
           query: {
             q: self.query,
-            filters: getQueryFilters(self.selectedFilters),
+            filters: getQueryFilters(self.selectedFilters, {{repo_objects}}),
             size: self.selectedPerPage,
             from: self.selectedPage
           }
@@ -570,7 +570,7 @@ var app = new Vue({
         var queryText = self.query ? encodeES(self.query) : "__all__";
 
         // pull out the applied filter string and convert to an object.
-        self.selectedFilters = filterString2Obj(self.$route.query.filters);
+        self.selectedFilters = filterString2Obj(self.$route.query.filters, {{repo_objects}});
 
         // if (Object.values(self.selectedFilters).flatMap(d => d).length > 0) {
         // let selectedFilters = getQueryFilters(self.selectedFilters);
@@ -621,7 +621,7 @@ var app = new Vue({
             d['descriptionExpanded'] = false;
             d['authorsExpanded'] = false;
             d['fundingExpanded'] = !((d.funding && d.funding.length > 2) || (d.funder && d.funder.length > 2));
-            d['sourceIndex'] = cleanSourceName(d['_index']);
+            d['sourceIndex'] = cleanSourceName(d['_index'], {{repo_objects}});
           })
 
           self.results = response.data.hits;
@@ -642,7 +642,7 @@ var app = new Vue({
         // TODO: promise-ize this.
         if (queryChanged) {
           axios.get("{{api_url}}" + 'query?', facetParams).then(function(response) {
-            let allResults = cleanFacets(response.data.facets, self.facetSize);
+            let allResults = cleanFacets(response.data.facets, {{repo_objects}}, self.facetSize);
 
             // console.log(response.data.facets)
             // console.log(allResults)

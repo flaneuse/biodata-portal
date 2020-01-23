@@ -155,7 +155,7 @@
           console.log(response.data);
           self.keywordsCounts = response.data.facets['keywords.keyword'].terms;
           self.datasetTotal = response.data.facets['_index'].total;
-          self.source_counts = cleanSources(response.data.facets['_index'].terms);
+          self.source_counts = cleanSources(response.data.facets['_index'].terms, {{repo_objects}});
           self.sourceTotal = self.source_counts.length;
         })
       }

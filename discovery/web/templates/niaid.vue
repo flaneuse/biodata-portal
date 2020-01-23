@@ -369,7 +369,7 @@
             rxjs.operators.tap(result => result['technique_count'] = result['measurementTechnique.keyword']['terms'].map(d => {
               return({"key": d.term, "value": d.count})
             })),
-            rxjs.operators.tap(result => result['source_counts'] = cleanSources(result['_index']['terms']))
+            rxjs.operators.tap(result => result['source_counts'] = cleanSources(result['_index']['terms'], {{repo_objects}}))
           )
         );
       },

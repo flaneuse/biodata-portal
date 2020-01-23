@@ -1,6 +1,6 @@
 // function to clean and return results from a facet call
 // returns an object array: [{variable: funder, counts: [{key: NIH, value: 1231}]}]
-cleanFacets = function(facets, facetSize = null) {
+cleanFacets = function(facets, repo_objects, facetSize = null) {
   let cleanedFacets = [];
 
   // Adding special cleanup function for funders / funding
@@ -14,11 +14,11 @@ cleanFacets = function(facets, facetSize = null) {
   cleanedFacets.push({
     "variable": "source",
     // "searchVariable": ["funder.name.keyword", "funding.funder.name.keyword"],
-    "counts": cleanSources(facets['_index']['terms'])
+    "counts": cleanSources(facets['_index']['terms'], repo_objects)
   })
 
 
-  let facetVars = [ "variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"];
+  let facetVars = ["variableMeasured.keyword", "measurementTechnique.keyword", "keywords.keyword"];
   facetVars.forEach(varName => {
     let summary = {};
     summary['variable'] = varName.replace(".keyword", "");
@@ -36,9 +36,9 @@ cleanFacets = function(facets, facetSize = null) {
   return (cleanedFacets)
 }
 
-cleanSources = function(sources) {
+cleanSources = function(sources, source_objects) {
   sources.forEach(d => {
-    d.term = cleanSourceName(d.term.replace("_search", "").replace("indexed_", "").replace(/_\d/, "").replace("_", " "));
+    d.term = cleanSourceName(d.term, source_objects);
   });
 
   let nested = d3.nest().key(d => d.term).rollup(values => d3.sum(values, d => d.count)).entries(sources);
@@ -46,22 +46,19 @@ cleanSources = function(sources) {
   return (nested);
 }
 
-cleanSourceName = function(source) {
-  if(["indexed_harvard_dataverse", "harvard_dataverse", "harvard dataverse"].includes(source.toLowerCase())) {
-    return("Harvard Dataverse")
-  }
-  if(["indexed_omicsdi", "omicsdi"].includes(source.toLowerCase())) {
-    return("Omics DI")
-  }
-  if(["indexed_ncbi_geo", "ncbi_geo", "ncbi geo"].includes(source.toLowerCase())) {
-    return("NCBI GEO")
+cleanSourceName = function(source, repo_objects) {
+  // remove any numbers in the
+  source = source.replace(/_\d/, "");
+
+  let filtered_repo = repo_objects.filter(d => d.synonyms.includes(source));
+
+  if (filtered_repo.length > 0) {
+    return(filtered_repo[0]["name"]);
+
   } else {
-    let sourceName = source.replace("_", " ").toLowerCase();
-    sourceName = sourceName[0].toUpperCase() + sourceName.slice(1);
-    return(sourceName)
+    let sourceName = source.replace(/\_/g, " ");
+    return (sourceName);
   }
-
-
 }
 
 combineFunders = function(facets, facetSize, includeUnknown = false) {
@@ -83,29 +80,38 @@ combineFunders = function(facets, facetSize, includeUnknown = false) {
   return (nested);
 }
 
-getQueryFilters = function(selectedFilters) {
+getQueryFilters = function(selectedFilters, repo_objects) {
   let query_string = Object.keys(selectedFilters)
     .filter(id => selectedFilters[id].length > 0)
-    .map(id => reduceQuery(id, selectedFilters))
+    .map(id => reduceQuery(id, selectedFilters, repo_objects))
     .join(" AND ")
 
   return (query_string)
 }
 
-reduceQuery = function(id, selectedFilters) {
+sourceName2ID = function(name, repo_objects) {
+  let filtered = repo_objects.filter(d => d['name'] == name);
+  if(filtered.length > 0) {
+    return(filtered[0]['id']);
+  } else {
+    return(name);
+  }
+}
+
+reduceQuery = function(id, selectedFilters, repo_objects) {
   let query_values = `("${selectedFilters[id].join('","')}")`;
   let query_string;
   if (id === "funder") {
     query_string = `(funder.name.keyword:${query_values} OR funding.funder.name.keyword:${query_values})`;
   } else if (id === "source") {
-    query_string = `(${selectedFilters[id].map(d => `_index:indexed_${d.replace(/Omics DI/, "omicsdi").toLowerCase().replace(/\s/, "_")}*`).join(" OR ")})`;
+    query_string = `(${selectedFilters[id].map(d => `_index:indexed_${sourceName2ID(d, repo_objects)}*`).join(" OR ")})`;
   } else {
     query_string = `${id}.keyword:${query_values}`;
   }
   return (query_string)
 }
 
-filterString2Obj = function(filterStr) {
+filterString2Obj = function(filterStr, repo_objects) {
   let filterObj = {
     "funder": [],
     "source": [],
@@ -122,10 +128,10 @@ filterString2Obj = function(filterStr) {
         // Assuming first and second entries are identical (which they should be)
         let value = `[${d.match(/funder\.name\.keyword\:\((.+)\)\sOR/)[1]}]`;
         filterObj["funder"] = JSON.parse(value);
-      } else if (d.search("_index") > -1){
+      } else if (d.search("_index") > -1) {
         let value = d.replace("(", "").replace(")", "").replace(/\*/g, "").replace(/_index:indexed_/g, "").replace("_", " ").split(" OR ");
         // let value = d.replace("(", "").replace(")", "").replace(/\*/g, "").replace(/_index:indexed_/g, "").replace("_", " ").split(" OR ");
-        filterObj["source"] = value.map(cleanSourceName);
+        filterObj["source"] = value.map(d => cleanSourceName(d, repo_objects));
       } else {
         let filterComponents = d.replace(".keyword", "").split(":");
         let key = filterComponents[0];
@@ -134,6 +140,7 @@ filterString2Obj = function(filterStr) {
       }
     })
   }
+  console.log(filterObj)
 
   return (filterObj)
 }
