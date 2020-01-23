@@ -5,7 +5,6 @@ import os
 
 from biothings.web.index_base import main
 
-from discovery.scripts.setup import es_data_setup
 from discovery.web.settings import DiscoveryWebSettings
 
 WEB_SETTINGS = DiscoveryWebSettings(config='config')
@@ -15,7 +14,6 @@ STATIC_PATH = os.path.join(SRC_PATH, 'web', 'static')
 if __name__ == '__main__':
 
     logging.captureWarnings(True)
-    es_data_setup()
 
     main(
         WEB_SETTINGS.generate_app_list(),
