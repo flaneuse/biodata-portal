@@ -16,6 +16,10 @@
         <input id="search-query" type="search" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets" autocomplete="off">
       </form>
     </div>
+
+    <div id="uh-oh" v-if="error">
+      Oh no! Something went wrong with the search. Try another query.
+    </div>
   </div>
 
   <div class="jumbotron bg-light text-muted w-100" v-if="numResults || numResults === 0">
@@ -23,6 +27,10 @@
     <form class="row" @submit.prevent="search(query, 'queryChanged')">
       <input id="search-query" type="search" v-model='query' name="query" class="form-control mb-4 col-lg-4 col-md-6" placeholder="search datasets" autocomplete="off">
     </form>
+
+    <div id="uh-oh" v-if="error">
+      Oh no! Something went wrong with the search. Try another query.
+    </div>
 
     <div id="results-count" class="d-flex align-items-center mb-2 justify-content-between">
       <!-- RESULTS COUNT -->
@@ -288,6 +296,7 @@
 <script src="https://unpkg.com/vue-router"></script>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="static/js/clean-facets.js"></script>
+<script src="static/js/encode-es.js"></script>
 <script src="https://unpkg.com/tippy.js@3/dist/tippy.all.min.js"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.28.11/dist/sweetalert2.all.min.js"></script> -->
 <script>
@@ -338,6 +347,7 @@ var app = new Vue({
 
       numResults: null,
       results: [],
+      error: false,
 
       facetSize: 1000,
       facetsPerShowMore: 5,
@@ -557,7 +567,7 @@ var app = new Vue({
         self.selectedPerPage = self.$route.query.size ? self.$route.query.size : self.defaultPerPage;
         self.selectedPage = self.$route.query.from ? self.$route.query.from : 1;
 
-        var queryText = self.query ? self.query : "__all__";
+        var queryText = self.query ? encodeES(self.query) : "__all__";
 
         // pull out the applied filter string and convert to an object.
         self.selectedFilters = filterString2Obj(self.$route.query.filters);
@@ -587,6 +597,8 @@ var app = new Vue({
         self.loading = true;
 
         self.results = [];
+        self.numResults = 0;
+        self.error = false;
 
         // TODO: set in config
         axios.get("{{api_url}}" + 'query?', params).then(function(response) {
@@ -620,6 +632,11 @@ var app = new Vue({
           }
 
           self.loading = false;
+        }).catch(err => {
+          self.loading = false;
+          self.error = true;
+          console.log("uh oh! Something went wrong with the query")
+          console.log(err)
         });
 
         // TODO: promise-ize this.
@@ -631,6 +648,9 @@ var app = new Vue({
             // console.log(allResults)
             self.facetSummary = allResults;
             self.loading = false;
+          }).catch(err => {
+            console.log("uh oh! Something went wrong with the query")
+            console.log(err)
           });
         }
       }
