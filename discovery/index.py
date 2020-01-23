@@ -18,7 +18,6 @@ if __name__ == '__main__':
     main(
         WEB_SETTINGS.generate_app_list(),
         app_settings={
-            "cookie_secret": WEB_SETTINGS.COOKIE_SECRET,
             "autoreload": True
         },
         debug_settings={
