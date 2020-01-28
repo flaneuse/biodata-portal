@@ -56,7 +56,7 @@ cleanSourceName = function(source, repo_objects) {
     return(filtered_repo[0]["name"]);
 
   } else {
-    let sourceName = source.replace(/indexed/g, "").replace(/\_/g, " ");
+    let sourceName = source.replace(/indexed/g, "").replace(/\_/g, " ").trim();
     return (sourceName);
   }
 }

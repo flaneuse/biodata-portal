@@ -202,7 +202,7 @@
             <!-- description -->
             <div class="col-md-8 text-left" id="description">
               <a :href="item['_id']" target="_blank" rel="noreferrer">
-                <img v-for="repo in {{repo_objects}}" class="repo-icon float-right" :data-tippy-info="`View on ${repo.name}`" :src="repo.img_src" v-if="item['_index'].includes(repo.id)"/>
+                <img v-for="repo in {{repo_objects}}" class="repo-icon float-right" :data-tippy-info="`View on ${repo.name}`" :src="repo.img_src" v-if="item['_index'] && item['_index'].includes(repo.id)"/>
               </a>
 
               <template v-if="item.descriptionExpanded">
@@ -621,7 +621,7 @@ var app = new Vue({
             d['descriptionExpanded'] = false;
             d['authorsExpanded'] = false;
             d['fundingExpanded'] = !((d.funding && d.funding.length > 2) || (d.funder && d.funder.length > 2));
-            d['sourceIndex'] = cleanSourceName(d['_index'], {{repo_objects}});
+            d['sourceIndex'] = d['_index'] ? cleanSourceName(d['_index'], {{repo_objects}}) : null;
           })
 
           self.results = response.data.hits;
