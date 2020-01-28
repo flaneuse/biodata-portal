@@ -85,5 +85,13 @@ REPOSITORIES = [{
 "img_src": "static/img/repositories/nyu.png",
 "url": "https://datacatalog.med.nyu.edu/",
 "description": ""
+},
+{
+"name": "ImmPort",
+"id": "immport",
+"synonyms": ["indexed_immport", "immport"],
+"img_src": "static/img/repositories/immport.png",
+"url": "https://www.immport.org/home",
+"description": ""
 }
 ]
