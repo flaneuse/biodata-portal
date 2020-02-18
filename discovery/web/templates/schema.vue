@@ -132,9 +132,9 @@
         width: 0,
         height: 0,
         margin: {
-          top: 75,
+          top: 95,
           right: 120,
-          bottom: 75,
+          bottom: 95,
           left: 120
         },
         // colorScheme: d3.interpolateMagma,
@@ -143,7 +143,7 @@
         y: d3.scaleBand(),
 
         repos: null,
-        repoOrder: ["Harvard Dataverse", "NCBI GEO", "Zenodo", "NYU Data Catalog", "Omics DI", "AVERAGE"],
+        repoOrder: ["ImmPort", "Harvard Dataverse", "NCBI GEO", "Zenodo", "Data Discovery Engine", "NYU Data Catalog", "Omics DI", "AVERAGE"],
         // add in funding: custom property in addition to schema.org's Dataset props.
         properties: ["text", "alternativeHeadline", "interactivityType", "expires", "catalog", "accessModeSufficient", "video", "schemaVersion", "additionalType", "review", "workTranslation", "author", "potentialAction", "workExample",
           "isBasedOn", "contentRating", "encodings", "publisher", "comment", "educationalUse", "isAccessibleForFree", "datasetTimeInterval", "thumbnailUrl", "genre", "variablesMeasured", "accountablePerson", "accessibilityControl", "funder",

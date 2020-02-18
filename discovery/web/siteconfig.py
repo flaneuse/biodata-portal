@@ -92,5 +92,13 @@ REPOSITORIES = [{
 "img_src": "static/img/repositories/immport.png",
 "url": "https://www.immport.org/home",
 "description": ""
+},
+{
+"name": "Data Discovery Engine",
+"id": "discovery",
+"synonyms": ["indexed_discovery", "discovery"],
+"img_src": "static/img/repositories/dde.png",
+"url": "https://discovery.biothings.io/dataset",
+"description": ""
 }
 ]
