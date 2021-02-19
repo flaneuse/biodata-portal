@@ -58,6 +58,7 @@ input.search-box {
     methods: {
       executeSearch() {
         if(this.query){
+          gtag('event','click',{'event_category':'ndp_search','event_label':this.query,'event_value':1})
           this.$router.push({path: "search", key: this.query, query: { q: this.query, size: this.defaultPerPage, from: this.defaultPage}}).catch(err => {console.log(err)});
           this.$router.go(0); // bit of a hack to force router execution; seems to be related to Vue's recycling of components, the fact that each component is a new Vue instance, and/or the routing conflicts b/w Tornado and Vue.
           this.query = null;
